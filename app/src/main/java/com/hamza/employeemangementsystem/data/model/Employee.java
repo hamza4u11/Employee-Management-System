@@ -1,6 +1,6 @@
 package com.hamza.employeemangementsystem.data.model;
 
-public class EmployeeModel {
+public class Employee {
 
     public int id;
     public String name;
@@ -16,10 +16,10 @@ public class EmployeeModel {
     public String roles;
     public String managerId;
 
-    public EmployeeModel(String name, String designation, String phone_no,
-                         String address, String paymentType, String allowHoliday,
-                         String overTimeAllow, String status, String pin,
-                         String checkIn, String roles, String managerId) {
+    public Employee(String name, String designation, String phone_no,
+                    String address, String paymentType, String allowHoliday,
+                    String overTimeAllow, String status, String pin,
+                    String checkIn, String roles, String managerId) {
         this.name = name;
         this.designation = designation;
         this.phone_no = phone_no;
@@ -34,10 +34,10 @@ public class EmployeeModel {
         this.managerId = managerId;
     }
 
-    public EmployeeModel(int id,String name, String designation, String phone_no,
-                         String address, String paymentType, String allowHoliday,
-                         String overTimeAllow, String status, String pin,
-                         String checkIn, String roles, String managerId) {
+    public Employee(int id, String name, String designation, String phone_no,
+                    String address, String paymentType, String allowHoliday,
+                    String overTimeAllow, String status, String pin,
+                    String checkIn, String roles, String managerId) {
         this.id=id;
         this.name = name;
         this.designation = designation;
@@ -53,6 +53,6 @@ public class EmployeeModel {
         this.managerId = managerId;
     }
 
-    public EmployeeModel(int anInt) {
+    public Employee() {
     }
 }

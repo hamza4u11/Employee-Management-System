@@ -6,17 +6,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.hamza.employeemangementsystem.R;
-import com.hamza.employeemangementsystem.data.model.EmployeeModel;
+import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
 
 public class LoginPinActivity extends AppCompatActivity {
@@ -31,7 +28,7 @@ public class LoginPinActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_pin);
-        employeeViewModel = new ViewModelProvider(this).get(EmployeeViewModel.class);
+        //employeeViewModel = new ViewModelProvider(this).get(EmployeeViewModel.class);
 
         String name = getIntent().getStringExtra("name");
         String id =getIntent().getStringExtra("id");
@@ -58,23 +55,25 @@ public class LoginPinActivity extends AppCompatActivity {
                 pin = "" +  pinOne + pinSecond + pinThird + pinFourth;
                 Log.d("PIN", pin );
 //                Log.d("Id", id);
+               Employee emp = employeeViewModel.getEmployeeById(String.valueOf(id));
+                        Log.d("Employee", emp.name );
 
-             String desgination = employeeViewModel.login( id,pin);
-                if (desgination == null) {
-                    Toast.makeText(LoginPinActivity.this,"PIN Not Matched ✅",Toast.LENGTH_SHORT).show();                    return;
-                }
-                switch (desgination){
-                    case "admin":
-                        Log.d("desgination","ADMIN");
-                        break;
-                    case "manager":
-                        Log.d("desgination","Manager");
-                        break;
-                    case "employee":
-                        Log.d("desgination","Employee");
-                        break;
-
-                }
+            // String desgination = employeeViewModel.login( id,pin);
+//                if (desgination == null) {
+//                    Toast.makeText(LoginPinActivity.this,"PIN Not Matched ✅",Toast.LENGTH_SHORT).show();                    return;
+//                }
+//                switch (desgination){
+//                    case "admin":
+//                        Log.d("desgination","ADMIN");
+//                        break;
+//                    case "manager":
+//                        Log.d("desgination","Manager");
+//                        break;
+//                    case "employee":
+//                        Log.d("desgination","Employee");
+//                        break;
+//
+//                }
 
 
 //                Boolean isCorrect = employeeViewModel.isPinCorrect(id, pin );

@@ -32,7 +32,19 @@
             android:layout_marginTop="8dp" />
     </LinearLayout>
 
-    <!-- CONTENT -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView2"
+            android:name="com.hamza.employeemangementsystem.ui.view.fragment.LoginPinFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+     CONTENT
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -110,40 +122,40 @@
                 android:background="#3F51FF" />
 
 
-            <!--            <TextView-->
-<!--                android:layout_width="56dp"-->
-<!--                android:layout_height="56dp"-->
-<!--                android:gravity="center"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textColor="#FFFFFF"-->
-<!--                android:background="#3F51FF" />-->
+                        <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:background="#3F51FF" />
 
-<!--            <TextView-->
-<!--                android:layout_width="56dp"-->
-<!--                android:layout_height="56dp"-->
-<!--                android:layout_marginStart="12dp"-->
-<!--                android:gravity="center"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textColor="#FFFFFF"-->
-<!--                android:background="#3F51FF" />-->
+            <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="12dp"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:background="#3F51FF" />
 
-<!--            <TextView-->
-<!--                android:layout_width="56dp"-->
-<!--                android:layout_height="56dp"-->
-<!--                android:layout_marginStart="12dp"-->
-<!--                android:gravity="center"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textColor="#FFFFFF"-->
-<!--                android:background="#3F51FF" />-->
+            <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="12dp"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:background="#3F51FF" />
 
-<!--            <TextView-->
-<!--                android:layout_width="56dp"-->
-<!--                android:layout_height="56dp"-->
-<!--                android:layout_marginStart="12dp"-->
-<!--                android:gravity="center"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textColor="#FFFFFF"-->
-<!--                android:background="#3F51FF" />-->
+            <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="12dp"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:background="#3F51FF" />
         </LinearLayout>
 
         <!-- BUTTONS -->

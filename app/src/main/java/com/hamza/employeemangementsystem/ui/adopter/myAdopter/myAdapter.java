@@ -1,6 +1,7 @@
 package com.hamza.employeemangementsystem.ui.adopter.myAdopter;
 
-import android.content.Intent;
+import android.app.Dialog;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,26 +9,28 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hamza.employeemangementsystem.R;
-import com.hamza.employeemangementsystem.data.model.EmployeeModel;
-import com.hamza.employeemangementsystem.ui.view.LoginPinActivity;
+import com.hamza.employeemangementsystem.data.model.Employee;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class myAdapter extends RecyclerView.Adapter<myAdapter.holder> {
-    private List<EmployeeModel> list = new ArrayList<>();
 
 
-    public myAdapter() {
+    private List<Employee> list = new ArrayList<>();
 
+    private Context context;
+    private final EmployeeClickHandler listener;
+
+    public myAdapter(EmployeeClickHandler listener) {
+        this.listener =listener;
     }
-    public void setList(List<EmployeeModel> newList) {
+    public void setList( List<Employee> newList) {
         this.list = newList;
         notifyDataSetChanged();
     }
@@ -46,18 +49,50 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.holder> {
             @NonNull holder holder,
             int position
     ) {
-        EmployeeModel employee = list.get(position);
+        Employee employee = list.get(position);
 
         holder.txtName.setText(employee.name);
         holder.txtRole.setText(employee.designation);
         holder.layout.setTag(employee.id);
         holder.loginBtn.setText(String.valueOf(employee.id));
+
+
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), LoginPinActivity.class);
-            intent.putExtra("name", holder.txtName.getText().toString());
-            intent.putExtra("id", holder.loginBtn.getText().toString());
-            v.getContext().startActivity(intent);
+
+//            if (context == null) return; // safety check
+            if(this.listener!=null){
+                this.listener.onItemClick(employee);
+            }
+
         });
+
+
+//       holder.itemView.setOnClickListener(v -> {
+//           Bundle bundle = new Bundle();
+//           bundle.putString("name", holder.txtName.getText().toString());
+//           bundle.putString("designation", holder.txtRole.getText().toString());
+//           LoginPinFragment loginPinFragment = new LoginPinFragment();
+//           loginPinFragment.setArguments(bundle);
+           //Globals.shared.setUserId("");
+           //Globals.loginUserId="";
+
+
+
+
+//           getSupportFragmentManager()
+//                   .beginTransaction()
+//                   .replace(R.id.fragmentContainerView, new LoginPinFragment())
+//                   .commit();
+
+
+
+
+
+//            Intent intent = new Intent(v.getContext(), LoginPinFragment.class);
+////            intent.putExtra("name", holder.txtName.getText().toString());
+////            intent.putExtra("id", holder.loginBtn.getText().toString());
+//            v.getContext().startActivity(intent);
+      //  });
 
 
     }

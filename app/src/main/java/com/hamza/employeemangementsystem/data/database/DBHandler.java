@@ -92,17 +92,18 @@
 //}
 package com.hamza.employeemangementsystem.data.database;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
+import com.hamza.employeemangementsystem.core.IConvertHelper;
+import com.hamza.employeemangementsystem.ui.view.fragment.SelectProfileFragment;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Checksum;
 
-public class DBHandler extends SQLiteOpenHelper {
+public class DBHandler <T> extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "ems.db";
     private static final int DB_VERSION = 3;
@@ -115,111 +116,48 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
 
-
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldV, int newV) {
         db.execSQL("DROP TABLE IF EXISTS employee");
-        onCreate(db);    }
+        onCreate(db);
+    }
 
-    public boolean isTableExists(String databaseTable) {
+
+
+    public T getRecordById(String id, IConvertHelper convertHelper) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
-                new String[]{databaseTable}
-        );
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
-    }
-
-//    public void createTable(String databaseTableCreateSql) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        db.execSQL(databaseTableCreateSql);
-//    }
+        String query = "SELECT *  FROM " + convertHelper.getEntityName() + " WHERE " + convertHelper.getIdFieldName() + "=?";
 
 
-//    public void createTable(List attendenceList){
-//        String column_sql = ", ".join(attendenceList);
-//         SQLiteDatabase db = this.getWritableDatabase();
-//        query = ;
-//
-//
-//    }
-
-
-    public void update(String sql, Object[] bindArgs) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL(sql, bindArgs);
-    }
-
-
-    public boolean insert(String sql, Object[] params) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        try {
-            db.execSQL(sql, params);
-            return true;
-        } catch (Exception e) {
-            Log.e("DB", "Insert Error: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public void delete(String sql, Object[] bindArgs) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL(sql, bindArgs);   // Correct usage
-    }
-    public Cursor getAllRecords(String query) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery(query, null);
-    }
-//    public Cursor getRecordById(String query, String[] params) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        return db.rawQuery(query, params);
-//    }
-//    public Cursor getRecordById(String query, int id) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        return db.rawQuery(query, id);
-//    }
-public Cursor getRecordById(String query, int id) {
-    SQLiteDatabase db = this.getReadableDatabase();
-    return db.rawQuery(
-            query,
-            new String[]{ String.valueOf(id) } // ✅ String[]
-    );
-}
-
-    public String login(String query, int employeeId, String enteredPin) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Log.d("DB", "Handler");
-        Log.d("PIN_CHECK", "EmployeeId: " + employeeId);
-        Log.d("PIN_CHECK", "EnteredPin: [" + enteredPin + "]");
         Cursor cursor = db.rawQuery(
                 query,
-                new String[]{
-                        String.valueOf(employeeId),
-                        enteredPin
-                }
+                new String[]{id} // ✅ String[]
         );
-        String desgination = null;
-
-        if (cursor != null && cursor.moveToFirst()) {
-            desgination = cursor.getString(cursor.getColumnIndexOrThrow("designation"));
-            Log.d("DB_HANDLER", "desgination fetched: " + desgination);        }
-        Log.d("DBhandler " , "The desgination is " + desgination);
-
-        if (cursor != null) cursor.close();
-        return desgination;
-
-
-
+        T model = null;
+        if (cursor.moveToFirst()) {
+            model = (T) convertHelper.toModel(cursor);
+        }
+        return model;
     }
 
+    public List<T> getAllRecords(IConvertHelper convertHelper) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<T> records = new ArrayList<T>();
+        String query = "SELECT * FROM " + convertHelper.getEntityName();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+              T  model = (T) convertHelper.toModel(cursor);
+              records.add(model);
+
+
+            } while (cursor.moveToNext());
+        }
+        return records;
+    }
 
 }
-
-
 
 
