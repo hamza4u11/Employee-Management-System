@@ -1,6 +1,5 @@
-package com.hamza.employeemangementsystem.ui.adopter.myAdopter;
+package com.hamza.employeemangementsystem.ui.adopter.myAdapter;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

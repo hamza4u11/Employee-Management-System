@@ -1,13 +1,10 @@
 package com.hamza.employeemangementsystem.ui.view;
 
 import android.os.Bundle;
-import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.hamza.employeemangementsystem.R;
-import com.hamza.employeemangementsystem.ui.adopter.myAdopter.myAdapter;
 import com.hamza.employeemangementsystem.ui.view.fragment.SelectProfileFragment;
 
 

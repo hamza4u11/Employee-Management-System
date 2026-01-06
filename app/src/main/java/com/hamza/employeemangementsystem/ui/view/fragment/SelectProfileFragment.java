@@ -20,8 +20,8 @@ import android.widget.Toast;
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Employee;
-import com.hamza.employeemangementsystem.ui.adopter.myAdopter.EmployeeClickHandler;
-import com.hamza.employeemangementsystem.ui.adopter.myAdopter.myAdapter;
+import com.hamza.employeemangementsystem.ui.adopter.myAdapter.EmployeeClickHandler;
+import com.hamza.employeemangementsystem.ui.adopter.myAdapter.myAdapter;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
 
 /**
@@ -87,55 +87,90 @@ public class SelectProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        RecyclerView.Adapter adapter1 = new myAdapter(getActivity());
 
-        View view =  inflater.inflate(R.layout.fragment_select_profile, container, false);
 
-        RecyclerView selectProfile= view.findViewById(R.id.selectProfile);
-        EmployeeClickHandler employeeClickHandler= new EmployeeClickHandler() {
+        View view = inflater.inflate(R.layout.fragment_select_profile, container, false);
+
+        RecyclerView selectProfile = view.findViewById(R.id.selectProfile);
+        EmployeeClickHandler employeeClickHandler = new EmployeeClickHandler() {
             @Override
             public void onItemClick(Employee employee) {
-                Log.d("Employee ", employee.name );
+                Log.d("Employee ", employee.name);
                 Dialog dialog = new Dialog(getActivity());
                 dialog.setContentView(R.layout.dialogue_pin);
                 dialog.setCancelable(false);
-               EditText pin1 = dialog.findViewById(R.id.pin1);
-                EditText pin2= dialog.findViewById(R.id.pin2);
-                EditText pin3= dialog.findViewById(R.id.pin3);
-                EditText pin4= dialog.findViewById(R.id.pin4);
-                Button loginBtn=dialog.findViewById(R.id.btnLogin);
+                EditText pin1 = dialog.findViewById(R.id.pin1);
+                EditText pin2 = dialog.findViewById(R.id.pin2);
+                EditText pin3 = dialog.findViewById(R.id.pin3);
+                EditText pin4 = dialog.findViewById(R.id.pin4);
+                Button loginBtn = dialog.findViewById(R.id.btnLogin);
+                Button btnCancel = dialog.findViewById(R.id.btnCancel);
                 loginBtn.setOnClickListener(new View.OnClickListener() {
-
-
                     @Override
                     public void onClick(View v) {
-                        pinOne= pin1.getText().toString().trim();
+                        pinOne = pin1.getText().toString().trim();
                         pinSecond = pin2.getText().toString().trim();
-                        pinThird= pin3.getText().toString().trim();
+                        pinThird = pin3.getText().toString().trim();
                         pinFourth = pin4.getText().toString().trim();
-                        pin = "" +  pinOne + pinSecond + pinThird + pinFourth;
-                        Log.d("PIN", pin );
-                        Log.d("PIN", employee.pin );
-
+                        pin = "" + pinOne + pinSecond + pinThird + pinFourth;
+                        Log.d("PIN", pin);
+                        Log.d("PIN", employee.pin);
                         int duration = Toast.LENGTH_SHORT;
-                        if (Integer.parseInt(pin) == Integer.parseInt(employee.pin))
-                        {
-                            Toast.makeText(getActivity(), "Welcome to the dashbroad", duration).show();
+                        if (Integer.parseInt(pin) == Integer.parseInt(employee.pin)) {
+                            Log.d("Designation", employee.designation);
+//                                if ("admin".equals(employee.designation)) {
+//                                        Toast.makeText(getActivity(), "Welcome to the Admin dashboard", Toast.LENGTH_SHORT).show();
+//                                }
+                            Fragment fragment;
 
-                        }else{
+                            if ("Admin".equals(employee.designation)) {
+
+                                fragment = new DashboardFragment();
+                                Bundle bundle = new Bundle();
+                                bundle.putString("name", employee.name);
+                                bundle.putString("designation", employee.designation);
+                                fragment.setArguments(bundle);
+                                Toast.makeText(getActivity(), "Welcome to the Admin dashboard", Toast.LENGTH_SHORT).show();
+
+                            } else if ("Manager".equals(employee.designation)) {
+                                fragment = new DashboardFragment();
+                                Bundle bundle = new Bundle();
+                                bundle.putString("name", employee.name);
+                                bundle.putString("designation", employee.designation);
+                                fragment.setArguments(bundle);
+                                Toast.makeText(getActivity(), "Welcome to the Manager dashboard", Toast.LENGTH_SHORT).show();
+
+                            } else {
+                                fragment = new DashboardFragment();
+                                Bundle bundle = new Bundle();
+                                bundle.putString("name", employee.name);
+                                bundle.putString("designation", employee.designation);
+                                fragment.setArguments(bundle);
+                                Toast.makeText(getActivity(), "Welcome to the Employee dashboard", Toast.LENGTH_SHORT).show();
+                            }
+
+                            requireActivity()
+                                    .getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.fragmentContainerView, fragment)
+                                    .addToBackStack(null)
+                                    .commit();
+                            dialog.cancel();
+
+
+                        } else {
                             Toast.makeText(getActivity(), "INVALID USER", duration).show();
-
                         }
-
-
+                    }
+                });
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
                     }
                 });
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                 dialog.show();
-
-
-
             }
         };
         myAdapter adapter = new myAdapter(employeeClickHandler);
@@ -144,42 +179,6 @@ public class SelectProfileFragment extends Fragment {
         employeeViewModel.getAllEmployees().observe(getActivity(), employees -> {
             adapter.setList(employees);
         });
-
-
-
-
-
-//        employeeId = findViewById(R.id.employeeId);
-//
-//
-//        employeeId.setOnClickListener(v -> {
-//            Bundle bundle = new Bundle();
-//            bundle.putString("name", txtName.getText().toString());
-//            bundle.putString("designation",txtDesignation.getText().toString());
-//            LoginPinFragment loginPinFragment = new LoginPinFragment();
-//            loginPinFragment.setArguments(bundle);
-
-//           getSupportFragmentManager()
-//                   .beginTransaction()
-//                   .replace(R.id.fragmentContainerView, new LoginPinFragment())
-//                   .commit();
-
-
-
-
-
-//            Intent intent = new Intent(v.getContext(), LoginPinActivity.class);
-//           intent.putExtra("name", holder.txtName.getText().toString());
-//           intent.putExtra("id", holder.loginBtn.getText().toString());
-//            v.getContext().startActivity(intent);
-       // });
-
-
-//        RecyclerView employee = findViewbyId(R.id.employeeId);
-
-
-
-
         return view;
     }
 }
