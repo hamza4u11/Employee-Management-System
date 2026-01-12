@@ -92,10 +92,16 @@
 //}
 package com.hamza.employeemangementsystem.data.database;
 
+import static android.app.DownloadManager.COLUMN_ID;
+
+import android.animation.TypeConverter;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.ColorSpace;
+import android.telephony.mbms.StreamingServiceInfo;
 
 import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.ui.view.fragment.SelectProfileFragment;
@@ -107,22 +113,106 @@ public class DBHandler <T> extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "ems.db";
     private static final int DB_VERSION = 3;
+    private static String TABLE_USERS= "attendance";
+    private static String COLUMN_EMP_ID= "empId";
+    private static String COLUMN_CHECK_IN_TIME= "checkInTime";
+    private static String COLUMN_CHECK_OUT_TIME= "checkOutTime";
+    private static String COLUMN_OVER_TIME= "overTime";
+
+
+//    private static final String SQL_CREATE_USERS_TABLE =
+//            "CREATE TABLE " + TABLE_USERS + " (" +
+//                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                    COLUMN_EMP_ID + " INTEGER NOT NULL, " +
+//                    COLUMN_CHECK_IN_TIME + " TEXT NOT NULL, " +
+//                    COLUMN_CHECK_OUT_TIME + " TEXT NOT NULL," +
+//                    COLUMN_OVER_TIME + " INTEGER NOT NULL " +
+//                    ")";
 
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+
+//        if(!isTableExists() == true){
+//
+//
+//
+//        }
+
+
+
+
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
 
 
+
     }
+
+
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldV, int newV) {
-        db.execSQL("DROP TABLE IF EXISTS employee");
-        onCreate(db);
+//        db.execSQL("DROP TABLE IF EXISTS employee");
+//        onCreate(db);
     }
+    public void createRecord(T object, IConvertHelper convertHelper){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = convertHelper.fromModel(object);
+        db.insert(convertHelper.getEntityName(),null, values);
+
+    }
+    public void updateRecord (int id ,T object, IConvertHelper convertHelper){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = convertHelper.fromModel(object);
+//        String where= "Where id = ?";
+//        String [] id = String.valueOf(id);
+        db.update(convertHelper.getEntityName(),values, "id = ?",new String[]{String.valueOf(id)}  );
+
+    }
+    public void deleteRecord(int id, IConvertHelper convertHelper){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + convertHelper.getEntityName() + " WHERE id = " + id);
+
+
+    }
+
+    public T getLastRecord(String id, IConvertHelper convertHelper) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT *  FROM " + convertHelper.getEntityName() + " WHERE " + convertHelper.getIdFieldName() + "=? AND " +convertHelper.getFirstFieldName()+" NOT NULL AND " + convertHelper.getSecondFieldName()+ " IS NULL ORDER BY " +  convertHelper.getFirstFieldName() + " DESC LIMIT 1" ;
+
+
+        Cursor cursor = db.rawQuery(
+                query,
+                new String[]{id}
+        );
+        T model = null;
+        if (cursor.moveToFirst()) {
+            model = (T) convertHelper.toModel(cursor);
+        }
+        return model;
+    }
+    public List<T> getRecordByCriteria(String criteria, IConvertHelper convertHelper) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT *  FROM " + convertHelper.getEntityName() + " WHERE " + criteria ;
+        Cursor cursor = db.rawQuery(
+                query,
+                null
+        );
+        T model = null;
+        ArrayList<T> models = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                model = (T) convertHelper.toModel(cursor);
+                models.add(model);
+            }while(cursor.moveToNext());
+        }
+        return models;
+    }
+
+
 
 
 
@@ -142,6 +232,7 @@ public class DBHandler <T> extends SQLiteOpenHelper {
         return model;
     }
 
+
     public List<T> getAllRecords(IConvertHelper convertHelper) {
         SQLiteDatabase db = this.getReadableDatabase();
         List<T> records = new ArrayList<T>();
@@ -157,6 +248,18 @@ public class DBHandler <T> extends SQLiteOpenHelper {
         }
         return records;
     }
+//    public boolean isTableExists(IConvertHelper convertHelper, String tableName) {
+//        Cursor cursor = db.rawQuery(
+//                "SELECT * FROM sqlite_master WHERE type='table' AND name=?",
+//                new String[]{tableName}
+//        );
+//
+//        boolean exists = cursor.getCount() > 0;
+//        cursor.close();
+//        return exists;
+//    }
+
+
 
 }
 

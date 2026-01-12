@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.model.Employee;
+import com.hamza.employeemangementsystem.ui.viewmodel.AttendanceViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +30,10 @@ public class DashboardFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     Button manageEmployees, attendenceReports;
+    Object values;
+    private AttendanceViewModel attendanceViewModel; ;
+
+
 
 
 
@@ -35,6 +43,7 @@ public class DashboardFragment extends Fragment {
 
     public DashboardFragment() {
         // Required empty public constructor
+
     }
 
     /**
@@ -62,40 +71,43 @@ public class DashboardFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        DBHandler<Employee> attendanceDBHandler= new DBHandler<>(getActivity());
+        attendanceViewModel = new AttendanceViewModel(attendanceDBHandler);
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+//        AttendenceViewModel attendanceViewModel = new ViewModelProvider(getActivity()).get(AttendenceViewModel.class);
+
 
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+//        DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(getActivity());
+
+      //  AttendenceViewModel attendenceViewModel = new ViewModelProvider(this).get(AttendenceViewModel.class);
 
         manageEmployees = view.findViewById(R.id.manageEmployees);
         LinearLayout hideAdminButtons = view.findViewById(R.id.hideAdminButtons);
-
+        Button checkInButton =view.findViewById(R.id.checkInButton);
         if (getArguments() != null) {
             String designation = getArguments().getString("designation");
             String name = getArguments().getString("name");
+            String id = getArguments().getString("id");
+            Log.d("ID", id);
             TextView  txtName= view.findViewById(R.id.txtName);
             txtName.setText(name);
-
             if ("Admin".equalsIgnoreCase(designation)) {
                 Toast.makeText(getActivity(),
                         "Welcome Admin", Toast.LENGTH_SHORT).show();
-
             }else if ("Manager".equalsIgnoreCase(designation)){
                 Toast.makeText(getActivity(),
                         "Welcome Manager", Toast.LENGTH_SHORT).show();
-
-
             }else {
                 Toast.makeText(getActivity(),
                         "Welcome Employee   ", Toast.LENGTH_SHORT).show();
                 hideAdminButtons.setVisibility(View.GONE); // or INVISIBLE
-
             }
         }
-
-
         manageEmployees=view.findViewById(R.id.manageEmployees);
         manageEmployees.setOnClickListener(new View.OnClickListener(){
 
@@ -110,6 +122,24 @@ public class DashboardFragment extends Fragment {
                         .replace(R.id.fragmentContainerView, fragment)
                         .addToBackStack(null)
                         .commit();
+            }
+        });
+        checkInButton.setOnClickListener(new View.OnClickListener (){
+            @Override
+            public void onClick(View v) {
+                String id = getArguments().getString("id");
+                Log.d("ID from CheckInn BUtton",id);
+                int isCheckedIn = attendanceViewModel.isCheckedIn(id);
+
+//                if (isCheckedIn) {
+//                    Toast.makeText(getActivity(), "Already checked in", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getActivity(), "You can check in", Toast.LENGTH_SHORT).show();
+               // }
+
+
+
+
             }
         });
 

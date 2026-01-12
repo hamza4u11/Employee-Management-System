@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Employee;
-//import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp_old;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
 
 public class SelectProfileActivity extends AppCompatActivity {

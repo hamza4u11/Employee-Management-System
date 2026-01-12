@@ -1,6 +1,7 @@
 package com.hamza.employeemangementsystem.ui.view.fragment;
 
 import android.app.Dialog;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -129,9 +130,9 @@ public class SelectProfileFragment extends Fragment {
                                 Bundle bundle = new Bundle();
                                 bundle.putString("name", employee.name);
                                 bundle.putString("designation", employee.designation);
+                                bundle.putString("id",String.valueOf(employee.id));
                                 fragment.setArguments(bundle);
                                 Toast.makeText(getActivity(), "Welcome to the Admin dashboard", Toast.LENGTH_SHORT).show();
-
                             } else if ("Manager".equals(employee.designation)) {
                                 fragment = new DashboardFragment();
                                 Bundle bundle = new Bundle();
@@ -179,6 +180,7 @@ public class SelectProfileFragment extends Fragment {
         employeeViewModel.getAllEmployees().observe(getActivity(), employees -> {
             adapter.setList(employees);
         });
+
         return view;
     }
 }

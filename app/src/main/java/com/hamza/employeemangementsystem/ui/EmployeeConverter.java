@@ -20,6 +20,16 @@ public class EmployeeConverter implements IConvertHelper<Employee> {
     }
 
     @Override
+    public String getFirstFieldName() {
+        return "";
+    }
+
+    @Override
+    public String getSecondFieldName() {
+        return "";
+    }
+
+    @Override
     public ContentValues fromModel(Employee model) {
         ContentValues values = new ContentValues();
         values.put("id",model.id);
