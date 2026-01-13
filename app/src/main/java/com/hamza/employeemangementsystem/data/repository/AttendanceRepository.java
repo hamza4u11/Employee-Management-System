@@ -26,8 +26,9 @@ public class AttendanceRepository {
     }
     public List<Attendance> getLastAttendance(String id){
         AttendanceConverter attendanceConverter = new AttendanceConverter();
-        String criteria = " empId = "+ id +" ORDER BY checkInTime DESC LIMIT 1";
-        return dbHandler.getRecordByCriteria(criteria, attendanceConverter);
+      String criteria = " empId = "+ id +" ";
+      String orderBy = " checkInTime DESC LIMIT 1";
+      return dbHandler.getRecordByCriteria(criteria,orderBy, attendanceConverter);
     }
 //    public Attendance getAttendanceByCriteria(String id){
 //        AttendanceConverter attendanceConverter = new AttendanceConverter();

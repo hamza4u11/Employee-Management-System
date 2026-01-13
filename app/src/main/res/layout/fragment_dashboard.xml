@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
@@ -22,34 +21,22 @@
             android:id="@+id/txtGreeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="28dp"
             android:text="Good Morning"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/txtName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="16dp"
             android:text="Hello"
             android:textColor="#FFFFFF"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtGreeting" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="77dp"
-            android:layout_height="67dp"
-            android:src="@drawable/ic_logout"
-            tools:layout_editor_absoluteX="301dp"
-            tools:layout_editor_absoluteY="42dp" />
+            app:layout_constraintTop_toBottomOf="@id/txtGreeting"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Status -->
@@ -69,47 +56,61 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Check In Button -->
+    <!-- Session -->
+    <TextView
+        android:id="@+id/seesion"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="#EEF2FF"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:text="Session"
+        android:textColor="#1A1A1A"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Check In -->
     <Button
         android:id="@+id/checkInButton"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="20dp"
-        android:background="    #2051E5"
+        android:layout_margin="20dp"
+        android:backgroundTint="#2051E5"
         android:text="Check In"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seesion"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/status" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Check Out -->
     <Button
-        android:id="@+id/button"
+        android:id="@+id/checkOutbutton"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="104dp"
-        android:layout_marginEnd="20dp"
-        android:background="    #2051E5"
+        android:layout_marginHorizontal="20dp"
+        android:backgroundTint="#2051E5"
         android:text="Check Out"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/checkInButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/status" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Admin Buttons -->
     <LinearLayout
         android:id="@+id/hideAdminButtons"
-        android:layout_width="409dp"
-        android:layout_height="200dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/checkOutbutton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <Button
             android:id="@+id/manageEmployees"
@@ -117,36 +118,37 @@
             android:layout_height="64dp"
             android:layout_margin="20dp"
             android:backgroundTint="#2051E5"
-            android:gravity="center"
-            android:text="Manage Employees   →"
+            android:text="Manage Employees →"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header" />
+            android:textSize="18sp"/>
 
-        <!-- View Attendance -->
         <Button
             android:id="@+id/attendenceReports"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginHorizontal="20dp"
             android:backgroundTint="#2051E5"
-            android:gravity="center"
-            android:text="View Attendance Report   →"
+            android:text="View Attendance Report →"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/manageEmployees" />
-
-
+            android:textSize="18sp"/>
     </LinearLayout>
 
-
+    <!-- Logout -->
+    <Button
+        android:id="@+id/Logout"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_margin="20dp"
+        android:layout_marginTop="50dp"
+        android:backgroundTint="#2051E5"
+        android:text="Logout →"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

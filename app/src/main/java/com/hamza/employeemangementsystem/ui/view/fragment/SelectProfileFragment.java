@@ -20,10 +20,14 @@ import android.widget.Toast;
 
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.EmployeeClickHandler;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.myAdapter;
+import com.hamza.employeemangementsystem.ui.viewmodel.AttendanceViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,6 +46,8 @@ public class SelectProfileFragment extends Fragment {
     LinearLayout employeeId;
     Button btnLogin;
     String pinOne, pinSecond,pinThird,pinFourth,pin;
+    private AttendanceViewModel attendanceViewModel; ;
+
 
 
 
@@ -81,6 +87,8 @@ public class SelectProfileFragment extends Fragment {
         }
         DBHandler<Employee> employeeDBHandler= new DBHandler<>(getActivity());
         employeeViewModel = new EmployeeViewModel(employeeDBHandler);
+        DBHandler<Employee> attendanceDBHandler= new DBHandler<>(getActivity());
+        attendanceViewModel = new AttendanceViewModel(attendanceDBHandler);
 
 
     }
@@ -123,7 +131,9 @@ public class SelectProfileFragment extends Fragment {
 //                                        Toast.makeText(getActivity(), "Welcome to the Admin dashboard", Toast.LENGTH_SHORT).show();
 //                                }
                             Fragment fragment;
-
+                            List<Attendance> isCheckedUser = attendanceViewModel.isCheckedIn(String.valueOf(employee.id));
+                            String checkInTime = isCheckedUser.get(0).checkInTime;
+                            String checkOutTime = isCheckedUser.get(0).checkOutTime;
                             if ("Admin".equals(employee.designation)) {
 
                                 fragment = new DashboardFragment();
@@ -131,6 +141,9 @@ public class SelectProfileFragment extends Fragment {
                                 bundle.putString("name", employee.name);
                                 bundle.putString("designation", employee.designation);
                                 bundle.putString("id",String.valueOf(employee.id));
+                                bundle.putString("checkInTime", checkInTime);
+                                bundle.putString("checkOutTime", checkOutTime);
+
                                 fragment.setArguments(bundle);
                                 Toast.makeText(getActivity(), "Welcome to the Admin dashboard", Toast.LENGTH_SHORT).show();
                             } else if ("Manager".equals(employee.designation)) {
@@ -138,6 +151,9 @@ public class SelectProfileFragment extends Fragment {
                                 Bundle bundle = new Bundle();
                                 bundle.putString("name", employee.name);
                                 bundle.putString("designation", employee.designation);
+                                bundle.putString("id",String.valueOf(employee.id));
+                                bundle.putString("checkInTime", checkInTime);
+                                bundle.putString("checkOutTime", checkOutTime);
                                 fragment.setArguments(bundle);
                                 Toast.makeText(getActivity(), "Welcome to the Manager dashboard", Toast.LENGTH_SHORT).show();
 
@@ -146,6 +162,9 @@ public class SelectProfileFragment extends Fragment {
                                 Bundle bundle = new Bundle();
                                 bundle.putString("name", employee.name);
                                 bundle.putString("designation", employee.designation);
+                                bundle.putString("id",String.valueOf(employee.id));
+                                bundle.putString("checkInTime", checkInTime);
+                                bundle.putString("checkOutTime", checkOutTime);
                                 fragment.setArguments(bundle);
                                 Toast.makeText(getActivity(), "Welcome to the Employee dashboard", Toast.LENGTH_SHORT).show();
                             }

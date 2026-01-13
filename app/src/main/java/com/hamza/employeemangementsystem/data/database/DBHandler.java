@@ -167,8 +167,6 @@ public class DBHandler <T> extends SQLiteOpenHelper {
     public void updateRecord (int id ,T object, IConvertHelper convertHelper){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = convertHelper.fromModel(object);
-//        String where= "Where id = ?";
-//        String [] id = String.valueOf(id);
         db.update(convertHelper.getEntityName(),values, "id = ?",new String[]{String.valueOf(id)}  );
 
     }
@@ -194,9 +192,12 @@ public class DBHandler <T> extends SQLiteOpenHelper {
         }
         return model;
     }
-    public List<T> getRecordByCriteria(String criteria, IConvertHelper convertHelper) {
+    public List<T> getRecordByCriteria(String criteria,String orderBy,  IConvertHelper convertHelper) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT *  FROM " + convertHelper.getEntityName() + " WHERE " + criteria ;
+        if(orderBy != null && !orderBy.isEmpty()){
+            query= query + " ORDER BY " +  orderBy;
+        }
         Cursor cursor = db.rawQuery(
                 query,
                 null

@@ -17,6 +17,7 @@ import com.hamza.employeemangementsystem.ui.AttendanceConverter;
 import com.hamza.employeemangementsystem.ui.view.fragment.SelectProfileFragment;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -106,9 +107,19 @@ public class MainActivity extends AppCompatActivity {
 
 
 //        DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(this);
+////        AttendanceRepository attendanceRepository = new AttendanceRepository(attendanceDBHandler);
+////        int record=  attendanceDBHandler.getLastAttendance("1").size();
+////        Log.d("Record", String.valueOf(record));
+//        List<Attendance> list =attendanceDBHandler.getRecordByCriteria("empId = 1 ","checkInTime DESC LIMIT 1" , new AttendanceConverter());
+//       Log.d("Size"," " +list.size());
+//        Log.d("CheckInTime"," " +list.get(0).checkInTime);
+
+//        DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(this);
 //        AttendanceRepository attendanceRepository = new AttendanceRepository(attendanceDBHandler);
-//        int record=  attendanceRepository.getLastAttendance("1").size();
-//        Log.d("Record", String.valueOf(record));
+//        List<Attendance> list =attendanceRepository.getLastAttendance("1");
+//       Log.d("Size"," " +list.size());
+//        Log.d("CheckInTime"," " +list.get(0).checkInTime);
+
 
 
 
