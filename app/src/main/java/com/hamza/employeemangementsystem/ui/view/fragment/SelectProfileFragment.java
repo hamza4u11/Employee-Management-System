@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
@@ -127,49 +128,9 @@ public class SelectProfileFragment extends Fragment {
                         int duration = Toast.LENGTH_SHORT;
                         if (Integer.parseInt(pin) == Integer.parseInt(employee.pin)) {
                             Log.d("Designation", employee.designation);
-//                                if ("admin".equals(employee.designation)) {
-//                                        Toast.makeText(getActivity(), "Welcome to the Admin dashboard", Toast.LENGTH_SHORT).show();
-//                                }
-                            Fragment fragment;
-                            List<Attendance> isCheckedUser = attendanceViewModel.isCheckedIn(String.valueOf(employee.id));
-                            String checkInTime = isCheckedUser.get(0).checkInTime;
-                            String checkOutTime = isCheckedUser.get(0).checkOutTime;
-                            if ("Admin".equals(employee.designation)) {
-
-                                fragment = new DashboardFragment();
-                                Bundle bundle = new Bundle();
-                                bundle.putString("name", employee.name);
-                                bundle.putString("designation", employee.designation);
-                                bundle.putString("id",String.valueOf(employee.id));
-                                bundle.putString("checkInTime", checkInTime);
-                                bundle.putString("checkOutTime", checkOutTime);
-
-                                fragment.setArguments(bundle);
-                                Toast.makeText(getActivity(), "Welcome to the Admin dashboard", Toast.LENGTH_SHORT).show();
-                            } else if ("Manager".equals(employee.designation)) {
-                                fragment = new DashboardFragment();
-                                Bundle bundle = new Bundle();
-                                bundle.putString("name", employee.name);
-                                bundle.putString("designation", employee.designation);
-                                bundle.putString("id",String.valueOf(employee.id));
-                                bundle.putString("checkInTime", checkInTime);
-                                bundle.putString("checkOutTime", checkOutTime);
-                                fragment.setArguments(bundle);
-                                Toast.makeText(getActivity(), "Welcome to the Manager dashboard", Toast.LENGTH_SHORT).show();
-
-                            } else {
-                                fragment = new DashboardFragment();
-                                Bundle bundle = new Bundle();
-                                bundle.putString("name", employee.name);
-                                bundle.putString("designation", employee.designation);
-                                bundle.putString("id",String.valueOf(employee.id));
-                                bundle.putString("checkInTime", checkInTime);
-                                bundle.putString("checkOutTime", checkOutTime);
-                                fragment.setArguments(bundle);
-                                Toast.makeText(getActivity(), "Welcome to the Employee dashboard", Toast.LENGTH_SHORT).show();
-                            }
-
-                            requireActivity()
+                            Globals.getShared().setEmployee(employee);
+                            Fragment fragment= new DashboardFragment();
+                                    requireActivity()
                                     .getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.fragmentContainerView, fragment)
@@ -193,6 +154,8 @@ public class SelectProfileFragment extends Fragment {
                 dialog.show();
             }
         };
+        Log.d("I am from Single Profile Fragment", " Hamza" );
+
         myAdapter adapter = new myAdapter(employeeClickHandler);
         selectProfile.setLayoutManager(new LinearLayoutManager(getActivity()));
         selectProfile.setAdapter(adapter);

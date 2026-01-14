@@ -16,16 +16,24 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class DateTimeUtlis {
+    private static DateTimeUtlis shared= new DateTimeUtlis();
 
-    public static Date convertStringToDateTime(String dateTime) {
+    private  String dbDataTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS";
+
+    public  Date convertStringToDateTime(String dateTime) {
         try {
             SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault());
+                    new SimpleDateFormat(dbDataTimeFormat, Locale.getDefault());
             return sdf.parse(dateTime);
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
         }
+    }
+    public String formatDateTime(Date date, String format){
+        Log.d("formatDateTime", "Function");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Locale.getDefault());
+        return  simpleDateFormat.format(date);
     }
     public static String calculateTimeFromNow(String dateTime) {
 
@@ -64,14 +72,23 @@ public class DateTimeUtlis {
             return "Invalid date";
         }
     }
-    public static String calculateDurationBetween(String startDateTime, String endDateTime) {
+
+    public static DateTimeUtlis getShared() {
+        return shared;
+    }
+
+    public static void setShared(DateTimeUtlis shared) {
+        DateTimeUtlis.shared = shared;
+    }
+
+    public String calculateDurationBetween(String date1, String date2) {
 
         SimpleDateFormat inputFormat =
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault());
+                new SimpleDateFormat(dbDataTimeFormat, Locale.getDefault());
 
         try {
-            Date startDate = inputFormat.parse(startDateTime);
-            Date endDate = inputFormat.parse(endDateTime);
+            Date startDate = inputFormat.parse(date1);
+            Date endDate = inputFormat.parse(date2);
 
             long diffMillis = endDate.getTime() - startDate.getTime();
             boolean isNegative = diffMillis < 0;
@@ -100,6 +117,12 @@ public class DateTimeUtlis {
             e.printStackTrace();
             return "Invalid date";
         }
+    }
+    public String getNow(){
+        Date now = new Date();
+        SimpleDateFormat inputFormat =
+                new SimpleDateFormat(dbDataTimeFormat, Locale.getDefault());
+        return inputFormat.format(now);
     }
 
 

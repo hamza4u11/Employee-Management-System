@@ -5,9 +5,7 @@ import com.hamza.employeemangementsystem.data.model.Attendance;
 import java.util.List;
 
 public interface AttendanceRepository {
-    Attendance getAttendanceByEmpId(String id);
-    List<Attendance> getAllAttendances();
+    Attendance getLastAttendance(String empId);
     boolean updateAttendance(Attendance attendance);
     boolean insertAttendance(Attendance attendance);
-    boolean deleteAttendance(String id);
 }
