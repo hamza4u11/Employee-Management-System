@@ -1,12 +1,11 @@
 package com.hamza.employeemangementsystem.ui.viewmodel;
 
-
 import android.os.Build;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
@@ -14,11 +13,9 @@ import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
 import com.hamza.employeemangementsystem.utils.DateTimeUtlis;
-
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
-
 
 public class AttendanceViewModel extends ViewModel {
     private AttendanceRepositoryImp repository;
@@ -29,6 +26,12 @@ public class AttendanceViewModel extends ViewModel {
     private String checkInOutText;
     private boolean ifUserCheckedIn = false;
     private boolean isLayoutEnabled = false;
+    private final MutableLiveData<Boolean> openSelectProfile = new MutableLiveData<>();
+
+
+    public LiveData<Boolean> openSelectProfile() {
+        return openSelectProfile;
+    }
 
 
     public AttendanceViewModel(@NonNull DBHandler dbHandler) {
@@ -90,19 +93,23 @@ public class AttendanceViewModel extends ViewModel {
             attendance.checkInTime = LocalDateTime.now().toString();
         }
         repository.insertAttendance(attendance);
-
-
     }
-
     public void checkOut(String id) {
-        Attendance record = repository.getLastAttendance(id);
+       Attendance record = repository.getLastAttendance(id);
         Attendance attendance = new Attendance();
         attendance.id =record.id;
         attendance.empId=Integer.parseInt(id);
         attendance.checkInTime = record.checkInTime;
+        Log.d("checkInTime",record.checkInTime);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             attendance.checkOutTime = LocalDateTime.now().toString();
         }
         repository.updateAttendance(attendance);
     }
+    public void logout(){
+        Globals.getShared().setEmployee(null);
+        openSelectProfile.setValue(true);
+    }
+
+
 }

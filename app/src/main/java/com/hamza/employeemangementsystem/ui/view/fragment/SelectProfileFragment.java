@@ -154,7 +154,6 @@ public class SelectProfileFragment extends Fragment {
                 dialog.show();
             }
         };
-        Log.d("I am from Single Profile Fragment", " Hamza" );
 
         myAdapter adapter = new myAdapter(employeeClickHandler);
         selectProfile.setLayoutManager(new LinearLayoutManager(getActivity()));

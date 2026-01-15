@@ -19,18 +19,7 @@ public class SelectProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_profile);
         DBHandler<Employee> employeeDBHandler= new DBHandler<>(this);
         employeeViewModel = new EmployeeViewModel(employeeDBHandler);
-       // RecyclerView selectProfile= findViewById(R.id.selectProfile);
-//        myAdapter adapter = new myAdapter(new EmployeeClickHandler {
-//            @Override
-//            public int getItemCount() {
-//                return super.getItemCount();
-//            }
-//        });
-        //selectProfile.setLayoutManager(new LinearLayoutManager(this));
-//        selectProfile.setAdapter(adapter);
-//        employeeViewModel.getAllEmployees().observe(this, employees -> {
-//            adapter.setList(employees);
-//        });
+
 
 
 

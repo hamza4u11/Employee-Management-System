@@ -42,6 +42,7 @@ public class DashboardFragment extends Fragment {
     LinearLayout hideAdminButtons ;
     Button checkInButton ;
     Button checkOutButton ;
+    Button logoutBtn;
     TextView status;
 
 
@@ -97,6 +98,7 @@ public class DashboardFragment extends Fragment {
         hideAdminButtons = view.findViewById(R.id.hideAdminButtons);
         checkInButton = view.findViewById(R.id.checkInButton);
         checkOutButton = view.findViewById(R.id.checkOutbutton);
+        logoutBtn = view.findViewById(R.id.logoutBtn);
 
 
 
@@ -115,6 +117,21 @@ public class DashboardFragment extends Fragment {
             public void onClick(View v) {
                 attendanceViewModel.checkOut(loginEmployeeId);
                 refresh();
+            }
+        });
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attendanceViewModel.logout();
+                attendanceViewModel.openSelectProfile().observe(getViewLifecycleOwner(), open -> {
+                if (open != null && open) {
+                    getParentFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragmentContainerView, new SelectProfileFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
             }
         });
 
@@ -136,5 +153,6 @@ public class DashboardFragment extends Fragment {
         checkInButton.setVisibility(attendanceViewModel.getIfUserCheckedIn()? View.GONE : View.VISIBLE);
         hideAdminButtons.setVisibility(attendanceViewModel.isLayoutEnabled()? View.VISIBLE: View.GONE);
     }
+
 
 }
