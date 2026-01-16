@@ -213,10 +213,6 @@ public class DBHandler <T> extends SQLiteOpenHelper {
         return models;
     }
 
-
-
-
-
     public T getRecordById(String id, IConvertHelper convertHelper) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT *  FROM " + convertHelper.getEntityName() + " WHERE " + convertHelper.getIdFieldName() + "=?";

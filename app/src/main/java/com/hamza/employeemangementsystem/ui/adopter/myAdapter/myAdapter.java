@@ -22,10 +22,8 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.holder> {
 
 
     private List<Employee> list = new ArrayList<>();
-
     private Context context;
     private final EmployeeClickHandler listener;
-
     public myAdapter(EmployeeClickHandler listener) {
         this.listener =listener;
     }
@@ -33,8 +31,6 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.holder> {
         this.list = newList;
         notifyDataSetChanged();
     }
-
-
     @NonNull
     @Override
     public holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,49 +45,15 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.holder> {
             int position
     ) {
         Employee employee = list.get(position);
-
         holder.txtName.setText(employee.name);
         holder.txtRole.setText(employee.designation);
         holder.layout.setTag(employee.id);
         holder.loginBtn.setText(String.valueOf(employee.id));
-
-
         holder.itemView.setOnClickListener(v -> {
-
-//            if (context == null) return; // safety check
             if(this.listener!=null){
                 this.listener.onItemClick(employee);
             }
-
         });
-
-
-//       holder.itemView.setOnClickListener(v -> {
-//           Bundle bundle = new Bundle();
-//           bundle.putString("name", holder.txtName.getText().toString());
-//           bundle.putString("designation", holder.txtRole.getText().toString());
-//           LoginPinFragment loginPinFragment = new LoginPinFragment();
-//           loginPinFragment.setArguments(bundle);
-           //Globals.shared.setUserId("");
-           //Globals.loginUserId="";
-
-
-
-
-//           getSupportFragmentManager()
-//                   .beginTransaction()
-//                   .replace(R.id.fragmentContainerView, new LoginPinFragment())
-//                   .commit();
-
-
-
-
-
-//            Intent intent = new Intent(v.getContext(), LoginPinFragment.class);
-////            intent.putExtra("name", holder.txtName.getText().toString());
-////            intent.putExtra("id", holder.loginBtn.getText().toString());
-//            v.getContext().startActivity(intent);
-      //  });
 
 
     }

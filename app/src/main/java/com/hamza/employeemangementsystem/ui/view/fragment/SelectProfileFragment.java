@@ -28,7 +28,9 @@ import com.hamza.employeemangementsystem.ui.adopter.myAdapter.myAdapter;
 import com.hamza.employeemangementsystem.ui.viewmodel.AttendanceViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
 
+import java.security.PublicKey;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,8 +41,8 @@ public class SelectProfileFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "modeParam";
+    private static final String ARG_PARAM2 = "mangerIdParam";
     private EmployeeViewModel employeeViewModel;
     RecyclerView recyclerView;
     TextView txtName, txtDesignation;
@@ -48,14 +50,25 @@ public class SelectProfileFragment extends Fragment {
     Button btnLogin;
     String pinOne, pinSecond,pinThird,pinFourth,pin;
     private AttendanceViewModel attendanceViewModel; ;
+    Button addBtn ;
 
+    public interface MyOnClickListener{
+        void OnItemClick(Employee employee);
+        void OnAddClick();
+    }
+    private MyOnClickListener listener;
 
+    public void setListener(MyOnClickListener listener) {
+        this.listener = listener;
+    }
 
-
+    public MyOnClickListener getListener() {
+        return listener;
+    }
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String modeParam;
+    private String managerIdParam;
 
     public SelectProfileFragment() {
         // Required empty public constructor
@@ -65,16 +78,16 @@ public class SelectProfileFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param modeParam Parameter 1.
+     * @param managerIdParam Parameter 2.
      * @return A new instance of fragment SelectProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SelectProfileFragment newInstance(String param1, String param2) {
+    public static SelectProfileFragment newInstance(String modeParam, String managerIdParam) {
         SelectProfileFragment fragment = new SelectProfileFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM1, modeParam);
+        args.putString(ARG_PARAM2, managerIdParam);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,15 +96,13 @@ public class SelectProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            modeParam = getArguments().getString(ARG_PARAM1);
+            managerIdParam = getArguments().getString(ARG_PARAM2);
         }
         DBHandler<Employee> employeeDBHandler= new DBHandler<>(getActivity());
         employeeViewModel = new EmployeeViewModel(employeeDBHandler);
-        DBHandler<Employee> attendanceDBHandler= new DBHandler<>(getActivity());
+        DBHandler<Attendance> attendanceDBHandler= new DBHandler<>(getActivity());
         attendanceViewModel = new AttendanceViewModel(attendanceDBHandler);
-
-
     }
 
     @Override
@@ -100,11 +111,20 @@ public class SelectProfileFragment extends Fragment {
 
 
         View view = inflater.inflate(R.layout.fragment_select_profile, container, false);
+        addBtn= view.findViewById(R.id.addBtn);
+        addBtn.setVisibility(view.GONE);
+        if(Objects.equals(modeParam, "add")) {
+            addBtn.setVisibility(view.VISIBLE);
+        }
 
         RecyclerView selectProfile = view.findViewById(R.id.selectProfile);
         EmployeeClickHandler employeeClickHandler = new EmployeeClickHandler() {
             @Override
             public void onItemClick(Employee employee) {
+                if(listener!=null){
+                    listener.OnItemClick(employee);
+                    return;
+                }
                 Log.d("Employee ", employee.name);
                 Dialog dialog = new Dialog(getActivity());
                 dialog.setContentView(R.layout.dialogue_pin);
@@ -133,7 +153,7 @@ public class SelectProfileFragment extends Fragment {
                                     requireActivity()
                                     .getSupportFragmentManager()
                                     .beginTransaction()
-                                    .replace(R.id.fragmentContainerView, fragment)
+                                    .replace(R.id.fragmentContainer, fragment)
                                     .addToBackStack(null)
                                     .commit();
                             dialog.cancel();
@@ -154,13 +174,31 @@ public class SelectProfileFragment extends Fragment {
                 dialog.show();
             }
         };
+        addBtn.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+                if(listener!=null){
+                    listener.OnAddClick();
+                }
+            }
+        });
         myAdapter adapter = new myAdapter(employeeClickHandler);
         selectProfile.setLayoutManager(new LinearLayoutManager(getActivity()));
         selectProfile.setAdapter(adapter);
-        employeeViewModel.getAllEmployees().observe(getActivity(), employees -> {
+        if (managerIdParam != null ){
+            Log.d("ManagerId param", "Manager ID" );
+            employeeViewModel.getEmployeesByManager(managerIdParam);
+
+        }else{
+            employeeViewModel.getAllEmployees().observe(getActivity(), employees -> {
+                adapter.setList(employees);
+            });
+        }
+        employeeViewModel.getFilteredEmployees().observe(getActivity(), employees -> {
             adapter.setList(employees);
         });
+
 
         return view;
     }

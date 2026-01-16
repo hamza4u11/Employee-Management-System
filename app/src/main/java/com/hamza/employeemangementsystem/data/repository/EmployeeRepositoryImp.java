@@ -21,6 +21,11 @@ public class EmployeeRepositoryImp implements EmployeeRepository {
         EmployeeConverter employeeConverter=new EmployeeConverter();
         return (Employee) dbHandler.getRecordById(id, employeeConverter);
     }
+    public List<Employee> getEmployeeByManager(String id) {
+        EmployeeConverter employeeConverter=new EmployeeConverter();
+        String criteria = "magager_id = "+ id;
+        return  dbHandler.getRecordByCriteria(criteria, null ,employeeConverter);
+    }
 
 
     @Override

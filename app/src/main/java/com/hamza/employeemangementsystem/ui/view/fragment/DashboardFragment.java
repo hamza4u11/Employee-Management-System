@@ -37,13 +37,12 @@ public class DashboardFragment extends Fragment {
 
     private AttendanceViewModel attendanceViewModel;
 
-    TextView seesion;
-    TextView label ;
+    TextView seesion, label, status;
     LinearLayout hideAdminButtons ;
-    Button checkInButton ;
-    Button checkOutButton ;
-    Button logoutBtn;
-    TextView status;
+    Button checkInButton, checkOutButton, logoutBtn, manageEmployeesBtn ;
+
+
+
 
 
     // TODO: Rename and change types of parameters
@@ -99,6 +98,8 @@ public class DashboardFragment extends Fragment {
         checkInButton = view.findViewById(R.id.checkInButton);
         checkOutButton = view.findViewById(R.id.checkOutbutton);
         logoutBtn = view.findViewById(R.id.logoutBtn);
+        manageEmployeesBtn= view.findViewById(R.id.manageEmployeesBtn);
+
 
 
 
@@ -127,11 +128,24 @@ public class DashboardFragment extends Fragment {
                 if (open != null && open) {
                     getParentFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragmentContainerView, new SelectProfileFragment())
+                            .replace(R.id.fragmentContainer, new SelectProfileFragment())
                             .addToBackStack(null)
                             .commit();
                 }
             });
+            }
+        });
+        manageEmployeesBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+               String adminOrManager= attendanceViewModel.getIsAdmin() ? null : loginEmployeeId;
+               String addBtnForAdmin = attendanceViewModel.getIsAdmin() ? "add" : null;
+                SelectProfileFragment profileFragment = SelectProfileFragment.newInstance(addBtnForAdmin, adminOrManager);
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, profileFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 

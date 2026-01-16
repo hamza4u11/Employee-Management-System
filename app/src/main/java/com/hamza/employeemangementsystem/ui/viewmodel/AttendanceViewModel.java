@@ -27,6 +27,7 @@ public class AttendanceViewModel extends ViewModel {
     private boolean ifUserCheckedIn = false;
     private boolean isLayoutEnabled = false;
     private final MutableLiveData<Boolean> openSelectProfile = new MutableLiveData<>();
+    private Boolean isAdmin = false;
 
 
     public LiveData<Boolean> openSelectProfile() {
@@ -51,6 +52,7 @@ public class AttendanceViewModel extends ViewModel {
         checkInOutText="";
         ifUserCheckedIn=false;
         isLayoutEnabled = false;
+        isAdmin= false;
         if (record != null ){
             time = (record.checkOutTime==null || record.checkOutTime.isEmpty() ) ?  DateTimeUtlis.getShared().convertStringToDateTime(record.checkInTime):DateTimeUtlis.getShared().convertStringToDateTime(record.checkOutTime);
             Log.d("Time" , " " +time);
@@ -59,9 +61,13 @@ public class AttendanceViewModel extends ViewModel {
             seesionText=DateTimeUtlis.getShared().calculateDurationBetween(record.checkInTime,record.checkOutTime==null|| record.checkOutTime.isEmpty() ? DateTimeUtlis.getShared().getNow() :record.checkOutTime);
             ifUserCheckedIn = record.checkOutTime == null || record.checkOutTime.isEmpty();
             isLayoutEnabled = Objects.equals(employee.designation, "manager") || Objects.equals(employee.designation, "admin");
-        }
+            isAdmin= Objects.equals(employee.designation, "admin");}
+
 
         return record;
+    }
+    public Boolean getIsAdmin(){
+        return isAdmin;
     }
     public Boolean getIfUserCheckedIn(){
 

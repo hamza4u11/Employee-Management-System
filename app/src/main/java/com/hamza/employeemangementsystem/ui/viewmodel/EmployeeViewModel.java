@@ -17,12 +17,11 @@ import java.util.List;
 
 public class EmployeeViewModel extends ViewModel {
     private final MutableLiveData<List<Employee>> employees = new MutableLiveData<>();
-//    private final MutableLiveData<EmployeeModel> loginState = new MutableLiveData<>();
+    private final MutableLiveData<List<Employee>> filteredEmployees = new MutableLiveData<>();
 
 
 
     private EmployeeRepositoryImp repository;
-   // private EmployeeRepositoryImp repositoryImp;
 
     public EmployeeViewModel(@NonNull DBHandler dbHandler) {
         super();
@@ -39,55 +38,15 @@ public class EmployeeViewModel extends ViewModel {
         return repository.getEmployeeById(id);
 
     }
-//    public LiveData<EmployeeModel> getEmployeeById(int id) {
-//        return repository.getEmployeeById(id);
-//    }
-//public List<Employee> getEmployeeById(int id) {
-//    return repository.getEmployeeById(id);
-//}
-//    public String login(int id, String pin){
-////        Log.d("Id", String.valueOf(id));
-////        Log.d("Pin",  pin );
-//       return repository.getEmployeeById(id);
-//    }
 
-//    public void getEmployeeByIdEx(int id){
-//      repository.getEmployeeByIdEx(id);
-//
-//    }
-
-//    public void isPinCorrect(int employeeId, String pin) {
-//
-//        String role = repository.checkEmployeePin(employeeId, pin);
-//
-//        if ("admin".equalsIgnoreCase(role)) {
-//            Log.d("Role", "ADMIN");
-//        } else if ("manager".equalsIgnoreCase(role)) {
-//            Log.d("Role", "MANAGER");
-//        } else {
-//            Log.d("Role", "EMPLOYEE");
-//        }
-//    }
-//    public boolean isPinCorrect(int employeeId, String enteredPin) {
-//        Log.d("View", "MOdel");
-//        return repository.checkEmployeePin(employeeId, enteredPin);
-//    }
-
-
-
-    //    public void insertEmployee(EmployeeModel model){
-//        repository.insertEmployee(model);
-//    }
-//    public void delete(int id){
-//        repository.deleteEmployee(id);
-//    }
-        public LiveData<List<Employee>> getAllEmployees() {
+    public LiveData<List<Employee>> getAllEmployees() {
           return employees;
-}
-//    public void getEmployeeById(int id){
-//        Cursor cursor = repository.getEmployeeById(id);
-//    }
-//    public void updateEmployee(EmployeeModel model){
-//        repository.updateEmployee(model);
-//    }
+    }
+    public LiveData<List<Employee>> getFilteredEmployees(){
+        return filteredEmployees;
+    }
+    public void getEmployeesByManager(String managerIdParam) {
+        filteredEmployees.setValue( repository.getEmployeeByManager(managerIdParam));
+
+    }
 }
