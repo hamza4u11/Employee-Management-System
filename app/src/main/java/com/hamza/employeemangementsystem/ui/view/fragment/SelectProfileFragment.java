@@ -44,11 +44,6 @@ public class SelectProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "modeParam";
     private static final String ARG_PARAM2 = "mangerIdParam";
     private EmployeeViewModel employeeViewModel;
-    RecyclerView recyclerView;
-    TextView txtName, txtDesignation;
-    LinearLayout employeeId;
-    Button btnLogin;
-    String pinOne, pinSecond,pinThird,pinFourth,pin;
     private AttendanceViewModel attendanceViewModel; ;
     Button addBtn ;
 
@@ -62,7 +57,8 @@ public class SelectProfileFragment extends Fragment {
         this.listener = listener;
     }
 
-    public MyOnClickListener getListener() {
+    public MyOnClickListener getListener()
+    {
         return listener;
     }
 
@@ -125,53 +121,14 @@ public class SelectProfileFragment extends Fragment {
                     listener.OnItemClick(employee);
                     return;
                 }
-                Log.d("Employee ", employee.name);
-                Dialog dialog = new Dialog(getActivity());
-                dialog.setContentView(R.layout.dialogue_pin);
-                dialog.setCancelable(false);
-                EditText pin1 = dialog.findViewById(R.id.pin1);
-                EditText pin2 = dialog.findViewById(R.id.pin2);
-                EditText pin3 = dialog.findViewById(R.id.pin3);
-                EditText pin4 = dialog.findViewById(R.id.pin4);
-                Button loginBtn = dialog.findViewById(R.id.btnLogin);
-                Button btnCancel = dialog.findViewById(R.id.btnCancel);
-                loginBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        pinOne = pin1.getText().toString().trim();
-                        pinSecond = pin2.getText().toString().trim();
-                        pinThird = pin3.getText().toString().trim();
-                        pinFourth = pin4.getText().toString().trim();
-                        pin = "" + pinOne + pinSecond + pinThird + pinFourth;
-                        Log.d("PIN", pin);
-                        Log.d("PIN", employee.pin);
-                        int duration = Toast.LENGTH_SHORT;
-                        if (Integer.parseInt(pin) == Integer.parseInt(employee.pin)) {
-                            Log.d("Designation", employee.designation);
-                            Globals.getShared().setEmployee(employee);
-                            Fragment fragment= new DashboardFragment();
-                                    requireActivity()
-                                    .getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.fragmentContainer, fragment)
-                                    .addToBackStack(null)
-                                    .commit();
-                            dialog.cancel();
+                Fragment fragment= EmployeeFragment.newInstance(String.valueOf(employee.id),null);
+                requireActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
 
-
-                        } else {
-                            Toast.makeText(getActivity(), "INVALID USER", duration).show();
-                        }
-                    }
-                });
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.cancel();
-                    }
-                });
-                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                dialog.show();
             }
         };
         addBtn.setOnClickListener(new View.OnClickListener() {
@@ -181,8 +138,16 @@ public class SelectProfileFragment extends Fragment {
                 if(listener!=null){
                     listener.OnAddClick();
                 }
+                Fragment fragment= EmployeeFragment.newInstance("add",null);
+                requireActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
+
         myAdapter adapter = new myAdapter(employeeClickHandler);
         selectProfile.setLayoutManager(new LinearLayoutManager(getActivity()));
         selectProfile.setAdapter(adapter);

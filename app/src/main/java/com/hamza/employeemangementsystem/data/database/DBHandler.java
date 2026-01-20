@@ -102,6 +102,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.ColorSpace;
 import android.telephony.mbms.StreamingServiceInfo;
+import android.util.Log;
 
 import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.ui.view.fragment.SelectProfileFragment;
@@ -112,42 +113,44 @@ import java.util.List;
 public class DBHandler <T> extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "ems.db";
-    private static final int DB_VERSION = 3;
-    private static String TABLE_USERS= "attendance";
-    private static String COLUMN_EMP_ID= "empId";
-    private static String COLUMN_CHECK_IN_TIME= "checkInTime";
-    private static String COLUMN_CHECK_OUT_TIME= "checkOutTime";
-    private static String COLUMN_OVER_TIME= "overTime";
+    private static final int DB_VERSION = 10;
+    private static final String TABLE_NAME = "employees";
+    public static final String CREATE_EMPLOYEE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "name TEXT NOT NULL, " +
+                    "designation TEXT, " +
+                    "phone_no TEXT, " +
+                    "address TEXT, " +
+                    "paymentType TEXT, " +
+                    "allowHoliday INTEGER, " +     // 0 = false, 1 = true
+                    "overTimeAllow INTEGER, " +    // 0 = false, 1 = true
+                    "status INTEGER, " +           // 0 = inactive, 1 = active
+                    "pin TEXT, " +
+                    "checkIn TEXT, " +             // datetime as TEXT
+                    "managerId INTEGER" +
+                    ");";
 
+    public static final String CREATE_ATTENDANCE_TABLE =
+            "CREATE TABLE IF NOT EXISTS attendance (" +
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        "empId INTEGER NOT NULL, " +
+        "date TEXT NOT NULL, " +
+        "checkInTime TEXT, " +
+        "checkOutTime TEXT, " +
+        "overTime INTEGER DEFAULT 0" +
+        ")";
 
-//    private static final String SQL_CREATE_USERS_TABLE =
-//            "CREATE TABLE " + TABLE_USERS + " (" +
-//                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//                    COLUMN_EMP_ID + " INTEGER NOT NULL, " +
-//                    COLUMN_CHECK_IN_TIME + " TEXT NOT NULL, " +
-//                    COLUMN_CHECK_OUT_TIME + " TEXT NOT NULL," +
-//                    COLUMN_OVER_TIME + " INTEGER NOT NULL " +
-//                    ")";
 
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
 
-//        if(!isTableExists() == true){
-//
-//
-//
-//        }
-
-
-
-
     }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
-
-
-
+//        db.execSQL(CREATE_EMPLOYEE_TABLE);
+        db.execSQL(CREATE_ATTENDANCE_TABLE);
+        Log.d("Tables","Created");
     }
 
 
@@ -155,8 +158,9 @@ public class DBHandler <T> extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldV, int newV) {
-//        db.execSQL("DROP TABLE IF EXISTS employee");
-//        onCreate(db);
+//        db.execSQL("DROP TABLE IF EXISTS employees");
+        db.execSQL("DROP TABLE IF EXISTS attendance");
+        onCreate(db);
     }
     public void createRecord(T object, IConvertHelper convertHelper){
         SQLiteDatabase db = this.getWritableDatabase();

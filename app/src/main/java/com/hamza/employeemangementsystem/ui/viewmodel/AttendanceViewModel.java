@@ -13,6 +13,8 @@ import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
 import com.hamza.employeemangementsystem.utils.DateTimeUtlis;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
@@ -22,6 +24,7 @@ public class AttendanceViewModel extends ViewModel {
     private EmployeeRepositoryImp employeeRepo;
     private String statusText= "";
     private String seesionText="";
+    private String seesionLabel="";
     private Date time;
     private String checkInOutText;
     private boolean ifUserCheckedIn = false;
@@ -45,23 +48,38 @@ public class AttendanceViewModel extends ViewModel {
         Employee employee = employeeRepo.getEmployeeById(id);
         Log.d("Employee Designation", employee.designation);
         Attendance record = repository.getLastAttendance(id);
-        Log.d("Checkinn time","" +record.checkInTime );
-        Log.d("Checkout time","" +record.checkOutTime );
+//        Log.d("Checkinn time","" +record.checkInTime );
+//        Log.d("Checkout time","" +record.checkOutTime );
         statusText = "";
         seesionText="";
         checkInOutText="";
         ifUserCheckedIn=false;
         isLayoutEnabled = false;
         isAdmin= false;
+        seesionLabel="";
         if (record != null ){
             time = (record.checkOutTime==null || record.checkOutTime.isEmpty() ) ?  DateTimeUtlis.getShared().convertStringToDateTime(record.checkInTime):DateTimeUtlis.getShared().convertStringToDateTime(record.checkOutTime);
             Log.d("Time" , " " +time);
+            seesionLabel= (record.checkInTime != null && record.checkOutTime == null )? "Current Seeion Duration" : "Last Seesion Duration";
             checkInOutText = (record.checkOutTime == null || record.checkOutTime.isEmpty() )? "Last Check In Time" : "Last Check out Time";
             statusText= DateTimeUtlis.getShared().formatDateTime(time, Globals.getShared().getDateTimeFormat());
             seesionText=DateTimeUtlis.getShared().calculateDurationBetween(record.checkInTime,record.checkOutTime==null|| record.checkOutTime.isEmpty() ? DateTimeUtlis.getShared().getNow() :record.checkOutTime);
             ifUserCheckedIn = record.checkOutTime == null || record.checkOutTime.isEmpty();
             isLayoutEnabled = Objects.equals(employee.designation, "manager") || Objects.equals(employee.designation, "admin");
-            isAdmin= Objects.equals(employee.designation, "admin");}
+            isAdmin= Objects.equals(employee.designation, "admin");
+        }else{
+            time = null;
+            checkInOutText= "Welcome";
+            statusText = employee.name;
+            seesionText="Please Check INN";
+            ifUserCheckedIn=false;
+            isLayoutEnabled=false;
+            isAdmin=false;
+            seesionLabel="Start Seesion";
+
+        }
+
+
 
 
         return record;
@@ -88,6 +106,9 @@ public class AttendanceViewModel extends ViewModel {
 
         return seesionText;
     }
+    public String getSeesionLabel() {
+        return seesionLabel;
+    }
     public String getCheckInOutText() {
 
         return checkInOutText;
@@ -95,6 +116,9 @@ public class AttendanceViewModel extends ViewModel {
     public void checkIn(String id){
         Attendance attendance = new Attendance();
         attendance.empId = Integer.parseInt(id);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            attendance.date= LocalDate.now().toString();
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             attendance.checkInTime = LocalDateTime.now().toString();
         }
@@ -105,6 +129,9 @@ public class AttendanceViewModel extends ViewModel {
         Attendance attendance = new Attendance();
         attendance.id =record.id;
         attendance.empId=Integer.parseInt(id);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            attendance.date= LocalDate.now().toString();
+        }
         attendance.checkInTime = record.checkInTime;
         Log.d("checkInTime",record.checkInTime);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -116,6 +143,7 @@ public class AttendanceViewModel extends ViewModel {
         Globals.getShared().setEmployee(null);
         openSelectProfile.setValue(true);
     }
+
 
 
 }

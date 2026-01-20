@@ -21,9 +21,13 @@
             android:id="@+id/txtGreeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Good Morning"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="270dp"
+            android:text="Welcome"
             android:textColor="#FFFFFF"
-            android:textSize="14sp"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,10 +35,14 @@
             android:id="@+id/txtName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="310dp"
             android:text="Hello"
             android:textColor="#FFFFFF"
             android:textSize="22sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txtGreeting" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -43,7 +51,9 @@
         android:id="@+id/label"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_margin="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:background="#EEF2FF"
         android:gravity="center_vertical"
         android:paddingStart="20dp"
@@ -62,9 +72,9 @@
         android:id="@+id/status"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_margin="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
         android:background="#EEF2FF"
         android:gravity="center_vertical"
         android:paddingStart="20dp"
@@ -72,9 +82,25 @@
         android:textColor="#1A1A1A"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/seeionLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/label" />
+    <TextView
+        android:id="@+id/seeionLabel"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_margin="20dp"
+        android:background="#EEF2FF"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:text="Last Seesion"
+        android:textColor="#1A1A1A"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/status" />
 
     <TextView
         android:id="@+id/seesion"
@@ -90,14 +116,15 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/status" />
+        app:layout_constraintTop_toBottomOf="@id/seeionLabel" />
 
     <!-- Check In -->
     <Button
         android:id="@+id/checkInButton"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="#2051E5"
         android:text="Check In"
         android:textColor="#FFFFFF"
@@ -110,8 +137,9 @@
     <Button
         android:id="@+id/checkOutbutton"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="#2051E5"
         android:text="Check Out"
         android:textColor="#FFFFFF"
@@ -121,12 +149,13 @@
         app:layout_constraintTop_toBottomOf="@id/checkInButton" />
 
 
-
     <LinearLayout
         android:id="@+id/hideAdminButtons"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -137,7 +166,7 @@
             android:id="@+id/manageEmployeesBtn"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:layout_margin="20dp"
+            android:layout_margin="2dp"
             android:backgroundTint="#2051E5"
             android:text="Manage Employees →"
             android:textAllCaps="false"
@@ -148,6 +177,7 @@
             android:id="@+id/attendenceReports"
             android:layout_width="match_parent"
             android:layout_height="64dp"
+            android:layout_margin="2dp"
             android:layout_marginHorizontal="20dp"
             android:backgroundTint="#2051E5"
             android:text="View Attendance Report →"
@@ -158,9 +188,11 @@
 
     <Button
         android:id="@+id/logoutBtn"
-        android:layout_width="360dp"
+        android:layout_width="0dp"
         android:layout_height="64dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
         android:backgroundTint="#2051E5"
         android:text="Logout"
         android:textColor="#FFFFFF"

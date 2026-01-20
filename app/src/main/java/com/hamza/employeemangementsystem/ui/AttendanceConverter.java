@@ -30,6 +30,7 @@ public class AttendanceConverter implements IConvertHelper<Attendance> {
 
         ContentValues values = new ContentValues();
         values.put("empId",model.empId);
+        values.put("date",model.date);
         values.put("checkInTime", model.checkInTime);
         values.put("checkOutTime", model.checkOutTime);
         values.put("overTime",model.overTime);
@@ -39,10 +40,10 @@ public class AttendanceConverter implements IConvertHelper<Attendance> {
 
     @Override
     public Attendance toModel(Cursor cursor) {
-
         Attendance attendance = new Attendance();
         attendance.id= cursor.getInt(cursor.getColumnIndexOrThrow("id"));
         attendance.empId= cursor.getInt(cursor.getColumnIndexOrThrow("empId"));
+        attendance.date= cursor.getString(cursor.getColumnIndexOrThrow("date"));
         attendance.checkInTime=cursor.getString(cursor.getColumnIndexOrThrow("checkInTime"));
         attendance.checkOutTime=cursor.getString(cursor.getColumnIndexOrThrow("checkOutTime"));
         attendance.overTime= cursor.getInt(cursor.getColumnIndexOrThrow("overTime"));

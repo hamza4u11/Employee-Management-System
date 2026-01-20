@@ -16,9 +16,10 @@ public class Attendance {
         this.overTime=overTime;
 
     }
-    public Attendance(int id, int empId, String checkInTime, String checkOutTime, int overTime){
+    public Attendance(int id, int empId, String checkInTime, String date,String checkOutTime, int overTime){
         this.id=id;
         this.empId=empId;
+        this.date=date;
         this.checkInTime=checkInTime;
         this.checkOutTime=checkOutTime;
         this.overTime=overTime;

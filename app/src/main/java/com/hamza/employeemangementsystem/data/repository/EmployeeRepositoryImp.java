@@ -1,6 +1,7 @@
 package com.hamza.employeemangementsystem.data.repository;
 
 import android.content.Context;
+import android.telephony.mbms.StreamingServiceInfo;
 
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Employee;
@@ -23,7 +24,7 @@ public class EmployeeRepositoryImp implements EmployeeRepository {
     }
     public List<Employee> getEmployeeByManager(String id) {
         EmployeeConverter employeeConverter=new EmployeeConverter();
-        String criteria = "magager_id = "+ id;
+        String criteria = "managerId = "+ id;
         return  dbHandler.getRecordByCriteria(criteria, null ,employeeConverter);
     }
 
@@ -34,18 +35,30 @@ public class EmployeeRepositoryImp implements EmployeeRepository {
         return dbHandler.getAllRecords(employeeConverter);
     }
 
+    public List<Employee> getAllManagers() {
+        EmployeeConverter employeeConverter = new EmployeeConverter();
+        String value ="manager";
+        String criteria = "designation = 'manager'";
+        return  dbHandler.getRecordByCriteria(criteria, null ,employeeConverter);    }
+
+
     @Override
-    public boolean updateEmployee(Employee employee) {
-        return false;
+    public void updateEmployee(Employee employee) {
+        EmployeeConverter employeeConverter = new EmployeeConverter();
+        dbHandler.updateRecord(employee.id, employee,employeeConverter);
     }
 
     @Override
-    public boolean insertEmployee(Employee employee) {
-        return false;
+    public void insertEmployee(Employee employee) {
+        EmployeeConverter employeeConverter = new EmployeeConverter();
+        dbHandler.createRecord(employee,employeeConverter);
+
+
     }
 
     @Override
     public boolean deleteEmployee(String id) {
         return false;
     }
+
 }
