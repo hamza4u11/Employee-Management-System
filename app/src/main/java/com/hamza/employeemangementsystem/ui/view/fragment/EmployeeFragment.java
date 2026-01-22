@@ -41,7 +41,7 @@ public class EmployeeFragment extends Fragment {
     SelectProfileViewModel selectProfileViewModel;
     Spinner spinner;
     Employee selectManagerId;
-    private int selectedManagerId = 0 , ifAddManager;
+    private int selectedManagerId = 0;
 
     public interface OnEventClickListener {
         void OnBackClick();
@@ -132,13 +132,7 @@ public class EmployeeFragment extends Fragment {
                 viewModel.setStatus(etstatus.getText().toString());
                 viewModel.setPin(etpin.getText().toString());
                 selectedManagerId = Objects.equals(mode, "add") ? selectedManagerId : Integer.parseInt(viewModel.getManagerId());
-//                if (selectedManagerId == -1) {
-//                    Toast.makeText(requireContext(),
-//                            "Please select a manager",
-//                            Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-                viewModel.setManagerId(String.valueOf(ifAddManager));
+                viewModel.setManagerId(String.valueOf(selectedManagerId));
                 Employee emp = new Employee();
                 emp.name = etName.getText().toString();
                 emp.designation = etdesignation.getText().toString();
@@ -193,7 +187,7 @@ public class EmployeeFragment extends Fragment {
 
     private void setupManagerSpinner() {
         Employee selectManager = new Employee();
-        selectManager.setId(-1);
+        selectManager.setId(0);
         selectManager.setName("Select Manager");
 
         ArrayAdapter<Employee> adapter = new ArrayAdapter<>(
@@ -227,7 +221,7 @@ public class EmployeeFragment extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                selectedManagerId = -1;
+                selectedManagerId = 0;
             }
         });
     }
