@@ -33,7 +33,6 @@ import java.util.Objects;
 public class EmployeeFragment extends Fragment {
     private EmployeeViewModel viewModel;
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "mode";
     private static final String ARG_PARAM2 = "employeeId";
     TextView addEmployee, txtName, selectManager;
@@ -42,8 +41,7 @@ public class EmployeeFragment extends Fragment {
     SelectProfileViewModel selectProfileViewModel;
     Spinner spinner;
     Employee selectManagerId;
-    private int selectedManagerId = -1;
-    private int selectedManagerIdMode;
+    private int selectedManagerId = 0 , ifAddManager;
 
     public interface OnEventClickListener {
         void OnBackClick();
@@ -115,7 +113,7 @@ public class EmployeeFragment extends Fragment {
         etpin = view.findViewById(R.id.pin);
         etoverTimeAllow = view.findViewById(R.id.allowOverTime);
         etstatus = view.findViewById(R.id.status);
-            selectManager = view.findViewById(R.id.selectManager);
+        selectManager = view.findViewById(R.id.selectManager);
         spinner = view.findViewById(R.id.spinner);
         cancelBtn = view.findViewById(R.id.cancelBtn);
 
@@ -124,9 +122,6 @@ public class EmployeeFragment extends Fragment {
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (listener != null) {
-                    listener.OnBackClick();
-                }
                 viewModel.setName(etName.getText().toString());
                 viewModel.setDesignation(etdesignation.getText().toString());
                 viewModel.setPhoneNo(etphoneNo.getText().toString());
@@ -136,16 +131,34 @@ public class EmployeeFragment extends Fragment {
                 viewModel.setAllowOverTime(etoverTimeAllow.getText().toString());
                 viewModel.setStatus(etstatus.getText().toString());
                 viewModel.setPin(etpin.getText().toString());
-                selectedManagerId = mode == "add"? selectedManagerId: Integer.parseInt(viewModel.getManagerId()) ;
-                if (selectedManagerId == -1) {
-                    Toast.makeText(requireContext(),
-                            "Please select a manager",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                viewModel.setManagerId(String.valueOf(selectedManagerId));
-                viewModel.updateEmployee();
+                selectedManagerId = Objects.equals(mode, "add") ? selectedManagerId : Integer.parseInt(viewModel.getManagerId());
+//                if (selectedManagerId == -1) {
+//                    Toast.makeText(requireContext(),
+//                            "Please select a manager",
+//                            Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+                viewModel.setManagerId(String.valueOf(ifAddManager));
+                Employee emp = new Employee();
+                emp.name = etName.getText().toString();
+                emp.designation = etdesignation.getText().toString();
+                emp.phone_no = etphoneNo.getText().toString();
+                emp.address = etaddress.getText().toString();
+                emp.paymentType = etpaymentType.getText().toString();
+                emp.allowHoliday = etallowHoliday.getText().toString();
+                emp.overTimeAllow = etoverTimeAllow.getText().toString();
+                emp.status = etstatus.getText().toString();
+                emp.pin = etpin.getText().toString();
+                viewModel.submitEmployee(emp);
+                viewModel.getResult().observe(getViewLifecycleOwner(), result -> {
+                    if (result != null && !result.isEmpty()) {
+                        Toast.makeText(requireContext(), result, Toast.LENGTH_SHORT).show();
+                    }
+                    if (listener != null) {
+                        listener.OnBackClick();
+                    }
 
+                });
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -177,6 +190,7 @@ public class EmployeeFragment extends Fragment {
         etpin.setText(viewModel.getPin());
         setupManagerSpinner();
     }
+
     private void setupManagerSpinner() {
         Employee selectManager = new Employee();
         selectManager.setId(-1);
@@ -189,7 +203,6 @@ public class EmployeeFragment extends Fragment {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-
         viewModel.getManagers().observe(getViewLifecycleOwner(), employees -> {
             List<Employee> list = new ArrayList<>();
             list.add(selectManager);
@@ -199,7 +212,6 @@ public class EmployeeFragment extends Fragment {
             adapter.addAll(list);
             adapter.notifyDataSetChanged();
         });
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -207,10 +219,9 @@ public class EmployeeFragment extends Fragment {
                 Employee selected = (Employee) parent.getItemAtPosition(position);
 
                 selectedManagerId =
-                        (selected != null && selected.getId() != -1)
+                        (selected != null && selected.getId() != 0)
                                 ? selected.getId()
-                                : -1;
-
+                                : 0;
                 Log.d("Spinner", "Selected Manager ID = " + selectedManagerId);
             }
 
@@ -220,7 +231,6 @@ public class EmployeeFragment extends Fragment {
             }
         });
     }
-
 
 
 }

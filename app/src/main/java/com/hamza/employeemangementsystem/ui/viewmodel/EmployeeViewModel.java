@@ -20,6 +20,8 @@ import java.util.List;
 public class EmployeeViewModel extends ViewModel {
     EmployeeRepositoryImp repository;
     private final MutableLiveData<List<Employee>> managers = new MutableLiveData<>();
+    private MutableLiveData<String> result = new MutableLiveData<>();
+
     String empId;
     Employee employee;
     public EmployeeViewModel(@NonNull DBHandler dbHandler,String employeeId){
@@ -34,6 +36,7 @@ public class EmployeeViewModel extends ViewModel {
             employee = new Employee();
         }
     }
+
     public int getId() {
         return employee.id;
     }
@@ -133,6 +136,59 @@ public class EmployeeViewModel extends ViewModel {
     }
     public void getAllManagers() {
         managers.setValue( repository.getAllManagers());
+    }
+    public LiveData<String> getResult() {
+        return result;
+    }
+    public void submitEmployee(Employee employee) {
+
+        // ✅ DECISIONS HERE
+        if (employee.name.isEmpty()) {
+            result.setValue("Name cannot be empty");
+            return;
+        }
+
+        if (employee.designation.isEmpty()) {
+            result.setValue("Designation cannot be empty");
+            return;
+        }
+        if (employee.phone_no.isEmpty() ) {
+            result.setValue("Phone No cannot be empty");
+            return;
+        }
+        if (employee.address.isEmpty() ) {
+            result.setValue("Address cannot be empty");
+            return;
+        }
+
+        if (employee.status.isEmpty() ) {
+            result.setValue("Status cannot be empty");
+            return;
+        }
+        if (employee.paymentType.isEmpty()) {
+            result.setValue("Payment Type cannot be empty");
+            return;
+        }
+
+        if (employee.allowHoliday.isEmpty()) {
+            result.setValue("Allow Holiday cannot be empty");
+            return;
+        }
+        if (employee.overTimeAllow.isEmpty() ) {
+            result.setValue("Over Time Allow cannot be empty");
+            return;
+        }
+        if (employee.pin.isEmpty()) {
+            result.setValue("Pin cannot be empty");
+            return;
+        }
+
+
+
+        // Business logic / DB call / Repository
+        updateEmployee();
+
+        result.setValue("Employee saved successfully");
     }
     public void updateEmployee(){
           Employee employee1 = employee;
