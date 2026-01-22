@@ -51,27 +51,32 @@ public class Employee {
         this.checkIn = checkIn;
         this.managerId = managerId;
     }
-
     public Employee() {
     }
-    @Override
-    public String toString() {
-        return name; // or getName()
-    }
 
-    public int setId(int i) {
-        return i;
-    }
 
-    public String setName(String selectManager) {
-        return selectManager;
-    }
+
+
 
     public int getId() {
-        return 0;
+        return id;
+    }
+
+    public int setId(int id) {
+        return this.id = id;
     }
 
     public String getName() {
-        return "0";
+        return name;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name != null ? name : "";
+    }
+
 }

@@ -2,12 +2,14 @@ package com.hamza.employeemangementsystem.data.repository;
 
 import android.content.Context;
 import android.telephony.mbms.StreamingServiceInfo;
+import android.util.Log;
 
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.domain.EmployeeRepository;
 import com.hamza.employeemangementsystem.ui.EmployeeConverter;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,8 +54,6 @@ public class EmployeeRepositoryImp implements EmployeeRepository {
     public void insertEmployee(Employee employee) {
         EmployeeConverter employeeConverter = new EmployeeConverter();
         dbHandler.createRecord(employee,employeeConverter);
-
-
     }
 
     @Override

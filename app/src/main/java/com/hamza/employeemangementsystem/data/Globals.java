@@ -14,7 +14,8 @@ public class Globals {
     }
 
     public static Globals getShared() {
-        return shared;
+
+         return shared;
     }
 
     public static void setShared(Globals shared) {

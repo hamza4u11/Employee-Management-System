@@ -1,7 +1,5 @@
 package com.hamza.employeemangementsystem.ui.view.fragment;
 
-import android.app.Dialog;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -13,23 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hamza.employeemangementsystem.R;
-import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.EmployeeClickHandler;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.myAdapter;
-import com.hamza.employeemangementsystem.ui.viewmodel.AttendanceViewModel;
-import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
+import com.hamza.employeemangementsystem.ui.viewmodel.DashboardViewModel;
+import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
 
-import java.security.PublicKey;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -43,8 +34,8 @@ public class SelectProfileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "modeParam";
     private static final String ARG_PARAM2 = "mangerIdParam";
-    private EmployeeViewModel employeeViewModel;
-    private AttendanceViewModel attendanceViewModel; ;
+    private SelectProfileViewModel selectProfileViewModel;
+    private DashboardViewModel dashboardViewModel; ;
     Button addBtn ;
 
     public interface MyOnClickListener{
@@ -96,9 +87,9 @@ public class SelectProfileFragment extends Fragment {
             managerIdParam = getArguments().getString(ARG_PARAM2);
         }
         DBHandler<Employee> employeeDBHandler= new DBHandler<>(getActivity());
-        employeeViewModel = new EmployeeViewModel(employeeDBHandler);
+        selectProfileViewModel = new SelectProfileViewModel(employeeDBHandler);
         DBHandler<Attendance> attendanceDBHandler= new DBHandler<>(getActivity());
-        attendanceViewModel = new AttendanceViewModel(attendanceDBHandler);
+        dashboardViewModel = new DashboardViewModel(attendanceDBHandler);
     }
 
     @Override
@@ -138,13 +129,13 @@ public class SelectProfileFragment extends Fragment {
                 if(listener!=null){
                     listener.OnAddClick();
                 }
-                Fragment fragment= EmployeeFragment.newInstance("add",null);
-                requireActivity()
-                        .getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragmentContainer, fragment)
-                        .addToBackStack(null)
-                        .commit();
+//                Fragment fragment= EmployeeFragment.newInstance("add",null);
+//                requireActivity()
+//                        .getSupportFragmentManager()
+//                        .beginTransaction()
+//                        .replace(R.id.fragmentContainer, fragment)
+//                        .addToBackStack(null)
+//                        .commit();
             }
         });
 
@@ -153,14 +144,14 @@ public class SelectProfileFragment extends Fragment {
         selectProfile.setAdapter(adapter);
         if (managerIdParam != null ){
             Log.d("ManagerId param", "Manager ID" );
-            employeeViewModel.getEmployeesByManager(managerIdParam);
+            selectProfileViewModel.getEmployeesByManager(managerIdParam);
 
         }else{
-            employeeViewModel.getAllEmployees().observe(getActivity(), employees -> {
+            selectProfileViewModel.getAllEmployees().observe(getActivity(), employees -> {
                 adapter.setList(employees);
             });
         }
-        employeeViewModel.getFilteredEmployees().observe(getActivity(), employees -> {
+        selectProfileViewModel.getFilteredEmployees().observe(getActivity(), employees -> {
             adapter.setList(employees);
         });
 

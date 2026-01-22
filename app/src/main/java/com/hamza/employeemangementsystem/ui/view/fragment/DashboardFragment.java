@@ -2,9 +2,6 @@ package com.hamza.employeemangementsystem.ui.view.fragment;
 
 
 
-import static androidx.constraintlayout.widget.ConstraintSet.VISIBLE;
-
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -14,16 +11,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
-import com.hamza.employeemangementsystem.ui.viewmodel.AttendanceViewModel;
-
-import org.w3c.dom.Text;
+import com.hamza.employeemangementsystem.ui.viewmodel.DashboardViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,21 +31,21 @@ public class DashboardFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private AttendanceViewModel attendanceViewModel;
+    private DashboardViewModel dashboardViewModel;
 
     TextView txtName,seesion, label, status ,seeionLabel;
     LinearLayout hideAdminButtons ;
     Button checkInButton, checkOutButton, logoutBtn, manageEmployeesBtn ;
 
     public interface  OnEventClickListener{
-//        void OnManageEmployeesClick( String adminOrManager,  String addBtnForAdmin);
-        void OnManageEmployeesClick();
-        void OnReportsClick();
-        void OnLogoutClick();
+       void OnManageEmployeesClick( String adminOrManager,  String addBtnForAdmin);
+       void OnReportsClick();
+       void OnLogoutClick();
     }
     private OnEventClickListener listener;
 
     public OnEventClickListener getListener() {
+
         return listener;
     }
 
@@ -86,7 +80,6 @@ public class DashboardFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +88,7 @@ public class DashboardFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(getActivity());
-        attendanceViewModel = new AttendanceViewModel(attendanceDBHandler);
+        dashboardViewModel = new DashboardViewModel(attendanceDBHandler);
 
     }
 
@@ -125,21 +118,21 @@ public class DashboardFragment extends Fragment {
         checkInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attendanceViewModel.checkIn(loginEmployeeId);
+                dashboardViewModel.checkIn(loginEmployeeId);
                 refresh();
             }
         });
         checkOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attendanceViewModel.checkOut(loginEmployeeId);
+                dashboardViewModel.checkOut(loginEmployeeId);
                 refresh();
             }
         });
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attendanceViewModel.logout();
+                dashboardViewModel.logout();
                 if(listener!=null){
                     listener.OnLogoutClick();
                 }
@@ -147,20 +140,14 @@ public class DashboardFragment extends Fragment {
 
             }
         });
+        String addBtnForAdmin = dashboardViewModel.getIsAdmin() ? "add" : null;
+        String adminOrManager= dashboardViewModel.getIsAdmin() ? null : loginEmployeeId;
         manageEmployeesBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-               String adminOrManager= attendanceViewModel.getIsAdmin() ? null : loginEmployeeId;
-               String addBtnForAdmin = attendanceViewModel.getIsAdmin() ? "add" : null;
-//                if(listener!=null){
-//                    listener.OnManageEmployeesClick(addBtnForAdmin, adminOrManager);
-//                }
-                SelectProfileFragment profileFragment = SelectProfileFragment.newInstance(addBtnForAdmin, adminOrManager);
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragmentContainer, profileFragment)
-                        .addToBackStack(null)
-                        .commit();
+                if(listener!=null){
+                    listener.OnManageEmployeesClick(addBtnForAdmin,adminOrManager);
+                }
             }
         });
 
@@ -173,17 +160,17 @@ public class DashboardFragment extends Fragment {
         String name = Globals.getShared().getEmployee().name;
         String loginEmployeeId = String.valueOf(loginEmployee.id);
         txtName.setText(name);
-        attendanceViewModel.loadUserStatus(loginEmployeeId);
-        status.setText(attendanceViewModel.getStatusText());
-        seesion.setText(attendanceViewModel.getSeesionText());
-        seeionLabel.setText(attendanceViewModel.getSeesionLabel());
-        label.setText(attendanceViewModel.getCheckInOutText());
+        dashboardViewModel.loadUserStatus(loginEmployeeId);
+        status.setText(dashboardViewModel.getStatusText());
+        seesion.setText(dashboardViewModel.getSeesionText());
+        seeionLabel.setText(dashboardViewModel.getSeesionLabel());
+        label.setText(dashboardViewModel.getCheckInOutText());
         hideAdminButtons.setVisibility(View.GONE);
         checkInButton.setVisibility(View.GONE);
         checkOutButton.setVisibility(View.GONE);
-        checkOutButton.setVisibility(attendanceViewModel.getIfUserCheckedIn() ? View.VISIBLE : View.GONE);
-        checkInButton.setVisibility(attendanceViewModel.getIfUserCheckedIn()? View.GONE : View.VISIBLE);
-        hideAdminButtons.setVisibility(attendanceViewModel.isLayoutEnabled()? View.VISIBLE: View.GONE);
+        checkOutButton.setVisibility(dashboardViewModel.getIfUserCheckedIn() ? View.VISIBLE : View.GONE);
+        checkInButton.setVisibility(dashboardViewModel.getIfUserCheckedIn()? View.GONE : View.VISIBLE);
+        hideAdminButtons.setVisibility(dashboardViewModel.isLayoutEnabled()? View.VISIBLE: View.GONE);
 
     }
 

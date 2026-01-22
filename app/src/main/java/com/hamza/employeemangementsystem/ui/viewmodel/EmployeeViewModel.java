@@ -1,12 +1,11 @@
 package com.hamza.employeemangementsystem.ui.viewmodel;
 
-import android.app.Application;
+
+import android.os.Build;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -14,92 +13,140 @@ import androidx.lifecycle.ViewModel;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
-//import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp_old;
 
-import org.w3c.dom.Text;
-
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-
-import javax.xml.namespace.QName;
 
 public class EmployeeViewModel extends ViewModel {
-    private final MutableLiveData<List<Employee>> employees = new MutableLiveData<>();
-    private final MutableLiveData<List<Employee>> filteredEmployees = new MutableLiveData<>();
+    EmployeeRepositoryImp repository;
     private final MutableLiveData<List<Employee>> managers = new MutableLiveData<>();
-
-
-
-
-    private EmployeeRepositoryImp repository;
-
-    public EmployeeViewModel(@NonNull DBHandler dbHandler) {
+    String empId;
+    Employee employee;
+    public EmployeeViewModel(@NonNull DBHandler dbHandler,String employeeId){
         super();
         repository = new EmployeeRepositoryImp(dbHandler);
-
-        loadEmployees();
         getAllManagers();
-    }
-    private void loadEmployees() {
 
-        employees.setValue(repository.getAllEmployees());
+        if(employeeId!= null) {
+            empId=employeeId;
+            employee = repository.getEmployeeById(employeeId);
+        }else{
+            employee = new Employee();
+        }
     }
-    public Employee getEmployeeById(String id){
-        return repository.getEmployeeById(id);
-
-    }
-
-    public LiveData<List<Employee>> getAllEmployees() {
-          return employees;
+    public int getId() {
+        return employee.id;
     }
 
-//    private void loadManagers() {
-//
-//        managers.setValue(repository.getAllManagers());
-//    }
+    public void setId(String id) {
+        employee.name = id;
+    }
+    public String getName() {
+        return employee.name;
+    }
 
-//    public LiveData<List<Employee>> getAllManagers(){
-//        return managers;
-//    }
+    public void setName(String name) {
+        employee.name = name;
+    }
+
+    public String getDesignation() {
+        return employee.designation;
+    }
+
+    public void setDesignation(String designation) {
+        employee.designation = designation;
+    }
+
+    public String getPhoneNo() {
+        return employee.phone_no;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        employee.phone_no = phoneNo;
+    }
+
+    public String getAddress() {
+        return employee.address;
+    }
+
+    public void setAddress(String address) {
+        employee.address = address;
+    }
+
+    public String getStatus() {
+        return employee.status;
+    }
+
+    public void setStatus(String status) {
+        employee.status = status;
+    }
+
+    public String getPaymentType() {
+        return employee.paymentType;
+    }
+
+    public void setPaymentType(String paymentType) {
+        employee.paymentType = paymentType;
+    }
+
+    public String getAllowHoliday() {
+        return employee.allowHoliday;
+    }
+
+    public void setAllowHoliday(String allowHoliday) {
+        employee.allowHoliday = allowHoliday;
+    }
+
+    public String getOverTimeAllow() {
+        return employee.overTimeAllow;
+    }
+
+    public void setAllowOverTime(String overTimeAllow) {
+        employee.overTimeAllow = overTimeAllow;
+    }
+
+    public String getPin() {
+        return employee.pin;
+    }
+
+    public void setPin(String pin) {
+        employee.pin = pin;
+    }
+    public String getCheckIn() {
+        return employee.checkIn;
+    }
+
+    public void setCheckIn(String checkIn) {
+        employee.checkIn = checkIn;
+    }
+
+    public String getManagerId(){
+       return employee.managerId;
+    }
+    public void setManagerId(String managerId){
+        employee.managerId = managerId;
+    }
+
     public LiveData<List<Employee>> getManagers(){
 
         return managers;
     }
     public void getAllManagers() {
-
         managers.setValue( repository.getAllManagers());
+    }
+    public void updateEmployee(){
+          Employee employee1 = employee;
+            if(empId == null){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    setCheckIn(String.valueOf(LocalDateTime.now()));
+                }
+                repository.insertEmployee(employee);
+
+            }else {
+                repository.updateEmployee(employee);
+            }
 
     }
-
-    public LiveData<List<Employee>> getFilteredEmployees(){
-
-        return filteredEmployees;
-    }
-    public void getEmployeesByManager(String managerIdParam) {
-
-        filteredEmployees.setValue( repository.getEmployeeByManager(managerIdParam));
-
-    }
-
-    public void saveEmployee(Employee emp) {
-        if (emp != null) {
-            Log.d("ATTENDANCE", String.valueOf(emp));
-        } else {
-            Log.d("ATTENDANCE", "attendance is NULL");
-        }
-        repository.insertEmployee(emp);
-    }
-
-    public void updateEmployee(Employee emp) {
-        repository.updateEmployee(emp);
-    }
-
-
-//    public Boolean saveBtn(String saveParam) {
-//         Boolean isSaveBtn= Objects.equals(saveParam, "add");
-//         return isSaveBtn;
-//
-//    }
 
 
 }

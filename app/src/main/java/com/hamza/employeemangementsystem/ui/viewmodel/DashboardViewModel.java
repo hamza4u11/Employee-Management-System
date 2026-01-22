@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
-public class AttendanceViewModel extends ViewModel {
+public class DashboardViewModel extends ViewModel {
     private AttendanceRepositoryImp repository;
     private EmployeeRepositoryImp employeeRepo;
     private String statusText= "";
@@ -38,7 +38,7 @@ public class AttendanceViewModel extends ViewModel {
     }
 
 
-    public AttendanceViewModel(@NonNull DBHandler dbHandler) {
+    public DashboardViewModel(@NonNull DBHandler dbHandler) {
         super();
         repository = new AttendanceRepositoryImp(dbHandler);
         employeeRepo = new EmployeeRepositoryImp(dbHandler);
@@ -85,6 +85,7 @@ public class AttendanceViewModel extends ViewModel {
         return record;
     }
     public Boolean getIsAdmin(){
+
         return isAdmin;
     }
     public Boolean getIfUserCheckedIn(){
@@ -107,6 +108,7 @@ public class AttendanceViewModel extends ViewModel {
         return seesionText;
     }
     public String getSeesionLabel() {
+
         return seesionLabel;
     }
     public String getCheckInOutText() {

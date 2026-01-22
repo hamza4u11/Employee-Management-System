@@ -1,13 +1,6 @@
 package com.hamza.employeemangementsystem.ui.view.fragment;
 
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,16 +11,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.hamza.employeemangementsystem.R;
-import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
-import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
-import com.hamza.employeemangementsystem.ui.viewmodel.AttendanceViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
+import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,22 +31,25 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class EmployeeFragment extends Fragment {
-    private AttendanceViewModel attendanceViewModel;
+    private EmployeeViewModel viewModel;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "addOrEditParam";
-    private static final String ARG_PARAM2 = "editParam";
-   TextView addEmployee,txtName, selectManager;
-   Button saveBtn, updateBtn;
-   EditText name ,designation, phoneNo,pin, address, paymentType, allowHolidays, allowOverTime, status;
-   EmployeeViewModel employeeViewModel;
-   Spinner spinner;
-   public interface OnEventClickListener{
-       void OnAddEmployeeClick();
-       void OnUpdateEmployeeClick();
+    private static final String ARG_PARAM1 = "mode";
+    private static final String ARG_PARAM2 = "employeeId";
+    TextView addEmployee, txtName, selectManager;
+    Button updateBtn, cancelBtn;
+    EditText etName, etdesignation, etphoneNo, etpin, etaddress, etpaymentType, etallowHoliday, etoverTimeAllow, etstatus;
+    SelectProfileViewModel selectProfileViewModel;
+    Spinner spinner;
+    Employee selectManagerId;
+    private int selectedManagerId = -1;
+    private int selectedManagerIdMode;
 
+    public interface OnEventClickListener {
+        void OnBackClick();
     }
-    private  OnEventClickListener listener;
+
+    private OnEventClickListener listener;
 
     public OnEventClickListener getListener() {
         return listener;
@@ -64,11 +60,9 @@ public class EmployeeFragment extends Fragment {
     }
 
 
-
-
     // TODO: Rename and change types of parameters
-    private String addOrEditParam;
-    private String editParam;
+    private String mode;
+    private String employeeId = null;
 
     public EmployeeFragment() {
         // Required empty public constructor
@@ -78,16 +72,16 @@ public class EmployeeFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param addParam Parameter 1.
-     * @param editParam Parameter 2.
+     * @param mode    Parameter 1.
+     * @param mParam2 Parameter 2.
      * @return A new instance of fragment EmployyeeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static EmployeeFragment newInstance(String addParam, String editParam) {
+    public static EmployeeFragment newInstance(String mode, String mParam2) {
         EmployeeFragment fragment = new EmployeeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, addParam);
-        args.putString(ARG_PARAM2, editParam);
+        args.putString(ARG_PARAM1, mode);
+        args.putString(ARG_PARAM2, mParam2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -96,182 +90,137 @@ public class EmployeeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            addOrEditParam = getArguments().getString(ARG_PARAM1);
-            editParam = getArguments().getString(ARG_PARAM2);
+            mode = getArguments().getString(ARG_PARAM1);
+            employeeId = getArguments().getString(ARG_PARAM2);
         }
-        DBHandler<Employee>  employeeDBHandler = new DBHandler<>(getActivity());
-        employeeViewModel = new EmployeeViewModel(employeeDBHandler);
-        DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(getActivity());
-        attendanceViewModel = new AttendanceViewModel(attendanceDBHandler);
+        DBHandler<Employee> employeeDBHandler = new DBHandler<>(getActivity());
+        selectProfileViewModel = new SelectProfileViewModel(employeeDBHandler);
+        //DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(getActivity());
+        viewModel = new EmployeeViewModel(employeeDBHandler, employeeId);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_employee, container, false);
-
-
-        addEmployee= view.findViewById(R.id.addEmployee);
-        txtName= view.findViewById(R.id.txtName);
-        saveBtn = view.findViewById(R.id.saveBtn);
+        addEmployee = view.findViewById(R.id.addEmployee);
+        txtName = view.findViewById(R.id.txtName);
         updateBtn = view.findViewById(R.id.updateBtn);
-        name= view.findViewById(R.id.name);
-        designation = view.findViewById(R.id.designation);
-        phoneNo = view.findViewById(R.id.phoneNo);
-        address = view.findViewById(R.id.address);
-        paymentType = view.findViewById(R.id.paymentType);
-        allowHolidays=view.findViewById(R.id.allowHolidays);
-        pin = view.findViewById(R.id.pin);
-        allowOverTime = view.findViewById(R.id.allowOverTime);
-        status = view.findViewById(R.id.status);
-        selectManager= view.findViewById(R.id.selectManager);
-        spinner= view.findViewById(R.id.spinner);
-        refresh();
-        setSpinner();
-        ifUpdateSetText();
-        saveBtn.setOnClickListener(new View.OnClickListener() {
+        etName = view.findViewById(R.id.name);
+        etdesignation = view.findViewById(R.id.designation);
+        etphoneNo = view.findViewById(R.id.phoneNo);
+        etaddress = view.findViewById(R.id.address);
+        etpaymentType = view.findViewById(R.id.paymentType);
+        etallowHoliday = view.findViewById(R.id.allowHolidays);
+        etpin = view.findViewById(R.id.pin);
+        etoverTimeAllow = view.findViewById(R.id.allowOverTime);
+        etstatus = view.findViewById(R.id.status);
+            selectManager = view.findViewById(R.id.selectManager);
+        spinner = view.findViewById(R.id.spinner);
+        cancelBtn = view.findViewById(R.id.cancelBtn);
 
+        loadScreenData();
+
+        updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(listener != null){
-//                    listener.OnAddEmployeeClick();
-//                    Toast.makeText(getActivity(),"On ADD Employee Click Listener:", Toast.LENGTH_SHORT).show();
-//                    Log.d("onClick: ", "Listener");
-//                }
-//                Log.d("onClick: ", "Save Button Function");
-                Employee emp= new Employee();
-                emp.name = name.getText().toString();
-                emp.designation = designation.getText().toString();
-                emp.phone_no = phoneNo.getText().toString();
-                emp.address = address.getText().toString();
-                emp.paymentType= paymentType.getText().toString();
-                emp.allowHoliday = allowHolidays.getText().toString();
-                emp.overTimeAllow = allowOverTime.getText().toString();
-                emp.status= status.getText().toString();
-                emp.pin = pin.getText().toString();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    emp.checkIn = LocalDateTime.now().toString();
+                if (listener != null) {
+                    listener.OnBackClick();
                 }
-                employeeViewModel.saveEmployee(emp);
-                SelectProfileFragment profileFragment = SelectProfileFragment.newInstance("add", null);
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragmentContainer, profileFragment)
-                        .addToBackStack(null)
-                        .commit();
+                viewModel.setName(etName.getText().toString());
+                viewModel.setDesignation(etdesignation.getText().toString());
+                viewModel.setPhoneNo(etphoneNo.getText().toString());
+                viewModel.setAddress(etaddress.getText().toString());
+                viewModel.setPaymentType(etpaymentType.getText().toString());
+                viewModel.setAllowHoliday(etallowHoliday.getText().toString());
+                viewModel.setAllowOverTime(etoverTimeAllow.getText().toString());
+                viewModel.setStatus(etstatus.getText().toString());
+                viewModel.setPin(etpin.getText().toString());
+                selectedManagerId = mode == "add"? selectedManagerId: Integer.parseInt(viewModel.getManagerId()) ;
+                if (selectedManagerId == -1) {
+                    Toast.makeText(requireContext(),
+                            "Please select a manager",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                viewModel.setManagerId(String.valueOf(selectedManagerId));
+                viewModel.updateEmployee();
+
             }
         });
-
-        updateBtn.setOnClickListener(new View.OnClickListener (){
-
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(listener != null){
-//                    listener.OnUpdateEmployeeClick();
-//
-//                }
-                Employee emp= new Employee();
-                emp.name = name.getText().toString();
-                emp.designation = designation.getText().toString();
-                emp.phone_no = phoneNo.getText().toString();
-                emp.address = address.getText().toString();
-                emp.paymentType= paymentType.getText().toString();
-                emp.allowHoliday = allowHolidays.getText().toString();
-                emp.overTimeAllow = allowOverTime.getText().toString();
-                emp.status= status.getText().toString();
-                emp.pin= pin.getText().toString() ;
-                employeeViewModel.updateEmployee(emp);
-//                if(listener!=null){
-//                    listener.OnManageEmployeesClick(addBtnForAdmin, adminOrManager);
-//                }
-                SelectProfileFragment profileFragment = SelectProfileFragment.newInstance("add", null);
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragmentContainer, profileFragment)
-                        .addToBackStack(null)
-                        .commit();
+                if (listener != null) {
+                    listener.OnBackClick();
+                }
             }
         });
         return view;
     }
-            private void refresh(){
-                addEmployee.setVisibility(View.GONE);
-                updateBtn.setVisibility(View.GONE);
-                Employee loginEmployee= Globals.getShared().getEmployee();
-                String name = Globals.getShared().getEmployee().name;
-                txtName.setText(name);
-                String employee = Objects.equals(addOrEditParam, "add") ? "Add" :"Edit";
-                addEmployee.setText(employee+" Employee" );
-                addEmployee.setVisibility(View.VISIBLE);
-                saveBtn.setVisibility(
-                        Objects.equals(addOrEditParam, "add") ? View.VISIBLE : View.GONE
 
-                );
+    private void loadScreenData() {
+        etName.setText(viewModel.getName());
+        etdesignation.setText(viewModel.getDesignation());
+        etphoneNo.setText(viewModel.getPhoneNo());
+        etaddress.setText(viewModel.getAddress());
+        etstatus.setText(viewModel.getStatus());
+        etpaymentType.setText(viewModel.getStatus());
+        etallowHoliday.setText(viewModel.getAllowHoliday());
+        etoverTimeAllow.setText(viewModel.getAllowHoliday());
+        selectManager.setVisibility(
+                Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
+        );
+        spinner.setVisibility(
+                Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
+        );
+        etpin.setText(viewModel.getPin());
+        setupManagerSpinner();
+    }
+    private void setupManagerSpinner() {
+        Employee selectManager = new Employee();
+        selectManager.setId(-1);
+        selectManager.setName("Select Manager");
 
-                updateBtn.setVisibility(
-                        Objects.equals(addOrEditParam, "add") ? View.GONE : View.VISIBLE
-                );
-                selectManager.setVisibility(
-                        Objects.equals(addOrEditParam, "add") ? View.VISIBLE : View.GONE
+        ArrayAdapter<Employee> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                new ArrayList<>()
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
-                );
-                spinner.setVisibility(
-                        Objects.equals(addOrEditParam, "add") ? View.VISIBLE : View.GONE
+        viewModel.getManagers().observe(getViewLifecycleOwner(), employees -> {
+            List<Employee> list = new ArrayList<>();
+            list.add(selectManager);
+            list.addAll(employees);
 
-                );
+            adapter.clear();
+            adapter.addAll(list);
+            adapter.notifyDataSetChanged();
+        });
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                Employee selected = (Employee) parent.getItemAtPosition(position);
+
+                selectedManagerId =
+                        (selected != null && selected.getId() != -1)
+                                ? selected.getId()
+                                : -1;
+
+                Log.d("Spinner", "Selected Manager ID = " + selectedManagerId);
             }
-            private void setSpinner (){
-                Employee selectManager = new Employee();
-                selectManager.setId(-1);
-                selectManager.setName("Select Manager");
-                ArrayAdapter<Employee> adapter = new ArrayAdapter<>(
-                        requireContext(),
-                        android.R.layout.simple_spinner_item,
-                        new ArrayList<>()
-                );
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinner.setAdapter(adapter);
-                employeeViewModel.getManagers().observe(getViewLifecycleOwner(), employees -> {
-                    List<Employee> spinnerList = new ArrayList<>();
-                    spinnerList.add(selectManager);
-                    spinnerList.addAll(employees);
-                    adapter.clear();
-                    adapter.addAll(spinnerList);
-                    adapter.notifyDataSetChanged();
-                });
-                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Employee selected = (Employee) parent.getItemAtPosition(position);
 
-                        if (selected.getId() == -1) {
-                            // "Select Manager" selected → do nothing
-                            return;
-                        }
-
-                        // ✅ Real manager selected
-                        Log.d("Spinner", "Manager: " + selected.getName());
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {}
-                });
-
-
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedManagerId = -1;
             }
-            private void ifUpdateSetText(){
-                if (!Objects.equals(addOrEditParam, "add")){
-                    Employee emp =employeeViewModel.getEmployeeById(addOrEditParam);
-                    name.setText(emp.name);
-                    designation.setText(emp.designation);
-                    phoneNo.setText(emp.phone_no);
-                    address.setText(emp.address);
-                    status.setText(emp.status);
-                    paymentType.setText(emp.paymentType);
-                    allowHolidays.setText(emp.allowHoliday);
-                    allowOverTime.setText(emp.overTimeAllow);
-                    pin.setText(emp.pin);
-                }
-            }
+        });
+    }
+
+
 
 }
