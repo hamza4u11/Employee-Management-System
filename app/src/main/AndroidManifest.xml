@@ -11,9 +11,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EmployeeMangementSystem">
-<!--        <activity-->
-<!--            android:name=".ui.view.LoginPinActivity"-->
-<!--            android:exported="false" />-->
         <activity
 
             android:name=".ui.view.MainActivity"

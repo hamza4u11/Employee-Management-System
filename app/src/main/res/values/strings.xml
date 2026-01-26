@@ -2,4 +2,5 @@
     <string name="app_name">Employee Mangement System</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="red_strike"><s><font color="#FF0000">Red Strikethrough</font></s></string>
 </resources>

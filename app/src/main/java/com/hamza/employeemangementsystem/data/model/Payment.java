@@ -1,8 +1,6 @@
 package com.hamza.employeemangementsystem.data.model;
 
-import java.util.StringTokenizer;
-
-public class PaymentModel {
+public class  Payment {
 
     public int id;
     public int empId;
@@ -13,7 +11,7 @@ public class PaymentModel {
 
 
 
-    public PaymentModel(int empId, String paymentDate, String paymentMonth, String paymentYear, String status) {
+    public Payment(int empId, String paymentDate, String paymentMonth, String paymentYear, String status) {
         this.empId = empId;
         this.paymentDate= paymentDate;
         this.paymentMonth=paymentMonth;
@@ -21,7 +19,7 @@ public class PaymentModel {
         this.status=status;
 
     }
-    public PaymentModel(int id,int empId,String paymentDate,String paymentMonth, String paymentYear,String status) {
+    public Payment(int id, int empId, String paymentDate, String paymentMonth, String paymentYear, String status) {
         this.id = id;
         this.empId = empId;
         this.paymentDate= paymentDate;

@@ -1,5 +1,7 @@
 package com.hamza.employeemangementsystem.ui.view.fragment;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,10 +20,12 @@ import androidx.fragment.app.Fragment;
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Employee;
+import com.hamza.employeemangementsystem.ui.view.MainActivity;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,12 +39,13 @@ public class EmployeeFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "mode";
     private static final String ARG_PARAM2 = "employeeId";
-    TextView addEmployee, txtName, selectManager;
+    TextView addEditEmployee, txtName, selectManager;
     Button updateBtn, cancelBtn;
-    EditText etName, etdesignation, etphoneNo, etpin, etaddress, etpaymentType, etallowHoliday, etoverTimeAllow, etstatus;
+    EditText etName, etDesignation, etPhoneNo, etPin, etAddress, etPaymentType, etAllowHoliday, etOverTimeAllow, etStatus;
     SelectProfileViewModel selectProfileViewModel;
     Spinner spinner;
     Employee selectManagerId;
+
     private int selectedManagerId = 0;
 
     public interface OnEventClickListener {
@@ -101,58 +106,57 @@ public class EmployeeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_employee, container, false);
-        addEmployee = view.findViewById(R.id.addEmployee);
+        addEditEmployee = view.findViewById(R.id.addEditEmployee);
         txtName = view.findViewById(R.id.txtName);
         updateBtn = view.findViewById(R.id.updateBtn);
         etName = view.findViewById(R.id.name);
-        etdesignation = view.findViewById(R.id.designation);
-        etphoneNo = view.findViewById(R.id.phoneNo);
-        etaddress = view.findViewById(R.id.address);
-        etpaymentType = view.findViewById(R.id.paymentType);
-        etallowHoliday = view.findViewById(R.id.allowHolidays);
-        etpin = view.findViewById(R.id.pin);
-        etoverTimeAllow = view.findViewById(R.id.allowOverTime);
-        etstatus = view.findViewById(R.id.status);
+        etDesignation = view.findViewById(R.id.designation);
+        etPhoneNo = view.findViewById(R.id.phoneNo);
+        etAddress = view.findViewById(R.id.address);
+        etPaymentType = view.findViewById(R.id.paymentType);
+        etAllowHoliday = view.findViewById(R.id.allowHolidays);
+        etPin = view.findViewById(R.id.pin);
+        etOverTimeAllow = view.findViewById(R.id.allowOverTime);
+        etStatus = view.findViewById(R.id.status);
         selectManager = view.findViewById(R.id.selectManager);
         spinner = view.findViewById(R.id.spinner);
         cancelBtn = view.findViewById(R.id.cancelBtn);
 
         loadScreenData();
+        if (Objects.equals(mode, "edit") && employeeId!=null){
+            List<EditText> editTextList = Arrays.asList(
+                    etName, etDesignation, etPhoneNo, etPin, etAddress, etPaymentType, etAllowHoliday, etOverTimeAllow, etStatus
+            );
+            for (EditText et : editTextList) {
+                et.setFocusable(false);
+                et.setFocusableInTouchMode(false);
+                et.setClickable(true);
+            }
+        }
 
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewModel.setName(etName.getText().toString());
-                viewModel.setDesignation(etdesignation.getText().toString());
-                viewModel.setPhoneNo(etphoneNo.getText().toString());
-                viewModel.setAddress(etaddress.getText().toString());
-                viewModel.setPaymentType(etpaymentType.getText().toString());
-                viewModel.setAllowHoliday(etallowHoliday.getText().toString());
-                viewModel.setAllowOverTime(etoverTimeAllow.getText().toString());
-                viewModel.setStatus(etstatus.getText().toString());
-                viewModel.setPin(etpin.getText().toString());
-                selectedManagerId = Objects.equals(mode, "add") ? selectedManagerId : Integer.parseInt(viewModel.getManagerId());
-                viewModel.setManagerId(String.valueOf(selectedManagerId));
-                Employee emp = new Employee();
-                emp.name = etName.getText().toString();
-                emp.designation = etdesignation.getText().toString();
-                emp.phone_no = etphoneNo.getText().toString();
-                emp.address = etaddress.getText().toString();
-                emp.paymentType = etpaymentType.getText().toString();
-                emp.allowHoliday = etallowHoliday.getText().toString();
-                emp.overTimeAllow = etoverTimeAllow.getText().toString();
-                emp.status = etstatus.getText().toString();
-                emp.pin = etpin.getText().toString();
-                viewModel.submitEmployee(emp);
-                viewModel.getResult().observe(getViewLifecycleOwner(), result -> {
-                    if (result != null && !result.isEmpty()) {
-                        Toast.makeText(requireContext(), result, Toast.LENGTH_SHORT).show();
-                    }
+
+                try {
+                    viewModel.setName(etName.getText().toString());
+                    viewModel.setDesignation(etDesignation.getText().toString());
+                    viewModel.setPhoneNo(etPhoneNo.getText().toString());
+                    viewModel.setAddress(etAddress.getText().toString());
+                    viewModel.setPaymentType(etPaymentType.getText().toString());
+                    viewModel.setAllowHoliday(etAllowHoliday.getText().toString());
+                    viewModel.setAllowOverTime(etOverTimeAllow.getText().toString());
+                    viewModel.setStatus(etStatus.getText().toString());
+                    viewModel.setPin(etPin.getText().toString());
+                    selectedManagerId = Objects.equals(mode, "add") ? selectedManagerId : Integer.parseInt(viewModel.getManagerId());
+                    viewModel.setManagerId(String.valueOf(selectedManagerId));
+                    viewModel.updateEmployee();
                     if (listener != null) {
                         listener.OnBackClick();
                     }
-
-                });
+                }catch (Exception e){
+                    showErrorMessage(e.getMessage());
+                }
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -167,22 +171,27 @@ public class EmployeeFragment extends Fragment {
     }
 
     private void loadScreenData() {
+        addEditEmployee.setText(Objects.equals(mode, "add") ? "Add Employee" : "Edit Employee");
         etName.setText(viewModel.getName());
-        etdesignation.setText(viewModel.getDesignation());
-        etphoneNo.setText(viewModel.getPhoneNo());
-        etaddress.setText(viewModel.getAddress());
-        etstatus.setText(viewModel.getStatus());
-        etpaymentType.setText(viewModel.getStatus());
-        etallowHoliday.setText(viewModel.getAllowHoliday());
-        etoverTimeAllow.setText(viewModel.getAllowHoliday());
+        etDesignation.setText(viewModel.getDesignation());
+        etPhoneNo.setText(viewModel.getPhoneNo());
+        etAddress.setText(viewModel.getAddress());
+        etStatus.setText(viewModel.getStatus());
+        etPaymentType.setText(viewModel.getPaymentType());
+        etAllowHoliday.setText(viewModel.getAllowHoliday());
+        etOverTimeAllow.setText(viewModel.getOverTimeAllow());
         selectManager.setVisibility(
                 Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
         );
         spinner.setVisibility(
                 Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
         );
-        etpin.setText(viewModel.getPin());
+        etPin.setText(viewModel.getPin());
         setupManagerSpinner();
+        formValidations();
+        if(!employeeId.isEmpty()&&employeeId!=null){
+            ifManagerLogin();
+        }
     }
 
     private void setupManagerSpinner() {
@@ -224,6 +233,117 @@ public class EmployeeFragment extends Fragment {
                 selectedManagerId = 0;
             }
         });
+    }
+
+    private void formValidations() {
+
+        etName.setOnFocusChangeListener((v, hasFocus) -> {
+            try{
+                if (!hasFocus) {
+                    viewModel.setName(etName.getText().toString());
+                }
+            }catch (Exception e){
+                showErrorMessage(e.getMessage());
+                etName.setError(e.getMessage());
+              //  etName.requestFocus();
+
+            }
+        });
+
+        etDesignation.setOnFocusChangeListener((v, hasFocus) -> {
+            try{
+                if (!hasFocus) {
+                    viewModel.setDesignation(etDesignation.getText().toString());
+                }
+            }catch (Exception e){
+                showErrorMessage(e.getMessage());
+                etDesignation.setError(e.getMessage());
+
+            }
+        });
+        etPhoneNo.setOnFocusChangeListener((v, hasFocus) -> {
+            try{
+                if (!hasFocus) {
+                    viewModel.setPhoneNo(etPhoneNo.getText().toString());
+                }
+            }catch (Exception e){
+                showErrorMessage(e.getMessage());
+                etPhoneNo.setError(e.getMessage());
+
+            }
+        });
+        etAddress.setOnFocusChangeListener((v, hasFocus) -> {
+            try{
+                if (!hasFocus) {
+                    viewModel.setAddress(etAddress.getText().toString());
+                }
+            }catch (Exception e){
+                showErrorMessage(e.getMessage());
+                etAddress.setError(e.getMessage());
+
+            }
+        });
+        etStatus.setOnFocusChangeListener((v, hasFocus) -> {
+            try{
+                if (!hasFocus) {
+                    viewModel.setStatus(etStatus.getText().toString());
+                }
+            }catch (Exception e){
+                showErrorMessage(e.getMessage());
+                etStatus.setError(e.getMessage());
+
+            }
+        });
+
+        etPaymentType.setOnFocusChangeListener((v, hasFocus) -> {
+            try{
+                if (!hasFocus) {
+                    viewModel.setPaymentType(etPaymentType.getText().toString());
+                }
+            }catch (Exception e){
+                showErrorMessage(e.getMessage());
+                etPaymentType.setError(e.getMessage());
+
+            }
+        });
+
+
+        etPin.setOnFocusChangeListener((v, hasFocus) -> {
+            try{
+                if (!hasFocus) {
+                    viewModel.setPin(etPin.getText().toString());
+                }
+            }catch (Exception e){
+                showErrorMessage(e.getMessage());
+                etPin.setError(e.getMessage());
+            }
+        });
+    }
+
+    private void showErrorMessage(String message) {
+        Toast.makeText(requireActivity(), message, LENGTH_SHORT).show();
+    }
+    private void ifManagerLogin(){
+        etName.setText(viewModel.getName());
+        etDesignation.setText(viewModel.getDesignation());
+        etPhoneNo.setText(viewModel.getPhoneNo());
+        etAddress.setText(viewModel.getAddress());
+        etStatus.setText(viewModel.getStatus());
+        etPaymentType.setText(viewModel.getPaymentType());
+        etAllowHoliday.setText(viewModel.getAllowHoliday());
+        etOverTimeAllow.setText(viewModel.getOverTimeAllow());
+        selectManager.setVisibility(
+                Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
+        );
+        spinner.setVisibility(
+                Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
+        );
+        etPin.setText(viewModel.getPin());
+        addEditEmployee.setText(employeeId!=null && !employeeId.isEmpty() ? "Employee Details":null);
+        updateBtn.setVisibility(View.GONE);
+
+
+
     }
 
 

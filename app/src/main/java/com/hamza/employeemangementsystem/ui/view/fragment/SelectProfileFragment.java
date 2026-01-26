@@ -129,13 +129,6 @@ public class SelectProfileFragment extends Fragment {
                 if(listener!=null){
                     listener.OnAddClick();
                 }
-//                Fragment fragment= EmployeeFragment.newInstance("add",null);
-//                requireActivity()
-//                        .getSupportFragmentManager()
-//                        .beginTransaction()
-//                        .replace(R.id.fragmentContainer, fragment)
-//                        .addToBackStack(null)
-//                        .commit();
             }
         });
 

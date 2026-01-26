@@ -51,10 +51,9 @@
         app:layout_constraintTop_toBottomOf="@+id/header">
 
         <LinearLayout
-            android:layout_width="409dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="1dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +61,7 @@
             app:layout_constraintTop_toBottomOf="@+id/header">
 
             <TextView
-                android:id="@+id/addEmployee"
+                android:id="@+id/addEditEmployee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -70,177 +69,286 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" *"
+                    android:textColor="#FF0000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
+            </LinearLayout>
             <EditText
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="12dp"
                 android:background="#EEF1FF"
+                android:inputType="textPersonName"
                 android:padding="14dp"
-                android:text="" />
+                android:text=""
+                android:hint="Ali"/>
 
             <!-- DESIGNATION -->
 
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Designation" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" *"
+                android:textColor="#FF0000"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
 
             <EditText
                 android:id="@+id/designation"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="12dp"
                 android:background="#EEF1FF"
                 android:padding="14dp"
-                android:text="" />
+                android:inputType="text"
+                android:text=""
+                android:hint="Employee"/>
 
             <!-- PHONE -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Phone No" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone Number" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" *"
+                    android:textColor="#FF0000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-            <!-- ADDRES -->
+
             <EditText
                 android:id="@+id/phoneNo"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="12dp"
                 android:background="#EEF1FF"
                 android:inputType="phone"
                 android:padding="14dp"
-                android:text="" />
+                android:text=""
+                android:hint="12345678910"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Address" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Address" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" *"
+                    android:textColor="#FF0000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
             <EditText
                 android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="12dp"
                 android:background="#EEF1FF"
+                android:inputType="textPostalAddress"
                 android:padding="14dp"
-                android:text="" />
+                android:text=""
+                android:hint="House no 1 Street no 1 ....."/>
             <!-- STATUS -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Status" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" *"
+                    android:textColor="#FF0000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
 
             <EditText
                 android:id="@+id/status"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="20dp"
+                android:inputType="text"
                 android:background="#EEF1FF"
                 android:padding="14dp"
-                android:text="" />
+                android:text=""
+                android:hint="Active / InActive"/>
 
             <!-- PAYMENT -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Payment Type" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Paymetn Type" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" *"
+                    android:textColor="#FF0000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
 
             <EditText
                 android:id="@+id/paymentType"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="12dp"
+                android:inputType="text"
                 android:background="#EEF1FF"
                 android:padding="14dp"
-                android:text="" />
+                android:text=""
+                android:hint="Daily / Weekly / Monthly"/>
 
             <!-- HOLIDAYS -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Allow Holiday" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Allow Holidays" />
+
 
             <EditText
                 android:id="@+id/allowHolidays"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="12dp"
                 android:background="#EEF1FF"
                 android:inputType="number"
                 android:padding="14dp"
-                android:text="" />
+                android:text=""
+                android:hint="0"/>
 
             <!-- WORKING HOURS -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Allow Over Time" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Over Time Allow" />
+
+
             <EditText
                 android:id="@+id/allowOverTime"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="12dp"
                 android:background="#EEF1FF"
+                android:inputType="number"
                 android:padding="14dp"
-                android:text="" />
+                android:text=""
+                android:hint="0"/>
+
             <TextView
                 android:id="@+id/selectManager"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Select Manager"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="20dp"
+                android:background="#EEF1FF"
                 android:text="Select Manager"
                 android:textColor="@color/black"
-                android:background="#EEF1FF"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pin" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pin" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" *"
+                    android:textColor="#FF0000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
 
             <EditText
                 android:id="@+id/pin"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginBottom="20dp"
                 android:background="#EEF1FF"
+                android:inputType="number"
                 android:padding="14dp"
-                android:text="" />
-
-<!--            <Button-->
-<!--                android:id="@+id/saveBtn"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="56dp"-->
-<!--                android:background="#2051E5"-->
-<!--                android:text="Save"-->
-<!--                android:textColor="#FFFFFF"-->
-<!--                android:textSize="18sp"-->
-<!--                />-->
-
-            <!-- UPDATE BUTTON -->
-<!--            <Button-->
-<!--                android:id="@+id/updateBtn"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="56dp"-->
-<!--                android:background="#2051E5"-->
-<!--                android:text="Update"-->
-<!--                android:textColor="#FFFFFF"-->
-<!--                android:textSize="18sp" />-->
-
-
+                android:maxLength="4"
+                android:text=""
+                android:hint="0000"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -251,16 +359,16 @@
                     android:id="@+id/cancelBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#2051E5"
                     android:layout_weight="1"
+                    android:backgroundTint="#2051E5"
                     android:text="Cancel" />
 
                 <Button
                     android:id="@+id/updateBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#2051E5"
                     android:layout_weight="1"
+                    android:backgroundTint="#2051E5"
                     android:text="Update" />
             </LinearLayout>
 
