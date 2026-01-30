@@ -189,7 +189,7 @@ public class EmployeeFragment extends Fragment {
         etPin.setText(viewModel.getPin());
         setupManagerSpinner();
         formValidations();
-        if(!employeeId.isEmpty()&&employeeId!=null){
+        if(employeeId!= null){
             ifManagerLogin();
         }
     }

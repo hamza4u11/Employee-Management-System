@@ -12,6 +12,7 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
 
 
     public AttendanceRepositoryImp(DBHandler dbHandler) {
+
         this.dbHandler = dbHandler;
     }
 

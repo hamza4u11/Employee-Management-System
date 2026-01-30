@@ -20,12 +20,12 @@ import java.util.List;
 
 public class myAdapter extends RecyclerView.Adapter<myAdapter.holder> {
 
-
     private List<Employee> list = new ArrayList<>();
     private Context context;
     private final EmployeeClickHandler listener;
     public myAdapter(EmployeeClickHandler listener) {
-        this.listener =listener;
+
+        this.listener = listener;
     }
     public void setList( List<Employee> newList) {
         this.list = newList;
@@ -54,11 +54,7 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.holder> {
                 this.listener.onItemClick(employee);
             }
         });
-
-
     }
-
-
     @Override
     public int getItemCount() {
         return list == null ? 0 : list.size();

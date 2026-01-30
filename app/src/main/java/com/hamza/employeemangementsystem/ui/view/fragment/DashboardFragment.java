@@ -35,7 +35,7 @@ public class DashboardFragment extends Fragment {
 
     TextView txtName,seesion, label, status ,seeionLabel;
     LinearLayout hideAdminButtons ;
-    Button checkInButton, checkOutButton, logoutBtn, manageEmployeesBtn ;
+    Button checkInButton, checkOutButton, logoutBtn, manageEmployeesBtn, attendenceReportsBtn ;
 
     public interface  OnEventClickListener{
        void OnManageEmployeesClick( String adminOrManager,  String addBtnForAdmin);
@@ -108,6 +108,7 @@ public class DashboardFragment extends Fragment {
         checkOutButton = view.findViewById(R.id.checkOutbutton);
         logoutBtn = view.findViewById(R.id.logoutBtn);
         manageEmployeesBtn= view.findViewById(R.id.manageEmployeesBtn);
+        attendenceReportsBtn= view.findViewById(R.id.attendenceReports);
 
 
 
@@ -148,6 +149,17 @@ public class DashboardFragment extends Fragment {
                 if(listener!=null){
                     listener.OnManageEmployeesClick(addBtnForAdmin,adminOrManager);
                 }
+            }
+        });
+        attendenceReportsBtn.setOnClickListener(new View.OnClickListener (){
+
+            @Override
+            public void onClick(View v) {
+                ReportFragment fragment= new ReportFragment();
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, fragment )
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 

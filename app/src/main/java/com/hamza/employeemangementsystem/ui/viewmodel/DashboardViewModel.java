@@ -34,6 +34,7 @@ public class DashboardViewModel extends ViewModel {
 
 
     public LiveData<Boolean> openSelectProfile() {
+
         return openSelectProfile;
     }
 
@@ -48,8 +49,6 @@ public class DashboardViewModel extends ViewModel {
         Employee employee = employeeRepo.getEmployeeById(id);
         Log.d("Employee Designation", employee.designation);
         Attendance record = repository.getLastAttendance(id);
-//        Log.d("Checkinn time","" +record.checkInTime );
-//        Log.d("Checkout time","" +record.checkOutTime );
         statusText = "";
         seesionText="";
         checkInOutText="";
@@ -76,12 +75,7 @@ public class DashboardViewModel extends ViewModel {
             isLayoutEnabled=false;
             isAdmin=false;
             seesionLabel="Start Seesion";
-
         }
-
-
-
-
         return record;
     }
     public Boolean getIsAdmin(){
@@ -141,11 +135,8 @@ public class DashboardViewModel extends ViewModel {
         }
         repository.updateAttendance(attendance);
     }
-    public void logout(){
+    public void logout() {
         Globals.getShared().setEmployee(null);
         openSelectProfile.setValue(true);
     }
-
-
-
 }

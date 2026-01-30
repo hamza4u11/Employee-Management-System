@@ -18,7 +18,9 @@ import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Employee;
+import com.hamza.employeemangementsystem.data.model.Report;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
+import com.hamza.employeemangementsystem.data.repository.ReportsRepositoryImp;
 import com.hamza.employeemangementsystem.ui.view.fragment.DashboardFragment;
 import com.hamza.employeemangementsystem.ui.view.fragment.EmployeeFragment;
 import com.hamza.employeemangementsystem.ui.view.fragment.SelectProfileFragment;
@@ -28,7 +30,6 @@ import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
 import com.hamza.employeemangementsystem.utils.DateTimeUtlis;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private SelectProfileViewModel selectProfileViewModel;
     private EmployeeRepositoryImp employeeRepositoryImp;
     private EmployeeViewModel employeeViewModel;
+
+
 
 
     private DBHandler dbHandler;
@@ -51,11 +54,10 @@ public class MainActivity extends AppCompatActivity {
        // openEmployeeScreen();
         DBHandler<Employee> employeeDBHandler = new DBHandler<>(this);
         employeeViewModel = new EmployeeViewModel(employeeDBHandler,null);
-//        employeeRepositoryImp = new EmployeeRepositoryImp(employeeDBHandler);
-       // testGetMangers();
-       // testGetAllManagers();
-        //testGetMangers();
+        DBHandler<Report> reportDBHandler=new DBHandler<>(this);
 
+//       int  reportsSize= reportViewModel.getAllReports().size();
+//       Log.d("Reports Size", String.valueOf(reportsSize));
         }
 
 
