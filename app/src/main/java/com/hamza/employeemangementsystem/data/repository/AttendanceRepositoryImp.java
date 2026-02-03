@@ -50,23 +50,14 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
         return true;
     }
 
-    //    public Attendance getAttendanceByCriteria(String id){
-//        AttendanceConverter attendanceConverter = new AttendanceConverter();
-//        String criteria = " empId = "+ id +" AND checkIntime NOT NULL AND checkOutTime IS NULL ORDER BY checkInTime DESC LIMIT 1";
-//        return (Attendance) dbHandler.getRecordByCriteria(criteria, attendanceConverter);
-//    }
-//    public  void insertAttendance(Attendance attendance){
-//        AttendanceConverter attendanceConverter = new AttendanceConverter();
-//         dbHandler.createRecord(attendance,attendanceConverter);
-//
-//    }
-//    @Override
-//    public void updateAttendance(int id, Attendance attendance){
-//        AttendanceConverter attendanceConverter = new AttendanceConverter();
-//        dbHandler.updateRecord(id, attendance, attendanceConverter);
-//
-//
-//
-//    }
+        public List<Attendance> getAttendanceByCriteria(String startDate, String endDate, String employeeId, String loginId){
+        AttendanceConverter attendanceConverter = new AttendanceConverter();
+        String criteria = " empId = "+ employeeId +" AND date BETWEEN '"+ startDate + "' AND '" + endDate +"'";
+//            SELECT *
+//                    FROM attendance
+//            WHERE empId = '2' AND date  BETWEEN '2026-01-20' AND '2026-01-29'
+        return  dbHandler.getRecordByCriteria(criteria,null, attendanceConverter);
+    }
+
 
 }

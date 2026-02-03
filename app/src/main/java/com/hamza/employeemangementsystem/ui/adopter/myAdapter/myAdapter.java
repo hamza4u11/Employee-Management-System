@@ -24,7 +24,6 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.holder> {
     private Context context;
     private final EmployeeClickHandler listener;
     public myAdapter(EmployeeClickHandler listener) {
-
         this.listener = listener;
     }
     public void setList( List<Employee> newList) {

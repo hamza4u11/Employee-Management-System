@@ -1,57 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="14dp"
-    app:cardElevation="2dp"
-    app:cardUseCompatPadding="true">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:id="@+id/employeeId"
-        android:weightSum="1">
+        android:layout_height="wrap_content">
 
-        <!-- USER ICON -->
-        <ImageView
-            android:id="@+id/img1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/report"
-            app:tint="@android:color/black" />
-
-        <!-- TEXT CONTAINER -->
         <LinearLayout
-            android:layout_width="216dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
+            android:layout_margin="10dp"
             android:orientation="vertical">
 
-            <!-- NAME -->
-
-            <!-- ROLE -->
-            <TextView
-                android:id="@+id/txtReport"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:text="Alice Smith"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
+                android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/reportName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Hamza"
+                    android:textSize="20dp"
+                    android:textStyle="italic" />
 
+                <TextView
+                    android:id="@+id/reportDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="29-01-26"
+                    android:textSize="20dp"
+                    android:textStyle="italic" />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/checkInLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Check In Time"
+                    android:textSize="20dp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/checkInTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="29-01-26"
+                    android:textSize="20dp"
+                    android:textStyle="italic" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/checkOutLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Check Out Time"
+                    android:textSize="20dp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/checkOutTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="29-01-26"
+                    android:textSize="20dp"
+                    android:textStyle="italic" />
+            </LinearLayout>
         </LinearLayout>
 
 
-
-
-    </LinearLayout>
-
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

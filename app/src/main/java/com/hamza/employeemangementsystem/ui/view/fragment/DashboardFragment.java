@@ -152,14 +152,11 @@ public class DashboardFragment extends Fragment {
             }
         });
         attendenceReportsBtn.setOnClickListener(new View.OnClickListener (){
-
             @Override
             public void onClick(View v) {
-                ReportFragment fragment= new ReportFragment();
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainer, fragment )
-                        .addToBackStack(null)
-                        .commit();
+                if(listener!=null){
+                    listener.OnReportsClick();
+                }
             }
         });
 

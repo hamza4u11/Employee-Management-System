@@ -177,8 +177,6 @@ public class DBHandler <T> extends SQLiteOpenHelper {
     public void deleteRecord(int id, IConvertHelper convertHelper){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + convertHelper.getEntityName() + " WHERE id = " + id);
-
-
     }
 
     public T getLastRecord(String id, IConvertHelper convertHelper) {

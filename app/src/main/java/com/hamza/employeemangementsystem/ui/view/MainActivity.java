@@ -1,6 +1,7 @@
 package com.hamza.employeemangementsystem.ui.view;
 
 import static android.content.ContentValues.TAG;
+import static android.widget.Toast.LENGTH_SHORT;
 
 import android.app.Dialog;
 import android.database.Cursor;
@@ -17,18 +18,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.model.Report;
+import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
-import com.hamza.employeemangementsystem.data.repository.ReportsRepositoryImp;
+import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ItemClickHandler;
 import com.hamza.employeemangementsystem.ui.view.fragment.DashboardFragment;
 import com.hamza.employeemangementsystem.ui.view.fragment.EmployeeFragment;
+import com.hamza.employeemangementsystem.ui.view.fragment.ListFragment;
+import com.hamza.employeemangementsystem.ui.view.fragment.ReportFragment;
 import com.hamza.employeemangementsystem.ui.view.fragment.SelectProfileFragment;
 import com.hamza.employeemangementsystem.ui.viewmodel.DashboardViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
+import com.hamza.employeemangementsystem.ui.viewmodel.ReportViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
 import com.hamza.employeemangementsystem.utils.DateTimeUtlis;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
@@ -41,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private EmployeeViewModel employeeViewModel;
 
 
+    ArrayList<String> list;
 
 
     private DBHandler dbHandler;
@@ -50,25 +58,71 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        openSelectProfileScreen(null, null);
+        list = new ArrayList<>();
+        list.add("Hamza");
+        list.add("Abdullah");
+        list.add("Salman");
+        list.add("Rabeet");
+        list.add("Ahmad Raza");
+        list.add("Asif");
+       // testinglistFargment( list ,"Students");
+        testingReportFragment("startDate", "endDate", "employeeId", "loginId");
+       // testingReportFragment(null,null,null,null);
+       // openSelectProfileScreen(null, null);
        // openEmployeeScreen();
-        DBHandler<Employee> employeeDBHandler = new DBHandler<>(this);
-        employeeViewModel = new EmployeeViewModel(employeeDBHandler,null);
-        DBHandler<Report> reportDBHandler=new DBHandler<>(this);
+        DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(this);
+        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(attendanceDBHandler);
+        ReportViewModel viewModel = new ReportViewModel(attendanceDBHandler);
+        int reportsSize=viewModel.getReportsByCriteria("2026-01-15","2026-01-29","2",null).size();
+        Log.d("TAG", String.valueOf(reportsSize));
 
-//       int  reportsSize= reportViewModel.getAllReports().size();
-//       Log.d("Reports Size", String.valueOf(reportsSize));
         }
 
+    private void testinglistFargment(ArrayList<String> list, String title) {
+        ListFragment fragment = ListFragment.newInstance(list,title);
+        fragment.setListener(new ItemClickHandler (){
+            @Override
+            public void ViewReportClick(String itemName) {
+             Toast.makeText(MainActivity.this,itemName,LENGTH_SHORT).show();
 
-        private void openEmployeeScreen(String mode , String employeeId){
+//                if(Objects.equals(itemName, "Today Attendance")){
+//                    Toast.makeText(MainActivity.this,"Today",LENGTH_SHORT).show();
+//
+//                }else if (Objects.equals(itemName, "Attendance By Employee")){
+//                    Toast.makeText(MainActivity.this,"Employee",LENGTH_SHORT).show();
+//
+//                }else if (Objects.equals(itemName, "All Month Attendance")){
+//                    Toast.makeText(MainActivity.this,"Month",LENGTH_SHORT).show();
+//
+//                }else if (Objects.equals(itemName,"One Week Attendance")){
+//                    Toast.makeText(MainActivity.this,"Week",LENGTH_SHORT).show();
+//
+//                }else if (Objects.equals(itemName, "Manager Attendance")){
+//                    Toast.makeText(MainActivity.this,"Manager",LENGTH_SHORT).show();
+//
+//                }else if(Objects.equals(itemName,"Attendance By Date")){
+//                    Toast.makeText(MainActivity.this,"Date",LENGTH_SHORT).show();
+//
+//                }
+
+                //openSelectProfileScreen(null,null);
+            }
+        });
+        MainActivity.this
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void openEmployeeScreen(String mode , String employeeId){
             Log.d("openEmployeeScreen", mode );
         EmployeeFragment fragment =  EmployeeFragment.newInstance(mode,employeeId);
         fragment.setListener(new EmployeeFragment.OnEventClickListener(){
             @Override
             public void OnBackClick() {
                 Log.d("Click from employee fragment", "clicked ");
-
                 String screenMode= Objects.equals(Globals.getShared().getEmployee().designation, "admin") ? "add":null;
                 String _managerId= null ;
                 openSelectProfileScreen(screenMode,_managerId);
@@ -92,10 +146,48 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void OnReportsClick() {
+              //  openReportsScreen();
             }
             @Override
             public void OnLogoutClick() {
                 openSelectProfileScreen(null,null);
+            }
+        });
+        MainActivity.this
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void openReportsScreen(ArrayList<String> criteria) {
+
+        ListFragment fragment = ListFragment.newInstance(criteria,null);
+        fragment.setListener(new ItemClickHandler (){
+            @Override
+            public void ViewReportClick(String itemName) {
+                if(Objects.equals(itemName, "Today Attendance")){
+                    Toast.makeText(MainActivity.this,"Today",LENGTH_SHORT).show();
+
+                }else if (Objects.equals(itemName, "Attendance By Employee")){
+                    Toast.makeText(MainActivity.this,"Employee",LENGTH_SHORT).show();
+
+                }else if (Objects.equals(itemName, "All Month Attendance")){
+                    Toast.makeText(MainActivity.this,"Month",LENGTH_SHORT).show();
+
+                }else if (Objects.equals(itemName,"One Week Attendance")){
+                    Toast.makeText(MainActivity.this,"Week",LENGTH_SHORT).show();
+
+                }else if (Objects.equals(itemName, "Manager Attendance")){
+                    Toast.makeText(MainActivity.this,"Manager",LENGTH_SHORT).show();
+
+                }else if(Objects.equals(itemName,"Attendance By Date")){
+                    Toast.makeText(MainActivity.this,"Date",LENGTH_SHORT).show();
+
+                }
+
+                //openSelectProfileScreen(null,null);
             }
         });
         MainActivity.this
@@ -139,15 +231,13 @@ public class MainActivity extends AppCompatActivity {
                             pin = "" + pinOne + pinSecond + pinThird + pinFourth;
                             Log.d("PIN", pin);
                             Log.d("PIN", employee.pin);
-                            int duration = Toast.LENGTH_SHORT;
+                            int duration = LENGTH_SHORT;
                             if (Integer.parseInt(pin) == Integer.parseInt(employee.pin)) {
                                 Log.d("Designation", employee.designation);
                                 Globals.getShared().setEmployee(employee);
 
                                 openDashboardScreen();
                                 dialog.cancel();
-
-
                             } else {
                                 Toast.makeText(MainActivity.this, "INVALID USER", duration).show();
                             }
@@ -161,13 +251,11 @@ public class MainActivity extends AppCompatActivity {
                     });
                     dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                     dialog.show();
-                    Toast.makeText(MainActivity.this,"Employee Clicked :"+employee.name, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this,"Employee Clicked :"+employee.name, LENGTH_SHORT).show();
                 }else{
                       openEmployeeScreen("edit",String.valueOf(employee.id));
                 }
-
             }
-
             @Override
             public void OnAddClick() {
                 String mode = Objects.equals(Globals.getShared().getEmployee().designation, "admin") ? "add" : "edit";
@@ -182,7 +270,15 @@ public class MainActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .commit();
     }
-
+    private void testingReportFragment(String startDate, String endDate, String employeeId, String loginId){
+        ReportFragment reportFragment = ReportFragment.newInstance(startDate,endDate,employeeId,loginId);
+        MainActivity.this
+                .getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer,reportFragment)
+                .addToBackStack(null)
+                .commit();
+    }
     private void testCheckInFunction(){
         dashboardViewModel.checkIn(String.valueOf(5));
 
