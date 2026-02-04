@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.StringDef;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +14,15 @@ import android.view.ViewGroup;
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
+import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.model.Report;
+import com.hamza.employeemangementsystem.ui.adopter.myAdapter.EmployeeClickHandler;
+import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ListAdapter;
+import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ReportAdapter;
+import com.hamza.employeemangementsystem.ui.adopter.myAdapter.myAdapter;
 import com.hamza.employeemangementsystem.ui.viewmodel.ReportViewModel;
+
+import java.sql.ClientInfoStatus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,10 +37,13 @@ public class ReportFragment extends Fragment {
     private static final String ARG_PARAM2 = "endDate";
     private static final String ARG_PARAM3 = "employeeId";
     private static final String ARG_PARAM4 = "loginEmployeeId";
+    RecyclerView ReportRecyclerView;
+    ReportAdapter adapter;
+    ReportViewModel reportViewModel;
 
 
-    DBHandler<Attendance> dbHandler = new DBHandler<>(getActivity());
-    ReportViewModel reportViewModel = new ReportViewModel(dbHandler);
+
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -71,6 +83,8 @@ public class ReportFragment extends Fragment {
             mParam3 = getArguments().getString(ARG_PARAM3);
             mParam4 = getArguments().getString(ARG_PARAM4);
         }
+        DBHandler<Attendance> dbHandler = new DBHandler<>(getActivity());
+         reportViewModel = new ReportViewModel(dbHandler,mParam1,mParam2, mParam3, mParam4);
     }
 
     @Override
@@ -78,10 +92,22 @@ public class ReportFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_report, container, false);
+        ReportRecyclerView = view.findViewById(R.id.reportsRecyclerView);
+        ReportAdapter adapter = new ReportAdapter(getContext());
+        ReportRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        ReportRecyclerView.setAdapter(adapter);
+        reportViewModel.getAllReports().observe(getActivity(), reports -> {
+            adapter.setList(reports);
+        });
         return view;
+
+
     }
-    public void crtieraReports(String startDate , String endDate, String employeeId, String loginEmployeeId ) {
-        reportViewModel.getReportsByCriteria(startDate, endDate, employeeId, loginEmployeeId);
-    }
+
+
+
+//    public void crtieraReports(String startDate , String endDate, String employeeId, String loginEmployeeId ) {
+//        reportViewModel.getReportsByCriteria(startDate, endDate, employeeId, loginEmployeeId);
+//    }
 
 }

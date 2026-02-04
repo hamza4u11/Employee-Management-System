@@ -18,12 +18,12 @@ import java.util.concurrent.TimeUnit;
 public class DateTimeUtlis {
     private static DateTimeUtlis shared= new DateTimeUtlis();
 
-    private  String dbDataTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS";
+    private  String dbDateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS";
 
     public  Date convertStringToDateTime(String dateTime) {
         try {
             SimpleDateFormat sdf =
-                    new SimpleDateFormat(dbDataTimeFormat, Locale.getDefault());
+                    new SimpleDateFormat(dbDateTimeFormat, Locale.getDefault());
             return sdf.parse(dateTime);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -84,7 +84,7 @@ public class DateTimeUtlis {
     public String calculateDurationBetween(String date1, String date2) {
 
         SimpleDateFormat inputFormat =
-                new SimpleDateFormat(dbDataTimeFormat, Locale.getDefault());
+                new SimpleDateFormat(dbDateTimeFormat, Locale.getDefault());
 
         try {
             Date startDate = inputFormat.parse(date1);
@@ -121,8 +121,29 @@ public class DateTimeUtlis {
     public String getNow(){
         Date now = new Date();
         SimpleDateFormat inputFormat =
-                new SimpleDateFormat(dbDataTimeFormat, Locale.getDefault());
+                new SimpleDateFormat(dbDateTimeFormat, Locale.getDefault());
         return inputFormat.format(now);
+    }
+    public static String dateTimeToSimpleTime(String dateTime) {
+        try {
+            SimpleDateFormat inputFormat =
+                    new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault());
+
+            SimpleDateFormat outputFormat =
+                    new SimpleDateFormat("hh:mm a", Locale.getDefault());
+
+            Date date = inputFormat.parse(dateTime);
+            return outputFormat.format(date);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    public String convertStringToTime(String dateTime){
+      return formatDateTime(  convertStringToDateTime(dateTime),"h:mm a");
+
+
     }
 
 

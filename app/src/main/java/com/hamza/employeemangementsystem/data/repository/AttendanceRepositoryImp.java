@@ -1,5 +1,7 @@
 package com.hamza.employeemangementsystem.data.repository;
 
+import android.util.Log;
+
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.domain.AttendanceRepository;
@@ -52,11 +54,11 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
 
         public List<Attendance> getAttendanceByCriteria(String startDate, String endDate, String employeeId, String loginId){
         AttendanceConverter attendanceConverter = new AttendanceConverter();
+        String selectClause = "* , (Select name from employees where id = attendance.empId ) as \"name\", (Select status from employees where id = attendance.empId ) as \"status\"";
         String criteria = " empId = "+ employeeId +" AND date BETWEEN '"+ startDate + "' AND '" + endDate +"'";
-//            SELECT *
-//                    FROM attendance
-//            WHERE empId = '2' AND date  BETWEEN '2026-01-20' AND '2026-01-29'
-        return  dbHandler.getRecordByCriteria(criteria,null, attendanceConverter);
+//        int reportSize=  dbHandler.getRecordByCriteria(criteria,null, attendanceConverter).size();
+//            Log.d("ReportSize Repo",  String.valueOf(reportSize));
+        return  dbHandler.getRecordByCriteria( selectClause,criteria,null, attendanceConverter);
     }
 
 

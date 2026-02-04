@@ -29,12 +29,12 @@ public class SelectProfileViewModel extends ViewModel {
 
         employees.setValue(repository.getAllEmployees());
     }
+    public LiveData<List<Employee>> getAllEmployees() {
+          return employees;
+    }
     public Employee getEmployeeById(String id){
         return repository.getEmployeeById(id);
 
-    }
-    public LiveData<List<Employee>> getAllEmployees() {
-          return employees;
     }
 //    private void loadManagers() {
 //

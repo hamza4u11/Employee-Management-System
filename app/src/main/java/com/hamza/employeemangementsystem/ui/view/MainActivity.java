@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
@@ -23,6 +24,7 @@ import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.model.Report;
 import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
+import com.hamza.employeemangementsystem.ui.AttendanceConverter;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ItemClickHandler;
 import com.hamza.employeemangementsystem.ui.view.fragment.DashboardFragment;
 import com.hamza.employeemangementsystem.ui.view.fragment.EmployeeFragment;
@@ -66,15 +68,19 @@ public class MainActivity extends AppCompatActivity {
         list.add("Ahmad Raza");
         list.add("Asif");
        // testinglistFargment( list ,"Students");
-        testingReportFragment("startDate", "endDate", "employeeId", "loginId");
+      testingReportFragment("2026-01-15","2026-01-29","2",null);
+      //  testingCriteriaFunctionDb("* , (Select name from employees where id = attendance.empId ) as \"name\", (Select status from employees where id = attendance.empId ) as \"status\"", "empId= 2 and date Between '2026-01-15' and '2026-01-29'", null);
+      //  testDateFunction("2026-01-19T16:40:27.548762");
        // testingReportFragment(null,null,null,null);
        // openSelectProfileScreen(null, null);
        // openEmployeeScreen();
-        DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(this);
-        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(attendanceDBHandler);
-        ReportViewModel viewModel = new ReportViewModel(attendanceDBHandler);
-        int reportsSize=viewModel.getReportsByCriteria("2026-01-15","2026-01-29","2",null).size();
-        Log.d("TAG", String.valueOf(reportsSize));
+//        DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(this);
+//        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(attendanceDBHandler);
+
+//      ReportViewModel viewModel = new ReportViewModel(attendanceDBHandler,"2026-01-15","2026-01-29","2",null);
+//      viewModel.getAllReports();
+//        int reportsSize=viewModel.getReportsByCriteria("2026-01-15","2026-01-29","2",null).size();
+//        Log.d("TAG", String.valueOf(reportsSize));
 
         }
 
@@ -338,6 +344,22 @@ public class MainActivity extends AppCompatActivity {
     public void testGetAllManagers(){
         int size =employeeRepositoryImp.getAllManagers().size();
         Log.d("testGetAllManagers: ", String.valueOf(size));
+
+
+    }
+    public void testDateFunction(String date){
+       Date date1 =  DateTimeUtlis.getShared().convertStringToDateTime(date);
+       String time = DateTimeUtlis.getShared().formatDateTime(date1, "h:mm a ");
+        Log.d("Date", ""+ date1);
+        Log.d("Time", " " + time);
+    }
+    private void testingCriteriaFunctionDb(String select, String criteria , String orderBy){
+        DBHandler<Attendance> dbHandler1= new DBHandler<>(this);
+        AttendanceConverter attendanceConverter = new AttendanceConverter();
+        int size = dbHandler1.getRecordByCriteria(select, criteria,orderBy,attendanceConverter).size();
+        Log.d("Size of Records"," " + size);
+
+
 
 
     }

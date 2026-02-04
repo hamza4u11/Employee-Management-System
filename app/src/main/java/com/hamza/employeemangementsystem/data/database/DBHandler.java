@@ -194,9 +194,9 @@ public class DBHandler <T> extends SQLiteOpenHelper {
         }
         return model;
     }
-    public List<T> getRecordByCriteria(String criteria,String orderBy,  IConvertHelper convertHelper) {
+    public List<T> getRecordByCriteria(String selectClause , String criteria,String orderBy,  IConvertHelper convertHelper) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT *  FROM " + convertHelper.getEntityName() + " WHERE " + criteria ;
+        String query = "SELECT " + selectClause + "  FROM " + convertHelper.getEntityName() + " WHERE " + criteria ;
         if(orderBy != null && !orderBy.isEmpty()){
             query= query + " ORDER BY " +  orderBy;
         }
@@ -213,6 +213,9 @@ public class DBHandler <T> extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
         }
         return models;
+    }
+    public List<T> getRecordByCriteria(String criteria,String orderBy,  IConvertHelper convertHelper) {
+            return  getRecordByCriteria(" * " , criteria ,orderBy , convertHelper);
     }
 
     public T getRecordById(String id, IConvertHelper convertHelper) {

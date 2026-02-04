@@ -35,7 +35,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String item = list.get(position);
-        holder.txtReport.setText(list.get(position));
+        holder.txtList.setText(list.get(position));
         holder.itemView.setOnClickListener(new View.OnClickListener (){
             @Override
             public void onClick(View v) {
@@ -57,11 +57,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtReport;
+        TextView txtList;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtReport = itemView.findViewById(R.id.txtReport);
+            txtList = itemView.findViewById(R.id.txtList);
         }
     }
 }
