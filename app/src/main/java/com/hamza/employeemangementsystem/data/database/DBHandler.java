@@ -194,7 +194,7 @@ public class DBHandler <T> extends SQLiteOpenHelper {
         }
         return model;
     }
-    public List<T> getRecordByCriteria(String selectClause , String criteria,String orderBy,  IConvertHelper convertHelper) {
+    public List<T>  getRecordByCriteria(String selectClause , String criteria,String orderBy,  IConvertHelper convertHelper) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT " + selectClause + "  FROM " + convertHelper.getEntityName() + " WHERE " + criteria ;
         if(orderBy != null && !orderBy.isEmpty()){

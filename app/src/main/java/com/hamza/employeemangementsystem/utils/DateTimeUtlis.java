@@ -5,11 +5,14 @@ import android.util.Log;
 
 import com.hamza.employeemangementsystem.data.Globals;
 
+import java.security.PublicKey;
 import java.sql.Time;
 import java.text.ParseException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -142,8 +145,27 @@ public class DateTimeUtlis {
     }
     public String convertStringToTime(String dateTime){
       return formatDateTime(  convertStringToDateTime(dateTime),"h:mm a");
-
-
+    }
+    public LocalDate todayDate(){
+        LocalDate today = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            today = LocalDate.now();
+        }
+        return today;
+    }
+    public LocalDate oneWeekPreviousDate() {
+        LocalDate dateBeforeOneWeek = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+             dateBeforeOneWeek = todayDate().minus(1, ChronoUnit.WEEKS);
+        }
+        return  dateBeforeOneWeek;
+    }
+    public LocalDate oneMonthPreviousDate(){
+        LocalDate dateBeforeOneMonth = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            dateBeforeOneMonth = todayDate().minusMonths(1);
+        }
+        return dateBeforeOneMonth;
     }
 
 

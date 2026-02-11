@@ -1,5 +1,7 @@
 package com.hamza.employeemangementsystem.ui.viewmodel;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -39,6 +41,10 @@ public class ReportViewModel extends ViewModel {
     public LiveData<List<Attendance>> getAllReports() {
         return reports;
     }
+
+//    public LiveData<List<Attendance>> getReportByDate(){
+//        return reports;
+//    }
 //    public List<Attendance> getReportsByCriteria(String startDate, String endDate, String employeeId, String loginEmployeeId){
 //         return repositoryImp.getAttendanceByCriteria(startDate,endDate,employeeId,loginEmployeeId);
 //    }

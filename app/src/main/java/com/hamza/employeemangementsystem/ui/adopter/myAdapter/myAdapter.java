@@ -66,8 +66,6 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.holder> {
         TextView txtName, txtRole;
         LinearLayout layout;
         Button loginBtn;
-
-
         public holder(@NonNull View itemView) {
             super(itemView);
             img1= itemView.findViewById(R.id.img1);
