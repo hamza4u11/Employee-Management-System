@@ -1,5 +1,6 @@
 package com.hamza.employeemangementsystem.data.repository;
 
+import android.opengl.EGLObjectHandle;
 import android.telephony.mbms.StreamingServiceInfo;
 import android.util.Log;
 
@@ -96,6 +97,8 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
         String selectClause = null, criteria = null, orderBy = null;
         EmployeeRepository employeeRepository = new EmployeeRepositoryImp(dbHandler);
         Employee employee=employeeRepository.getEmployeeById(loginId);
+         Globals.getShared().setEmployee(employee);
+         Log.d("Employee Name", " "+ Globals.getShared().getEmployee().name );
         selectClause = "* , (SELECT e.name FROM employees e WHERE e.id = attendance.empId) AS name ,(SELECT e.status FROM employees e WHERE e.id = attendance.empId ) AS status ";
         String dateCriteria = " date BETWEEN '" + startDate + "' AND '" + endDate +"'";
         String employeeFilterCriteria = (employeeId.isEmpty()?"":" empId ="+employeeId);

@@ -11,8 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
@@ -20,6 +24,8 @@ import com.hamza.employeemangementsystem.ui.adopter.myAdapter.EmployeeClickHandl
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.myAdapter;
 import com.hamza.employeemangementsystem.ui.viewmodel.DashboardViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
+import com.hamza.employeemangementsystem.utils.DateTimeUtlis;
+import com.hamza.employeemangementsystem.utils.DynEditTextDateTimePicker;
 
 import java.util.Objects;
 
@@ -34,13 +40,21 @@ public class SelectProfileFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "modeParam";
     private static final String ARG_PARAM2 = "mangerIdParam";
+    private static final String ARG_PARAM3 = "title";
+
     private SelectProfileViewModel selectProfileViewModel;
     private DashboardViewModel dashboardViewModel; ;
     Button addBtn ;
+    LinearLayout startDateEndDateLayout;
+    EditText etStartDate, etEndDate;
+    TextView titleTxt;
+    String startDate, endDate;
 
     public interface MyOnClickListener{
         void OnItemClick(Employee employee);
         void OnAddClick();
+        void onItemClickWithDate(Employee employee, String startDate, String endDate);
+
     }
     private MyOnClickListener listener;
 
@@ -56,6 +70,8 @@ public class SelectProfileFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String modeParam;
     private String managerIdParam;
+    private String title;
+
 
     public SelectProfileFragment() {
         // Required empty public constructor
@@ -70,11 +86,13 @@ public class SelectProfileFragment extends Fragment {
      * @return A new instance of fragment SelectProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SelectProfileFragment newInstance(String modeParam, String managerIdParam) {
+    public static SelectProfileFragment newInstance(String modeParam, String managerIdParam, String title) {
         SelectProfileFragment fragment = new SelectProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, modeParam);
         args.putString(ARG_PARAM2, managerIdParam);
+        args.putString(ARG_PARAM3, title);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -85,6 +103,8 @@ public class SelectProfileFragment extends Fragment {
         if (getArguments() != null) {
             modeParam = getArguments().getString(ARG_PARAM1);
             managerIdParam = getArguments().getString(ARG_PARAM2);
+            title = getArguments().getString(ARG_PARAM3);
+
         }
         DBHandler<Employee> employeeDBHandler= new DBHandler<>(getActivity());
         selectProfileViewModel = new SelectProfileViewModel(employeeDBHandler);
@@ -99,17 +119,44 @@ public class SelectProfileFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_select_profile, container, false);
         addBtn= view.findViewById(R.id.addBtn);
+        startDateEndDateLayout= view.findViewById(R.id.startDateEndDateLayout);
+        etStartDate = view.findViewById(R.id.etStartDate);
+        etEndDate = view.findViewById(R.id.etEndDate);
+          startDate= DateTimeUtlis.getShared().todayDate().toString();
+            endDate = DateTimeUtlis.getShared().todayDate().toString();
+        titleTxt = view.findViewById(R.id.titleTxt);
+        titleTxt.setText(title);
         addBtn.setVisibility(view.GONE);
         if(Objects.equals(modeParam, "add")) {
             addBtn.setVisibility(view.VISIBLE);
+        }
+        if(Objects.equals(modeParam, "report")) {
+            startDateEndDateLayout.setVisibility(view.VISIBLE);
+            DynEditTextDateTimePicker  dynEditTextDateTimePickerStartDate =new DynEditTextDateTimePicker(getContext(),etStartDate,startDate);
+            dynEditTextDateTimePickerStartDate.setOnlyDate(true);
+            DynEditTextDateTimePicker  dynEditTextDateTimePickerEndDate =new DynEditTextDateTimePicker(getContext(),etEndDate,endDate);
+            dynEditTextDateTimePickerEndDate.setOnlyDate(true);
         }
 
         RecyclerView selectProfile = view.findViewById(R.id.selectProfile);
         EmployeeClickHandler employeeClickHandler = new EmployeeClickHandler() {
             @Override
             public void onItemClick(Employee employee) {
+                startDate = etStartDate.getText().toString();
+                endDate = etEndDate.getText().toString();
+                Log.d("Start", startDate);
+                Log.d("End", endDate);
+
+
                 if(listener!=null){
-                    listener.OnItemClick(employee);
+                    if (Objects.equals(modeParam,"report")){
+                        listener.onItemClickWithDate(employee,startDate,endDate);
+
+                    }else {
+                        listener.OnItemClick(employee);
+                    }
+
+
                     return;
                 }
                 Fragment fragment= EmployeeFragment.newInstance(String.valueOf(employee.id),null);
@@ -121,6 +168,9 @@ public class SelectProfileFragment extends Fragment {
                         .commit();
 
             }
+
+
+
         };
         addBtn.setOnClickListener(new View.OnClickListener() {
 

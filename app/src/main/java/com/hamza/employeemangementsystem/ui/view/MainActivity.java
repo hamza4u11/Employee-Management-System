@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                     testingReportFragment(todayDate,todayDate,"","1","Today Attendance");
                     Toast.makeText(MainActivity.this,"Today Attendance",LENGTH_SHORT).show();
                 }else if (Objects.equals(itemName, "Attendance By Employee")){
-                    openSelectProfileScreen("",null);
+                    openSelectProfileScreen("report",null , "Attendance By Employee");
                     Toast.makeText(MainActivity.this,"Attendance By Employee",LENGTH_SHORT).show();
                 }else if (Objects.equals(itemName, "Attendance By Date")) {
                     testingReportFragment("2026-02-01","2026-02-09","","17","Attendance By Date \n \n 2026-02-01 - 2026-02-01");
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Click from employee fragment", "clicked ");
                 String screenMode= Objects.equals(Globals.getShared().getEmployee().designation, "admin") ? "add":null;
                 String _managerId= null ;
-                openSelectProfileScreen(screenMode,_managerId);
+                openSelectProfileScreen(screenMode,_managerId, null);
 
             }
         });
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void OnLogoutClick() {
-                openSelectProfileScreen(null,null);
+                openSelectProfileScreen(null,null,null);
             }
         });
         MainActivity.this
@@ -171,51 +171,51 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void openReportsScreen(ArrayList<String> criteria) {
-
-        ListFragment fragment = ListFragment.newInstance(criteria,null);
-        fragment.setListener(new ItemClickHandler (){
-            @Override
-            public void ViewReportClick(String itemName) {
-                if(Objects.equals(itemName, "Today Attendance")){
-                    Toast.makeText(MainActivity.this,"Today",LENGTH_SHORT).show();
-
-                }else if (Objects.equals(itemName, "Attendance By Employee")){
-                    Toast.makeText(MainActivity.this,"Employee",LENGTH_SHORT).show();
-
-                }else if (Objects.equals(itemName, "All Month Attendance")){
-                    Toast.makeText(MainActivity.this,"Month",LENGTH_SHORT).show();
-
-                }else if (Objects.equals(itemName,"One Week Attendance")){
-                    Toast.makeText(MainActivity.this,"Week",LENGTH_SHORT).show();
-
-                }else if (Objects.equals(itemName, "Manager Attendance")){
-                    Toast.makeText(MainActivity.this,"Manager",LENGTH_SHORT).show();
-
-                }else if(Objects.equals(itemName,"Attendance By Date")){
-                    Toast.makeText(MainActivity.this,"Date",LENGTH_SHORT).show();
-
-                }
-
-                //openSelectProfileScreen(null,null);
-            }
-        });
-        MainActivity.this
-                .getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .addToBackStack(null)
-                .commit();
-    }
+//    private void openReportsScreen(ArrayList<String> criteria) {
+//
+//        ListFragment fragment = ListFragment.newInstance(criteria,null);
+//        fragment.setListener(new ItemClickHandler (){
+//            @Override
+//            public void ViewReportClick(String itemName) {
+//                if(Objects.equals(itemName, "Today Attendance")){
+//                    Toast.makeText(MainActivity.this,"Today",LENGTH_SHORT).show();
+//
+//                }else if (Objects.equals(itemName, "Attendance By Employee")){
+//                    Toast.makeText(MainActivity.this,"Employee",LENGTH_SHORT).show();
+//
+//                }else if (Objects.equals(itemName, "All Month Attendance")){
+//                    Toast.makeText(MainActivity.this,"Month",LENGTH_SHORT).show();
+//
+//                }else if (Objects.equals(itemName,"One Week Attendance")){
+//                    Toast.makeText(MainActivity.this,"Week",LENGTH_SHORT).show();
+//
+//                }else if (Objects.equals(itemName, "Manager Attendance")){
+//                    Toast.makeText(MainActivity.this,"Manager",LENGTH_SHORT).show();
+//
+//                }else if(Objects.equals(itemName,"Attendance By Date")){
+//                    Toast.makeText(MainActivity.this,"Date",LENGTH_SHORT).show();
+//
+//                }
+//
+//                //openSelectProfileScreen(null,null);
+//            }
+//        });
+//        MainActivity.this
+//                .getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.fragmentContainer, fragment)
+//                .addToBackStack(null)
+//                .commit();
+//    }
 
     private void openManageEmployeesScreen( String mode,String adminOrManager) {
         Log.d("Manage Employees for admin", "openManageEmployeesScreen");
-        openSelectProfileScreen(mode, adminOrManager);
+        openSelectProfileScreen(mode, adminOrManager,"Manage Employee");
     }
 
-    private void openSelectProfileScreen( String mode,String managerId ) {
+    private void openSelectProfileScreen( String mode,String managerId ,String title) {
         SelectProfileFragment profileFragment;
-        profileFragment = SelectProfileFragment.newInstance(mode,managerId);
+        profileFragment = SelectProfileFragment.newInstance(mode,managerId, title);
         Log.d("ID_CHECK", String.valueOf(R.id.fragmentContainer));
         profileFragment.setListener(new SelectProfileFragment.MyOnClickListener (){
             @Override
@@ -256,13 +256,15 @@ public class MainActivity extends AppCompatActivity {
                     btnCancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
                             dialog.cancel();
                         }
                     });
                     dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                     dialog.show();
                     Toast.makeText(MainActivity.this,"Employee Clicked :"+employee.name, LENGTH_SHORT).show();
+                }else if(Objects.equals(title, "Attendance By Employee")){
+
+                   // testingReportFragment("2026-01-24","2026-02-10",String.valueOf(employee.id),"2","Attendance By Employee");
                 }else{
                       openEmployeeScreen("edit",String.valueOf(employee.id));
                 }
@@ -272,6 +274,13 @@ public class MainActivity extends AppCompatActivity {
                 String mode = Objects.equals(Globals.getShared().getEmployee().designation, "admin") ? "add" : "edit";
                 openEmployeeScreen(mode,null);
 
+
+            }
+
+            @Override
+            public void onItemClickWithDate(Employee employee, String startDate, String endDate) {
+                Log.d("Start Date and End Date", startDate + " " + endDate );
+                testingReportFragment(startDate,endDate,String.valueOf(employee.id),"1","Attendance By Employee");
 
             }
         });        MainActivity.this
