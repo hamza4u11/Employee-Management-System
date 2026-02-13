@@ -36,23 +36,6 @@ public class SelectProfileViewModel extends ViewModel {
         return repository.getEmployeeById(id);
 
     }
-//    private void loadManagers() {
-//
-//        managers.setValue(repository.getAllManagers());
-//    }
-
-//    public LiveData<List<Employee>> getAllManagers(){
-//        return managers;
-//    }
-//    public LiveData<List<Employee>> getManagers(){
-//
-//        return managers;
-//    }
-//    public void getAllManagers() {
-//
-//        managers.setValue( repository.getAllManagers());
-//
-//    }
 
     public LiveData<List<Employee>> getFilteredEmployees(){
 

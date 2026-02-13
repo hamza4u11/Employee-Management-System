@@ -141,13 +141,13 @@ public class DashboardFragment extends Fragment {
 
             }
         });
-        String addBtnForAdmin = dashboardViewModel.getIsAdmin() ? "add" : null;
+        String mode = dashboardViewModel.getIsAdmin() ? "add" : null;
         String adminOrManager= dashboardViewModel.getIsAdmin() ? null : loginEmployeeId;
         manageEmployeesBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 if(listener!=null){
-                    listener.OnManageEmployeesClick(addBtnForAdmin,adminOrManager);
+                    listener.OnManageEmployeesClick(mode,adminOrManager);
                 }
             }
         });

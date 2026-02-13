@@ -17,13 +17,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.hamza.employeemangementsystem.R;
-import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
-import com.hamza.employeemangementsystem.data.model.Report;
-import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
 import com.hamza.employeemangementsystem.ui.AttendanceConverter;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ItemClickHandler;
@@ -34,9 +31,9 @@ import com.hamza.employeemangementsystem.ui.view.fragment.ReportFragment;
 import com.hamza.employeemangementsystem.ui.view.fragment.SelectProfileFragment;
 import com.hamza.employeemangementsystem.ui.viewmodel.DashboardViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
-import com.hamza.employeemangementsystem.ui.viewmodel.ReportViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
 import com.hamza.employeemangementsystem.utils.DateTimeUtlis;
+import com.hamza.employeemangementsystem.utils.DynEditTextDateTimePicker;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -50,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private SelectProfileViewModel selectProfileViewModel;
     private EmployeeRepositoryImp employeeRepositoryImp;
     private EmployeeViewModel employeeViewModel;
+    EditText etStartDate, etEndDate;
 
 
     ArrayList<String> list;
@@ -62,69 +60,89 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        list = new ArrayList<>();
-        list.add("Today Attendance");
-        list.add("Attendance By Employee");
-        list.add("Attendance By Date");
-        list.add("One Week Attendance");
-        list.add("One Month Attendance");
-       testinglistFargment( list ,"Select Attendance ");
-     // testingReportFragment("2026-01-15","2026-01-29","1",null);
-      //  testingCriteriaFunctionDb("* , (Select name from employees where id = attendance.empId ) as \"name\", (Select status from employees where id = attendance.empId ) as \"status\"", "empId= 2 and date Between '2026-01-15' and '2026-01-29'", null);
-      //  testDateFunction("2026-01-19T16:40:27.548762");
-       // testingReportFragment(null,null,null,null);
-       // openSelectProfileScreen(null, null);
-       // openEmployeeScreen();
-//        DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(this);
-//        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(attendanceDBHandler);
 
-//      ReportViewModel viewModel = new ReportViewModel(attendanceDBHandler,"2026-01-15","2026-01-29","2",null);
-//      viewModel.getAllReports();
-//        int reportsSize=viewModel.getReportsByCriteria("2026-01-15","2026-01-29","2",null).size();
-//        Log.d("TAG", String.valueOf(reportsSize));
-
+       openSelectProfileScreen(null, null,"Welcome");
         }
 
-    private void testinglistFargment(ArrayList<String> list, String title) {
-        ListFragment fragment = ListFragment.newInstance(list,title);
-        fragment.setListener(new ItemClickHandler (){
-            @Override
-            public void ViewReportClick(String itemName) {
-                String endDate = DateTimeUtlis.getShared().todayDate().toString();
-                if(Objects.equals(itemName, "Today Attendance")){
-//                    LocalDate todayDate = null?
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                        todayDate = LocalDate.now();
-                    }
-                    String todayDate = "2026-02-03";
-                    testingReportFragment(todayDate,todayDate,"","1","Today Attendance");
-                    Toast.makeText(MainActivity.this,"Today Attendance",LENGTH_SHORT).show();
-                }else if (Objects.equals(itemName, "Attendance By Employee")){
-                    openSelectProfileScreen("report",null , "Attendance By Employee");
-                    Toast.makeText(MainActivity.this,"Attendance By Employee",LENGTH_SHORT).show();
-                }else if (Objects.equals(itemName, "Attendance By Date")) {
-                    testingReportFragment("2026-02-01","2026-02-09","","17","Attendance By Date \n \n 2026-02-01 - 2026-02-01");
-                    Toast.makeText(MainActivity.this, "Attendance By date", LENGTH_SHORT).show();
-                }else if (Objects.equals(itemName,"One Week Attendance")){
-                    String startDate=DateTimeUtlis.getShared().oneWeekPreviousDate().toString();
-                   testingReportFragment(startDate,endDate,"","20","One Week Attendance \n \n " + startDate + "-" + endDate);
-                    Toast.makeText(MainActivity.this, "One Week Attendance", LENGTH_SHORT).show();
-                }else if (Objects.equals(itemName,"One Month Attendance")){
-                    String startDate=DateTimeUtlis.getShared().oneMonthPreviousDate().toString();
-                    testingReportFragment(startDate,endDate,"","20","Attendance By Date \n \n " + startDate + "-" + endDate);
-                    Toast.makeText(MainActivity.this, "One Month Attendance", LENGTH_SHORT).show();
-                }
+private void openListScreen(ArrayList<String> list, String title) {
+    ListFragment fragment = ListFragment.newInstance(list,title);
+    fragment.setListener(new ItemClickHandler (){
+        @Override
+        public void ViewReportClick(String itemName) {
+//            String endDate = DateTimeUtlis.getShared().todayDate().toString();
+            String loginId = String.valueOf(Globals.getShared().getEmployee().id);
 
-                //openSelectProfileScreen(null,null);
+
+            if(Objects.equals(itemName, "Today Attendance")){
+                    LocalDate todayDate = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                      todayDate = LocalDate.now();
+                }
+                openReportScreen(String.valueOf(todayDate),String.valueOf(todayDate),"","1","Today Attendance");
+                Toast.makeText(MainActivity.this,"Today Attendance",LENGTH_SHORT).show();
+            }else if (Objects.equals(itemName, "Attendance By Employee")){
+                String loginEmployeeId = Objects.equals(Globals.getShared().getEmployee().designation, "admin") ? null : String.valueOf(Globals.getShared().getEmployee().id);
+
+                openSelectProfileScreen("report",loginEmployeeId , "Attendance By Employee");
+                Toast.makeText(MainActivity.this,"Attendance By Employee",LENGTH_SHORT).show();
+            }else if (Objects.equals(itemName, "Attendance By Date")) {
+                Dialog dialog = new Dialog(MainActivity.this);
+                dialog.setContentView(R.layout.dailogue_dates);
+                dialog.setCancelable(false);
+                String startDate= DateTimeUtlis.getShared().todayDate().toString();
+                String endDate = DateTimeUtlis.getShared().todayDate().toString();
+                etStartDate = dialog.findViewById(R.id.etStartDate);
+                etEndDate = dialog.findViewById(R.id.etEndDate);
+                Button btnCancel = dialog.findViewById(R.id.btnCancel);
+                Button btnSelect = dialog.findViewById(R.id.btnSelect);
+                DynEditTextDateTimePicker dynEditTextDateTimePickerStartDate =new DynEditTextDateTimePicker(MainActivity.this,etStartDate,startDate);
+                dynEditTextDateTimePickerStartDate.setOnlyDate(true);
+                DynEditTextDateTimePicker  dynEditTextDateTimePickerEndDate =new DynEditTextDateTimePicker(MainActivity.this,etEndDate,endDate);
+                dynEditTextDateTimePickerEndDate.setOnlyDate(true);
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                    }
+                });
+                btnSelect.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    Log.d("StartDate and EndDate Btn Select", startDate +  " " + endDate);
+                    String startDate = etStartDate.getText().toString().trim();
+                    String endDate = etEndDate.getText().toString().trim();
+                        openReportScreen(startDate,endDate,"",loginId,"Attendance By Date \n \n "+  startDate +"<-> " + endDate );
+
+                        dialog.cancel();
+
+                    }
+                });
+                dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                dialog.show();
+                Toast.makeText(MainActivity.this, "Attendance By date", LENGTH_SHORT).show();
+            }else if (Objects.equals(itemName,"One Week Attendance")){
+                    String startDate=String.valueOf( DateTimeUtlis.getShared().oneWeekPreviousDate());
+                    String endDate= String.valueOf(DateTimeUtlis.getShared().todayDate());
+
+                openReportScreen(startDate,endDate,"",loginId,"One Week Attendance \n \n " + startDate + "-" + endDate);
+                Toast.makeText(MainActivity.this, "One Week Attendance", LENGTH_SHORT).show();
+            }else if (Objects.equals(itemName,"One Month Attendance")){
+                String startDate=DateTimeUtlis.getShared().oneMonthPreviousDate().toString();
+                String endDate= String.valueOf(DateTimeUtlis.getShared().todayDate());
+                openReportScreen(startDate,endDate,"",loginId,"Attendance By Date \n \n " + startDate + "-" + endDate);
+                Toast.makeText(MainActivity.this, "One Month Attendance", LENGTH_SHORT).show();
             }
-        });
-        MainActivity.this
-                .getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .addToBackStack(null)
-                .commit();
-    }
+
+            //openSelectProfileScreen(null,null);
+        }
+    });
+    MainActivity.this
+            .getSupportFragmentManager()
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .addToBackStack(null)
+            .commit();
+}
 
     private void openEmployeeScreen(String mode , String employeeId){
             Log.d("openEmployeeScreen", mode );
@@ -135,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Click from employee fragment", "clicked ");
                 String screenMode= Objects.equals(Globals.getShared().getEmployee().designation, "admin") ? "add":null;
                 String _managerId= null ;
-                openSelectProfileScreen(screenMode,_managerId, null);
+                openSelectProfileScreen(screenMode,_managerId, "Manage Employees");
 
             }
         });
@@ -152,11 +170,18 @@ public class MainActivity extends AppCompatActivity {
         fragment.setListener( new DashboardFragment.OnEventClickListener() {
             @Override
             public void OnManageEmployeesClick(String mode, String managerId) {
+                Log.d("Manager id from dashboard", " " +managerId );
                  openManageEmployeesScreen(mode,managerId);
             }
             @Override
             public void OnReportsClick() {
-              //  openReportsScreen();
+                list = new ArrayList<>();
+                list.add("Today Attendance");
+                list.add("Attendance By Employee");
+                list.add("Attendance By Date");
+                list.add("One Week Attendance");
+                list.add("One Month Attendance");
+                openListScreen( list ,"Select Attendance");
             }
             @Override
             public void OnLogoutClick() {
@@ -171,42 +196,6 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-//    private void openReportsScreen(ArrayList<String> criteria) {
-//
-//        ListFragment fragment = ListFragment.newInstance(criteria,null);
-//        fragment.setListener(new ItemClickHandler (){
-//            @Override
-//            public void ViewReportClick(String itemName) {
-//                if(Objects.equals(itemName, "Today Attendance")){
-//                    Toast.makeText(MainActivity.this,"Today",LENGTH_SHORT).show();
-//
-//                }else if (Objects.equals(itemName, "Attendance By Employee")){
-//                    Toast.makeText(MainActivity.this,"Employee",LENGTH_SHORT).show();
-//
-//                }else if (Objects.equals(itemName, "All Month Attendance")){
-//                    Toast.makeText(MainActivity.this,"Month",LENGTH_SHORT).show();
-//
-//                }else if (Objects.equals(itemName,"One Week Attendance")){
-//                    Toast.makeText(MainActivity.this,"Week",LENGTH_SHORT).show();
-//
-//                }else if (Objects.equals(itemName, "Manager Attendance")){
-//                    Toast.makeText(MainActivity.this,"Manager",LENGTH_SHORT).show();
-//
-//                }else if(Objects.equals(itemName,"Attendance By Date")){
-//                    Toast.makeText(MainActivity.this,"Date",LENGTH_SHORT).show();
-//
-//                }
-//
-//                //openSelectProfileScreen(null,null);
-//            }
-//        });
-//        MainActivity.this
-//                .getSupportFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.fragmentContainer, fragment)
-//                .addToBackStack(null)
-//                .commit();
-//    }
 
     private void openManageEmployeesScreen( String mode,String adminOrManager) {
         Log.d("Manage Employees for admin", "openManageEmployeesScreen");
@@ -245,7 +234,6 @@ public class MainActivity extends AppCompatActivity {
                             if (Integer.parseInt(pin) == Integer.parseInt(employee.pin)) {
                                 Log.d("Designation", employee.designation);
                                 Globals.getShared().setEmployee(employee);
-
                                 openDashboardScreen();
                                 dialog.cancel();
                             } else {
@@ -280,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClickWithDate(Employee employee, String startDate, String endDate) {
                 Log.d("Start Date and End Date", startDate + " " + endDate );
-                testingReportFragment(startDate,endDate,String.valueOf(employee.id),"1","Attendance By Employee");
+                openReportScreen(startDate,endDate,String.valueOf(employee.id),"1","Attendance By Employee");
 
             }
         });        MainActivity.this
@@ -290,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .commit();
     }
-    private void testingReportFragment(String startDate, String endDate, String employeeId, String loginId, String title){
+    private void openReportScreen(String startDate, String endDate, String employeeId, String loginId, String title){
         ReportFragment reportFragment = ReportFragment.newInstance(startDate,endDate,employeeId,loginId,title);
         MainActivity.this
                 .getSupportFragmentManager()

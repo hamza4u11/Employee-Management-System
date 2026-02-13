@@ -41,11 +41,4 @@ public class ReportViewModel extends ViewModel {
     public LiveData<List<Attendance>> getAllReports() {
         return reports;
     }
-
-//    public LiveData<List<Attendance>> getReportByDate(){
-//        return reports;
-//    }
-//    public List<Attendance> getReportsByCriteria(String startDate, String endDate, String employeeId, String loginEmployeeId){
-//         return repositoryImp.getAttendanceByCriteria(startDate,endDate,employeeId,loginEmployeeId);
-//    }
 }

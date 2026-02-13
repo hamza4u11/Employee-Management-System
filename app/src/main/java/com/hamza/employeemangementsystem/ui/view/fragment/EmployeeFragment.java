@@ -65,7 +65,7 @@ public class EmployeeFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String mode;
-    private String employeeId = null;
+    private String employeeId;
 
     public EmployeeFragment() {
         // Required empty public constructor
@@ -123,16 +123,16 @@ public class EmployeeFragment extends Fragment {
         cancelBtn = view.findViewById(R.id.cancelBtn);
 
         loadScreenData();
-        if (Objects.equals(mode, "edit") && employeeId!=null){
-            List<EditText> editTextList = Arrays.asList(
-                    etName, etDesignation, etPhoneNo, etPin, etAddress, etPaymentType, etAllowHoliday, etOverTimeAllow, etStatus
-            );
-            for (EditText et : editTextList) {
-                et.setFocusable(false);
-                et.setFocusableInTouchMode(false);
-                et.setClickable(true);
-            }
-        }
+//        if (Objects.equals(mode, "edit") && employeeId!=null){
+//            List<EditText> editTextList = Arrays.asList(
+//                    etName, etDesignation, etPhoneNo, etPin, etAddress, etPaymentType, etAllowHoliday, etOverTimeAllow, etStatus
+//            );
+//            for (EditText et : editTextList) {
+//                et.setFocusable(false);
+//                et.setFocusableInTouchMode(false);
+//                et.setClickable(true);
+//            }
+//        }
 
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -340,7 +340,7 @@ public class EmployeeFragment extends Fragment {
         );
         etPin.setText(viewModel.getPin());
         addEditEmployee.setText(employeeId!=null && !employeeId.isEmpty() ? "Employee Details":null);
-        updateBtn.setVisibility(View.GONE);
+//        updateBtn.setVisibility(View.GONE);
 
 
 

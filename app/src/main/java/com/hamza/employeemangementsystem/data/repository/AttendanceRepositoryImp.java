@@ -100,7 +100,7 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
          Globals.getShared().setEmployee(employee);
          Log.d("Employee Name", " "+ Globals.getShared().getEmployee().name );
         selectClause = "* , (SELECT e.name FROM employees e WHERE e.id = attendance.empId) AS name ,(SELECT e.status FROM employees e WHERE e.id = attendance.empId ) AS status ";
-        String dateCriteria = " date BETWEEN '" + startDate + "' AND '" + endDate +"'";
+        String dateCriteria = " date BETWEEN '" + startDate + "' AND '" + endDate +"'ORDER BY date DESC";
         String employeeFilterCriteria = (employeeId.isEmpty()?"":" empId ="+employeeId);
         String employeeCriteria="";
         if(employee.designation.equals("admin")){
