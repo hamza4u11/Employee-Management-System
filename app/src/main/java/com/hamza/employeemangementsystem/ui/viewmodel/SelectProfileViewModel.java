@@ -36,27 +36,16 @@ public class SelectProfileViewModel extends ViewModel {
         return repository.getEmployeeById(id);
 
     }
-
     public LiveData<List<Employee>> getFilteredEmployees(){
-
         return filteredEmployees;
     }
     public void getEmployeesByManager(String managerIdParam) {
-
         filteredEmployees.setValue( repository.getEmployeeByManager(managerIdParam));
-
     }
-
     public void saveEmployee(Employee emp) {
         repository.insertEmployee(emp);
     }
-
     public void updateEmployee(Employee emp) {
         repository.updateEmployee(emp);
     }
-
-
-
-
-
 }

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,10 +46,11 @@ public class SelectProfileFragment extends Fragment {
     private SelectProfileViewModel selectProfileViewModel;
     private DashboardViewModel dashboardViewModel; ;
     Button addBtn ;
-    LinearLayout startDateEndDateLayout;
+    LinearLayout startDateEndDateLayout, header;
     EditText etStartDate, etEndDate;
-    TextView titleTxt;
+    TextView titleTxt, txtName;
     String startDate, endDate;
+    ImageView imageView;
 
     public interface MyOnClickListener{
         void OnItemClick(Employee employee);
@@ -120,15 +122,24 @@ public class SelectProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_select_profile, container, false);
         addBtn= view.findViewById(R.id.addBtn);
         startDateEndDateLayout= view.findViewById(R.id.startDateEndDateLayout);
+        header = view.findViewById(R.id.header);
+        header.setVisibility(View.GONE);
         etStartDate = view.findViewById(R.id.etStartDate);
         etEndDate = view.findViewById(R.id.etEndDate);
-          startDate= DateTimeUtlis.getShared().todayDate().toString();
-            endDate = DateTimeUtlis.getShared().todayDate().toString();
+        startDate= DateTimeUtlis.getShared().todayDate().toString();
+        endDate = DateTimeUtlis.getShared().todayDate().toString();
+        imageView= view.findViewById(R.id.imageView);
         titleTxt = view.findViewById(R.id.titleTxt);
         titleTxt.setText(title);
+        txtName= view.findViewById(R.id.txtName);
+        txtName.setText(Globals.getShared().getEmployee()  == null ? " " :  Globals.getShared().getEmployee().name );
         addBtn.setVisibility(view.GONE);
         if(Objects.equals(modeParam, "add")) {
             addBtn.setVisibility(view.VISIBLE);
+        }
+        if(Objects.equals(modeParam, "add") || Objects.equals(modeParam,"edit") || Objects.equals(modeParam, "report") && Objects.equals(managerIdParam, null) || !Objects.equals(managerIdParam, null)) {
+            header.setVisibility(view.VISIBLE);
+            imageView.setVisibility(View.GONE);
         }
         if(Objects.equals(modeParam, "report")) {
             startDateEndDateLayout.setVisibility(view.VISIBLE);

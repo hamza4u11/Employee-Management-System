@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ItemClickHandler;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ListAdapter;
 
@@ -26,7 +27,7 @@ public class ListFragment extends Fragment {
 
     RecyclerView recyclerView;
     ListAdapter adapter;
-    TextView title;
+    TextView title, txtName;
 
     public ItemClickHandler getListener() {
         return listener;
@@ -91,6 +92,8 @@ public class ListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         recyclerView = view.findViewById(R.id.listRecyclerView);
+        txtName= view.findViewById(R.id.txtName);
+        txtName.setText(Globals.getShared().getEmployee().name);
         title = view.findViewById(R.id.title);
         title.setText(mParam2);
 

@@ -19,7 +19,7 @@
 
         <TextView
             android:id="@+id/txtGreeting"
-            android:layout_width="wrap_content"
+            android:layout_width="236dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="30dp"
@@ -27,24 +27,22 @@
             android:text="Welcome"
             android:textColor="#FFFFFF"
             android:textSize="25sp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/txtName"
-            android:layout_width="wrap_content"
+            android:layout_width="262dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="310dp"
             android:text="Hello"
             android:textColor="#FFFFFF"
             android:textSize="22sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/txtGreeting" />
+            app:layout_constraintTop_toBottomOf="@id/txtGreeting"  />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
@@ -152,7 +150,7 @@
     <LinearLayout
         android:id="@+id/hideAdminButtons"
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="20dp"

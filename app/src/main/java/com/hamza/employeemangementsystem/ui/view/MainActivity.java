@@ -8,7 +8,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       openSelectProfileScreen(null, null,"Welcome");
+       openSelectProfileScreen(null, null,"Select Your Profile");
         }
 
 private void openListScreen(ArrayList<String> list, String title) {
@@ -69,20 +72,16 @@ private void openListScreen(ArrayList<String> list, String title) {
     fragment.setListener(new ItemClickHandler (){
         @Override
         public void ViewReportClick(String itemName) {
-//            String endDate = DateTimeUtlis.getShared().todayDate().toString();
             String loginId = String.valueOf(Globals.getShared().getEmployee().id);
-
-
             if(Objects.equals(itemName, "Today Attendance")){
                     LocalDate todayDate = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                       todayDate = LocalDate.now();
                 }
-                openReportScreen(String.valueOf(todayDate),String.valueOf(todayDate),"","1","Today Attendance");
+                openReportScreen(String.valueOf(todayDate),String.valueOf(todayDate),"",loginId,"Today Attendance \n \n"+ String.valueOf(todayDate));
                 Toast.makeText(MainActivity.this,"Today Attendance",LENGTH_SHORT).show();
             }else if (Objects.equals(itemName, "Attendance By Employee")){
                 String loginEmployeeId = Objects.equals(Globals.getShared().getEmployee().designation, "admin") ? null : String.valueOf(Globals.getShared().getEmployee().id);
-
                 openSelectProfileScreen("report",loginEmployeeId , "Attendance By Employee");
                 Toast.makeText(MainActivity.this,"Attendance By Employee",LENGTH_SHORT).show();
             }else if (Objects.equals(itemName, "Attendance By Date")) {
@@ -111,10 +110,8 @@ private void openListScreen(ArrayList<String> list, String title) {
                     Log.d("StartDate and EndDate Btn Select", startDate +  " " + endDate);
                     String startDate = etStartDate.getText().toString().trim();
                     String endDate = etEndDate.getText().toString().trim();
-                        openReportScreen(startDate,endDate,"",loginId,"Attendance By Date \n \n "+  startDate +"<-> " + endDate );
-
+                        openReportScreen(startDate,endDate,"",loginId,"Attendance By Date \n \n "+  startDate +" to " + endDate );
                         dialog.cancel();
-
                     }
                 });
                 dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -124,12 +121,12 @@ private void openListScreen(ArrayList<String> list, String title) {
                     String startDate=String.valueOf( DateTimeUtlis.getShared().oneWeekPreviousDate());
                     String endDate= String.valueOf(DateTimeUtlis.getShared().todayDate());
 
-                openReportScreen(startDate,endDate,"",loginId,"One Week Attendance \n \n " + startDate + "-" + endDate);
+                openReportScreen(startDate,endDate,"",loginId,"One Week Attendance \n \n " + startDate + " to " + endDate);
                 Toast.makeText(MainActivity.this, "One Week Attendance", LENGTH_SHORT).show();
             }else if (Objects.equals(itemName,"One Month Attendance")){
                 String startDate=DateTimeUtlis.getShared().oneMonthPreviousDate().toString();
                 String endDate= String.valueOf(DateTimeUtlis.getShared().todayDate());
-                openReportScreen(startDate,endDate,"",loginId,"Attendance By Date \n \n " + startDate + "-" + endDate);
+                openReportScreen(startDate,endDate,"",loginId,"Attendance By Date \n \n " + startDate + " to " + endDate);
                 Toast.makeText(MainActivity.this, "One Month Attendance", LENGTH_SHORT).show();
             }
 
@@ -143,7 +140,87 @@ private void openListScreen(ArrayList<String> list, String title) {
             .addToBackStack(null)
             .commit();
 }
+    private void setupOtpInputs(EditText... editTexts) {
 
+        for (int i = 0; i < editTexts.length; i++) {
+            final int index = i;
+
+            editTexts[i].addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (s.length() == 1 && index < editTexts.length - 1) {
+                        editTexts[index + 1].requestFocus();
+                    }
+                }
+
+                @Override public void afterTextChanged(Editable s) {}
+            });
+
+            editTexts[i].setOnKeyListener((v, keyCode, event) -> {
+                if (keyCode == KeyEvent.KEYCODE_DEL &&
+                        event.getAction() == KeyEvent.ACTION_DOWN &&
+                        editTexts[index].getText().toString().isEmpty() &&
+                        index > 0) {
+
+                    editTexts[index - 1].requestFocus();
+                    editTexts[index - 1].setSelection(editTexts[index - 1].getText().length());
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
+
+//    private void setupOtpInputs(Button loginButton, EditText... editTexts) {
+//
+//        for (int i = 0; i < editTexts.length; i++) {
+//            final int index = i;
+//
+//            editTexts[i].addTextChangedListener(new TextWatcher() {
+//                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+//
+//                @Override
+//                public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//                    // move forward
+//                    if (s.length() == 1 && index < editTexts.length - 1) {
+//                        editTexts[index + 1].requestFocus();
+//                    }
+//
+//                    // check if all filled
+//                    boolean allFilled = true;
+//                    for (EditText et : editTexts) {
+//                        if (et.getText().toString().trim().isEmpty()) {
+//                            allFilled = false;
+//                            break;
+//                        }
+//                    }
+//
+//                    if (allFilled) {
+//                        loginButton.performClick(); // auto click
+//                    }
+//                }
+//
+//                @Override public void afterTextChanged(Editable s) {}
+//            });
+//
+//            // move back on delete
+//            editTexts[i].setOnKeyListener((v, keyCode, event) -> {
+//                if (keyCode == KeyEvent.KEYCODE_DEL &&
+//                        event.getAction() == KeyEvent.ACTION_DOWN &&
+//                        editTexts[index].getText().toString().isEmpty() &&
+//                        index > 0) {
+//
+//                    editTexts[index - 1].requestFocus();
+//                    editTexts[index - 1].setSelection(editTexts[index - 1].getText().length());
+//                    return true;
+//                }
+//                return false;
+//            });
+//        }
+//    }
     private void openEmployeeScreen(String mode , String employeeId){
             Log.d("openEmployeeScreen", mode );
         EmployeeFragment fragment =  EmployeeFragment.newInstance(mode,employeeId);
@@ -154,7 +231,6 @@ private void openListScreen(ArrayList<String> list, String title) {
                 String screenMode= Objects.equals(Globals.getShared().getEmployee().designation, "admin") ? "add":null;
                 String _managerId= null ;
                 openSelectProfileScreen(screenMode,_managerId, "Manage Employees");
-
             }
         });
             MainActivity.this
@@ -165,7 +241,6 @@ private void openListScreen(ArrayList<String> list, String title) {
                     .commit();
         }
     private void openDashboardScreen() {
-
         DashboardFragment fragment= new DashboardFragment();
         fragment.setListener( new DashboardFragment.OnEventClickListener() {
             @Override
@@ -175,17 +250,25 @@ private void openListScreen(ArrayList<String> list, String title) {
             }
             @Override
             public void OnReportsClick() {
-                list = new ArrayList<>();
-                list.add("Today Attendance");
-                list.add("Attendance By Employee");
-                list.add("Attendance By Date");
-                list.add("One Week Attendance");
-                list.add("One Month Attendance");
+                if(Objects.equals(Globals.getShared().getEmployee().designation, "admin") || Objects.equals(Globals.getShared().getEmployee().designation, "manager")){
+                    list = new ArrayList<>();
+                    list.add("Today Attendance");
+                    list.add("Attendance By Employee");
+                    list.add("Attendance By Date");
+                    list.add("One Week Attendance");
+                    list.add("One Month Attendance");
+                }else{
+                    list = new ArrayList<>();
+                    list.add("Today Attendance");
+                    list.add("Attendance By Date");
+                    list.add("One Week Attendance");
+                    list.add("One Month Attendance");
+                }
                 openListScreen( list ,"Select Attendance");
             }
             @Override
             public void OnLogoutClick() {
-                openSelectProfileScreen(null,null,null);
+                openSelectProfileScreen(null,null,"Select Your Profile");
             }
         });
         MainActivity.this
@@ -195,13 +278,10 @@ private void openListScreen(ArrayList<String> list, String title) {
                 .addToBackStack(null)
                 .commit();
     }
-
-
     private void openManageEmployeesScreen( String mode,String adminOrManager) {
         Log.d("Manage Employees for admin", "openManageEmployeesScreen");
         openSelectProfileScreen(mode, adminOrManager,"Manage Employee");
     }
-
     private void openSelectProfileScreen( String mode,String managerId ,String title) {
         SelectProfileFragment profileFragment;
         profileFragment = SelectProfileFragment.newInstance(mode,managerId, title);
@@ -220,6 +300,9 @@ private void openListScreen(ArrayList<String> list, String title) {
                     EditText pin4 = dialog.findViewById(R.id.pin4);
                     Button loginBtn = dialog.findViewById(R.id.btnLogin);
                     Button btnCancel = dialog.findViewById(R.id.btnCancel);
+//                    setupOtpInputs(loginBtn,pin1, pin2, pin3, pin4);
+                    setupOtpInputs(pin1, pin2, pin3, pin4);
+
                     loginBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -250,6 +333,7 @@ private void openListScreen(ArrayList<String> list, String title) {
                     dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
                     dialog.show();
                     Toast.makeText(MainActivity.this,"Employee Clicked :"+employee.name, LENGTH_SHORT).show();
+
                 }else if(Objects.equals(title, "Attendance By Employee")){
 
                    // testingReportFragment("2026-01-24","2026-02-10",String.valueOf(employee.id),"2","Attendance By Employee");
@@ -261,8 +345,6 @@ private void openListScreen(ArrayList<String> list, String title) {
             public void OnAddClick() {
                 String mode = Objects.equals(Globals.getShared().getEmployee().designation, "admin") ? "add" : "edit";
                 openEmployeeScreen(mode,null);
-
-
             }
 
             @Override
@@ -346,8 +428,6 @@ private void openListScreen(ArrayList<String> list, String title) {
     public void testGetAllManagers(){
         int size =employeeRepositoryImp.getAllManagers().size();
         Log.d("testGetAllManagers: ", String.valueOf(size));
-
-
     }
     public void testDateFunction(String date){
        Date date1 =  DateTimeUtlis.getShared().convertStringToDateTime(date);
@@ -360,10 +440,6 @@ private void openListScreen(ArrayList<String> list, String title) {
         AttendanceConverter attendanceConverter = new AttendanceConverter();
         int size = dbHandler1.getRecordByCriteria(select, criteria,orderBy,attendanceConverter).size();
         Log.d("Size of Records"," " + size);
-
-
-
-
     }
 
 

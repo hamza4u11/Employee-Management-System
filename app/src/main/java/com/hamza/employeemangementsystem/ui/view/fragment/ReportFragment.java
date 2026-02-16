@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
@@ -44,7 +45,7 @@ public class ReportFragment extends Fragment {
     RecyclerView ReportRecyclerView;
     ReportAdapter adapter;
     ReportViewModel reportViewModel;
-    TextView title;
+    TextView title,txtName;
 
 
 
@@ -104,6 +105,8 @@ public class ReportFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_report, container, false);
         title = view.findViewById(R.id.title);
         title.setText(mParam5);
+        txtName= view.findViewById(R.id.txtName);
+        txtName.setText(Globals.getShared().getEmployee().name);
         ReportRecyclerView = view.findViewById(R.id.reportsRecyclerView);
         ReportAdapter adapter = new ReportAdapter(getContext());
         ReportRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

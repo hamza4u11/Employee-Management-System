@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.DBHandler;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.ui.view.MainActivity;
@@ -108,6 +109,7 @@ public class EmployeeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_employee, container, false);
         addEditEmployee = view.findViewById(R.id.addEditEmployee);
         txtName = view.findViewById(R.id.txtName);
+        txtName.setText(Globals.getShared().getEmployee().name);
         updateBtn = view.findViewById(R.id.updateBtn);
         etName = view.findViewById(R.id.name);
         etDesignation = view.findViewById(R.id.designation);

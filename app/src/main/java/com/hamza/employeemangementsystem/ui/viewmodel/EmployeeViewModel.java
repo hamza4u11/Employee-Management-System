@@ -118,7 +118,7 @@ public class EmployeeViewModel extends ViewModel {
     }
 
     public String getAllowHoliday() {
-        return employee.allowHoliday == null? "0": employee.allowHoliday;
+        return employee.allowHoliday == null? "": employee.allowHoliday;
     }
 
     public void setAllowHoliday(String allowHoliday) {
@@ -127,7 +127,7 @@ public class EmployeeViewModel extends ViewModel {
     }
 
     public String getOverTimeAllow() {
-        return employee.overTimeAllow == null? "0": employee.overTimeAllow;
+        return employee.overTimeAllow == null? "": employee.overTimeAllow;
     }
 
     public void setAllowOverTime(String overTimeAllow) {

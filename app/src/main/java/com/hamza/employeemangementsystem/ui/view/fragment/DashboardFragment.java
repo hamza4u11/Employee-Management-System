@@ -174,12 +174,13 @@ public class DashboardFragment extends Fragment {
         seesion.setText(dashboardViewModel.getSeesionText());
         seeionLabel.setText(dashboardViewModel.getSeesionLabel());
         label.setText(dashboardViewModel.getCheckInOutText());
-        hideAdminButtons.setVisibility(View.GONE);
+//        hideAdminButtons.setVisibility(View.GONE);
+        manageEmployeesBtn.setVisibility(View.GONE);
         checkInButton.setVisibility(View.GONE);
         checkOutButton.setVisibility(View.GONE);
         checkOutButton.setVisibility(dashboardViewModel.getIfUserCheckedIn() ? View.VISIBLE : View.GONE);
         checkInButton.setVisibility(dashboardViewModel.getIfUserCheckedIn()? View.GONE : View.VISIBLE);
-        hideAdminButtons.setVisibility(dashboardViewModel.isLayoutEnabled()? View.VISIBLE: View.GONE);
+        manageEmployeesBtn.setVisibility(dashboardViewModel.isLayoutEnabled()? View.VISIBLE: View.GONE);
 
     }
 

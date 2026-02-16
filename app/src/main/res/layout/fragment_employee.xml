@@ -19,24 +19,31 @@
 
         <TextView
             android:id="@+id/txtGreeting"
-            android:layout_width="wrap_content"
+            android:layout_width="236dp"
             android:layout_height="wrap_content"
-            android:text="Good Morning"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="270dp"
+            android:text="Welcome"
             android:textColor="#FFFFFF"
-            android:textSize="14sp"
+            android:textSize="25sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/txtName"
-            android:layout_width="wrap_content"
+            android:layout_width="262dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="310dp"
             android:text="Hello"
             android:textColor="#FFFFFF"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/txtGreeting" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
@@ -97,7 +104,7 @@
                 android:inputType="textPersonName"
                 android:padding="14dp"
                 android:text=""
-                android:hint="Ali"/>
+                android:hint="Enter name"/>
 
             <!-- DESIGNATION -->
 
@@ -130,7 +137,7 @@
                 android:padding="14dp"
                 android:inputType="text"
                 android:text=""
-                android:hint="Employee"/>
+                android:hint="Enter designation"/>
 
             <!-- PHONE -->
             <LinearLayout
@@ -162,7 +169,7 @@
                 android:inputType="phone"
                 android:padding="14dp"
                 android:text=""
-                android:hint="12345678910"/>
+                android:hint="Enter phone number"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -193,7 +200,7 @@
                 android:inputType="textPostalAddress"
                 android:padding="14dp"
                 android:text=""
-                android:hint="House no 1 Street no 1 ....."/>
+                android:hint="Enter address"/>
             <!-- STATUS -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -224,7 +231,7 @@
                 android:background="#EEF1FF"
                 android:padding="14dp"
                 android:text=""
-                android:hint="Active / InActive"/>
+                android:hint="Enter status"/>
 
             <!-- PAYMENT -->
             <LinearLayout
@@ -256,7 +263,7 @@
                 android:background="#EEF1FF"
                 android:padding="14dp"
                 android:text=""
-                android:hint="Daily / Weekly / Monthly"/>
+                android:hint="Enter payment type"/>
 
             <!-- HOLIDAYS -->
 
@@ -277,8 +284,8 @@
                 android:inputType="number"
                 android:padding="14dp"
                 android:text=""
-                android:hint="0"/>
-
+                android:hint="Enter allow holidays"/>
+0
             <!-- WORKING HOURS -->
 
                 <TextView
@@ -298,7 +305,7 @@
                 android:inputType="number"
                 android:padding="14dp"
                 android:text=""
-                android:hint="0"/>
+                android:hint="Enter over time "/>
 
             <TextView
                 android:id="@+id/selectManager"
@@ -348,7 +355,7 @@
                 android:padding="14dp"
                 android:maxLength="4"
                 android:text=""
-                android:hint="0000"/>
+                android:hint="Enter 4 digit pin"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -376,6 +383,7 @@
         </LinearLayout>
 
     </ScrollView>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
