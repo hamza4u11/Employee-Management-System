@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.hamza.employeemangementsystem.data.Globals;
-import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
@@ -39,10 +39,10 @@ public class DashboardViewModel extends ViewModel {
     }
 
 
-    public DashboardViewModel(@NonNull DBHandler dbHandler) {
+    public DashboardViewModel(@NonNull AppDatabaseHelper appDatabaseHelper) {
         super();
-        repository = new AttendanceRepositoryImp(dbHandler);
-        employeeRepo = new EmployeeRepositoryImp(dbHandler);
+        repository = new AttendanceRepositoryImp(appDatabaseHelper);
+        employeeRepo = new EmployeeRepositoryImp(appDatabaseHelper);
     }
     public Attendance loadUserStatus(String id ) {
         Log.d("Android" ,"Attendance LoadUserStatus");

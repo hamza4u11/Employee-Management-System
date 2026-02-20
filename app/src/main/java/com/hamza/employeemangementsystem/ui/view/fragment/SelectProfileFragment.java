@@ -1,5 +1,6 @@
 package com.hamza.employeemangementsystem.ui.view.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,7 +19,8 @@ import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.Globals;
-import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
+import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.EmployeeClickHandler;
@@ -108,10 +110,11 @@ public class SelectProfileFragment extends Fragment {
             title = getArguments().getString(ARG_PARAM3);
 
         }
-        DBHandler<Employee> employeeDBHandler= new DBHandler<>(getActivity());
-        selectProfileViewModel = new SelectProfileViewModel(employeeDBHandler);
-        DBHandler<Attendance> attendanceDBHandler= new DBHandler<>(getActivity());
-        dashboardViewModel = new DashboardViewModel(attendanceDBHandler);
+//        SQLiteLocalDataSource<Employee> sqLiteLocalDataSource = new SQLiteLocalDataSource<>(getActivity());
+        AppDatabaseHelper<Employee> employeeAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
+        selectProfileViewModel = new SelectProfileViewModel(employeeAppDatabaseHelper,getContext());
+        AppDatabaseHelper<Attendance> attendanceAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
+        dashboardViewModel = new DashboardViewModel(attendanceAppDatabaseHelper);
     }
 
     @Override

@@ -1,18 +1,14 @@
 package com.hamza.employeemangementsystem.ui.viewmodel;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.model.Attendance;
-import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
 
-import java.security.PrivateKey;
 import java.util.List;
 
 public class ReportViewModel extends ViewModel {
@@ -30,9 +26,9 @@ public class ReportViewModel extends ViewModel {
         this.listener = listener;
     }
 
-    public ReportViewModel(@NonNull DBHandler dbHandler,String startDate, String endDate, String employeeId, String loginEmployeeId) {
+    public ReportViewModel(@NonNull AppDatabaseHelper appDatabaseHelper, String startDate, String endDate, String employeeId, String loginEmployeeId) {
         super();
-        repositoryImp = new AttendanceRepositoryImp(dbHandler);
+        repositoryImp = new AttendanceRepositoryImp(appDatabaseHelper);
         loadReports(startDate,endDate,employeeId,loginEmployeeId);
     }
     private void loadReports(String startDate, String endDate, String employeeId, String loginEmployeeId){

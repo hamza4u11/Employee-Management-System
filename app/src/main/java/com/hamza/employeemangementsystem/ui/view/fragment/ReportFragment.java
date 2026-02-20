@@ -2,7 +2,6 @@ package com.hamza.employeemangementsystem.ui.view.fragment;
 
 import android.os.Bundle;
 
-import androidx.annotation.StringDef;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,19 +13,10 @@ import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.Globals;
-import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.model.Attendance;
-import com.hamza.employeemangementsystem.data.model.Employee;
-import com.hamza.employeemangementsystem.data.model.Report;
-import com.hamza.employeemangementsystem.ui.adopter.myAdapter.EmployeeClickHandler;
-import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ListAdapter;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ReportAdapter;
-import com.hamza.employeemangementsystem.ui.adopter.myAdapter.myAdapter;
 import com.hamza.employeemangementsystem.ui.viewmodel.ReportViewModel;
-
-import org.w3c.dom.Text;
-
-import java.sql.ClientInfoStatus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -94,8 +84,8 @@ public class ReportFragment extends Fragment {
             mParam5 = getArguments().getString(ARG_PARAM5);
 
         }
-        DBHandler<Attendance> dbHandler = new DBHandler<>(getActivity());
-         reportViewModel = new ReportViewModel(dbHandler,mParam1,mParam2, mParam3, mParam4);
+        AppDatabaseHelper<Attendance> appDatabaseHelper = new AppDatabaseHelper<>(getActivity());
+         reportViewModel = new ReportViewModel(appDatabaseHelper,mParam1,mParam2, mParam3, mParam4);
     }
 
     @Override

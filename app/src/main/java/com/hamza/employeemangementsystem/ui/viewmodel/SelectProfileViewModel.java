@@ -1,13 +1,16 @@
 package com.hamza.employeemangementsystem.ui.viewmodel;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
+import com.hamza.employeemangementsystem.ui.view.MainActivity;
 //import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp_old;
 
 import java.util.List;
@@ -18,20 +21,22 @@ public class SelectProfileViewModel extends ViewModel {
     private final MutableLiveData<List<Employee>> managers = new MutableLiveData<>();
     private EmployeeRepositoryImp repository;
 
-    public SelectProfileViewModel(@NonNull DBHandler dbHandler) {
+    public SelectProfileViewModel(@NonNull AppDatabaseHelper appDatabaseHelper, Context context) {
         super();
-        repository = new EmployeeRepositoryImp(dbHandler);
+        AppDatabaseHelper<Employee> appDatabaseHelper1 = new AppDatabaseHelper<>(context);
+        repository = new EmployeeRepositoryImp(appDatabaseHelper);
 
         loadEmployees();
        // getAllManagers();
+    }
+    public LiveData<List<Employee>> getAllEmployees() {
+        return employees;
     }
     private void loadEmployees() {
 
         employees.setValue(repository.getAllEmployees());
     }
-    public LiveData<List<Employee>> getAllEmployees() {
-          return employees;
-    }
+
     public Employee getEmployeeById(String id){
         return repository.getEmployeeById(id);
 

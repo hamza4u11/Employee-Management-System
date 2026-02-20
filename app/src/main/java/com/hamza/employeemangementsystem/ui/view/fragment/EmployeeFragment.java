@@ -19,14 +19,12 @@ import androidx.fragment.app.Fragment;
 
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.Globals;
-import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.model.Employee;
-import com.hamza.employeemangementsystem.ui.view.MainActivity;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -97,10 +95,10 @@ public class EmployeeFragment extends Fragment {
             mode = getArguments().getString(ARG_PARAM1);
             employeeId = getArguments().getString(ARG_PARAM2);
         }
-        DBHandler<Employee> employeeDBHandler = new DBHandler<>(getActivity());
-        selectProfileViewModel = new SelectProfileViewModel(employeeDBHandler);
+        AppDatabaseHelper<Employee> employeeAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
+        selectProfileViewModel = new SelectProfileViewModel(employeeAppDatabaseHelper,getContext());
         //DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(getActivity());
-        viewModel = new EmployeeViewModel(employeeDBHandler, employeeId);
+        viewModel = new EmployeeViewModel(employeeAppDatabaseHelper, employeeId);
     }
 
     @Override

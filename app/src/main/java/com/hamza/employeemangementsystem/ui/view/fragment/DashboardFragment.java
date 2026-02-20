@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.Globals;
-import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.ui.viewmodel.DashboardViewModel;
@@ -87,8 +87,8 @@ public class DashboardFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(getActivity());
-        dashboardViewModel = new DashboardViewModel(attendanceDBHandler);
+        AppDatabaseHelper<Attendance> attendanceAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
+        dashboardViewModel = new DashboardViewModel(attendanceAppDatabaseHelper);
 
     }
 

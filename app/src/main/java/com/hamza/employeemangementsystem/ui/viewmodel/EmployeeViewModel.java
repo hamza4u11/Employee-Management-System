@@ -2,19 +2,15 @@ package com.hamza.employeemangementsystem.ui.viewmodel;
 
 
 import android.os.Build;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.hamza.employeemangementsystem.core.IConvertHelper;
-import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
-import com.hamza.employeemangementsystem.ui.EmployeeConverter;
-import com.hamza.employeemangementsystem.ui.view.MainActivity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,10 +22,10 @@ public class EmployeeViewModel extends ViewModel {
 
     String empId;
     Employee employee;
-    public EmployeeViewModel(@NonNull DBHandler dbHandler,String employeeId){
+    public EmployeeViewModel(@NonNull AppDatabaseHelper appDatabaseHelper, String employeeId){
         super();
 
-        repository = new EmployeeRepositoryImp(dbHandler);
+        repository = new EmployeeRepositoryImp(appDatabaseHelper);
         getAllManagers();
 
         if(employeeId!= null) {

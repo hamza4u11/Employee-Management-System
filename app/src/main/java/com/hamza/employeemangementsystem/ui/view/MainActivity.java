@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.Globals;
-import com.hamza.employeemangementsystem.data.database.DBHandler;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> list;
 
 
-    private DBHandler dbHandler;
+    private AppDatabaseHelper appDatabaseHelper;
     String pinOne, pinSecond,pinThird,pinFourth,pin;
 
     @Override
@@ -384,8 +384,8 @@ private void openListScreen(ArrayList<String> list, String title) {
     }
     private void checkAllTables() {
 
-        dbHandler = new DBHandler(this);
-        SQLiteDatabase db = dbHandler.getReadableDatabase();
+        appDatabaseHelper = new AppDatabaseHelper(this);
+        SQLiteDatabase db = appDatabaseHelper.getReadableDatabase();
 
         Cursor c = db.rawQuery(
                 "SELECT name FROM sqlite_master WHERE type='table'",
@@ -436,9 +436,9 @@ private void openListScreen(ArrayList<String> list, String title) {
         Log.d("Time", " " + time);
     }
     private void testingCriteriaFunctionDb(String select, String criteria , String orderBy){
-        DBHandler<Attendance> dbHandler1= new DBHandler<>(this);
+        AppDatabaseHelper<Attendance> appDatabaseHelper1 = new AppDatabaseHelper<>(this);
         AttendanceConverter attendanceConverter = new AttendanceConverter();
-        int size = dbHandler1.getRecordByCriteria(select, criteria,orderBy,attendanceConverter).size();
+        int size = appDatabaseHelper1.getRecordByCriteria(select, criteria,orderBy,attendanceConverter).size();
         Log.d("Size of Records"," " + size);
     }
 
