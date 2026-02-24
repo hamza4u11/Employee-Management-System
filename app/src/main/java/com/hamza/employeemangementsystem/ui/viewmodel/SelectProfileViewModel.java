@@ -7,7 +7,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.hamza.employeemangementsystem.core.ResultCallback;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
+import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
 import com.hamza.employeemangementsystem.ui.view.MainActivity;
@@ -21,10 +23,13 @@ public class SelectProfileViewModel extends ViewModel {
     private final MutableLiveData<List<Employee>> managers = new MutableLiveData<>();
     private EmployeeRepositoryImp repository;
 
-    public SelectProfileViewModel(@NonNull AppDatabaseHelper appDatabaseHelper, Context context) {
+    public SelectProfileViewModel(@NonNull EmployeeRepositoryImp repository, Context context) {
         super();
-        AppDatabaseHelper<Employee> appDatabaseHelper1 = new AppDatabaseHelper<>(context);
-        repository = new EmployeeRepositoryImp(appDatabaseHelper);
+//        AppDatabaseHelper<Employee> appDatabaseHelper1 = new AppDatabaseHelper<>(context);
+//        SQLiteLocalDataSource<Employee> sqLiteLocalDataSource1 = new SQLiteLocalDataSource<>(appDatabaseHelper1,context);
+
+//        repository = new EmployeeRepositoryImp(sqLiteLocalDataSource1, context);
+        this.repository = repository;
 
         loadEmployees();
        // getAllManagers();
@@ -33,8 +38,18 @@ public class SelectProfileViewModel extends ViewModel {
         return employees;
     }
     private void loadEmployees() {
+        repository.getAllEmp(new ResultCallback<List<Employee>>() {
+            @Override
+            public void onSuccess(List<Employee> result) {
+                employees.setValue(result);
+            }
 
-        employees.setValue(repository.getAllEmployees());
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+        });
+//        employees.setValue(repository.getAllEmp());
     }
 
     public Employee getEmployeeById(String id){

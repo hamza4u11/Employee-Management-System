@@ -1,6 +1,7 @@
 package com.hamza.employeemangementsystem.ui.viewmodel;
 
 
+import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
@@ -8,24 +9,28 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.hamza.employeemangementsystem.core.ResultCallback;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
+import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
+import com.hamza.employeemangementsystem.domain.EmployeeRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class EmployeeViewModel extends ViewModel {
-    EmployeeRepositoryImp repository;
+    EmployeeRepository repository;
     private final MutableLiveData<List<Employee>> managers = new MutableLiveData<>();
     private MutableLiveData<String> result = new MutableLiveData<>();
-
+    SQLiteLocalDataSource<Employee> sqliteLocalDateSource;
     String empId;
     Employee employee;
-    public EmployeeViewModel(@NonNull AppDatabaseHelper appDatabaseHelper, String employeeId){
+
+    public EmployeeViewModel(EmployeeRepository employeeRepository, String employeeId){
         super();
 
-        repository = new EmployeeRepositoryImp(appDatabaseHelper);
+        repository = employeeRepository;
         getAllManagers();
 
         if(employeeId!= null) {
@@ -164,7 +169,18 @@ public class EmployeeViewModel extends ViewModel {
         return managers;
     }
     public void getAllManagers() {
-        managers.setValue( repository.getAllManagers());
+        repository.getAllEmp(new ResultCallback<List<Employee>>() {
+            @Override
+            public void onSuccess(List<Employee> result) {
+                managers.setValue(result);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+            }
+        });
+       // managers.setValue( repository.getAllManagers());
     }
     public LiveData<String> getResult() {
         return result;

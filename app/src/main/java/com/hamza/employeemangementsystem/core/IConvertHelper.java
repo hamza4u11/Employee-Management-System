@@ -3,6 +3,8 @@ package com.hamza.employeemangementsystem.core;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import org.json.JSONObject;
+
 public interface IConvertHelper<T> {
     String getIdFieldName();
     String getEntityName();
@@ -10,4 +12,6 @@ public interface IConvertHelper<T> {
     String getSecondFieldName();
     ContentValues fromModel(T model);
     T toModel(Cursor cursor);
+    T fromJson(JSONObject json);
+    JSONObject toJson(T model);
 }

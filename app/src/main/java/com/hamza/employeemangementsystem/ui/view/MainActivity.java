@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<String> list;
 
-
     private AppDatabaseHelper appDatabaseHelper;
     String pinOne, pinSecond,pinThird,pinFourth,pin;
 
@@ -172,55 +171,6 @@ private void openListScreen(ArrayList<String> list, String title) {
             });
         }
     }
-
-//    private void setupOtpInputs(Button loginButton, EditText... editTexts) {
-//
-//        for (int i = 0; i < editTexts.length; i++) {
-//            final int index = i;
-//
-//            editTexts[i].addTextChangedListener(new TextWatcher() {
-//                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-//
-//                @Override
-//                public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                    // move forward
-//                    if (s.length() == 1 && index < editTexts.length - 1) {
-//                        editTexts[index + 1].requestFocus();
-//                    }
-//
-//                    // check if all filled
-//                    boolean allFilled = true;
-//                    for (EditText et : editTexts) {
-//                        if (et.getText().toString().trim().isEmpty()) {
-//                            allFilled = false;
-//                            break;
-//                        }
-//                    }
-//
-//                    if (allFilled) {
-//                        loginButton.performClick(); // auto click
-//                    }
-//                }
-//
-//                @Override public void afterTextChanged(Editable s) {}
-//            });
-//
-//            // move back on delete
-//            editTexts[i].setOnKeyListener((v, keyCode, event) -> {
-//                if (keyCode == KeyEvent.KEYCODE_DEL &&
-//                        event.getAction() == KeyEvent.ACTION_DOWN &&
-//                        editTexts[index].getText().toString().isEmpty() &&
-//                        index > 0) {
-//
-//                    editTexts[index - 1].requestFocus();
-//                    editTexts[index - 1].setSelection(editTexts[index - 1].getText().length());
-//                    return true;
-//                }
-//                return false;
-//            });
-//        }
-//    }
     private void openEmployeeScreen(String mode , String employeeId){
             Log.d("openEmployeeScreen", mode );
         EmployeeFragment fragment =  EmployeeFragment.newInstance(mode,employeeId);

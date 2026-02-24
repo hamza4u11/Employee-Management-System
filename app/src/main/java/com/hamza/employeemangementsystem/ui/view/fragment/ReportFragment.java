@@ -2,6 +2,7 @@ package com.hamza.employeemangementsystem.ui.view.fragment;
 
 import android.os.Bundle;
 
+import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,9 +13,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.core.DataSourceMode;
+import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.Globals;
+import com.hamza.employeemangementsystem.data.database.DbHandler;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
+import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSourceClass;
 import com.hamza.employeemangementsystem.data.model.Attendance;
+import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
+import com.hamza.employeemangementsystem.ui.AttendanceConverter;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ReportAdapter;
 import com.hamza.employeemangementsystem.ui.viewmodel.ReportViewModel;
 
@@ -36,6 +45,7 @@ public class ReportFragment extends Fragment {
     ReportAdapter adapter;
     ReportViewModel reportViewModel;
     TextView title,txtName;
+    SQLiteLocalDataSource<Attendance> sqLiteLocalDataSource;
 
 
 
@@ -85,7 +95,12 @@ public class ReportFragment extends Fragment {
 
         }
         AppDatabaseHelper<Attendance> appDatabaseHelper = new AppDatabaseHelper<>(getActivity());
-         reportViewModel = new ReportViewModel(appDatabaseHelper,mParam1,mParam2, mParam3, mParam4);
+        SQLiteLocalDataSource<Attendance> attendanceSQLiteLocalDataSource = new SQLiteLocalDataSource<>(appDatabaseHelper,getActivity());
+        RemoteDataSourceClass<Attendance> attendanceRemoteDataSourceClass = new RemoteDataSourceClass<>();
+        IConvertHelper<Attendance> convertHelper = new AttendanceConverter();
+        DbHandler<Attendance> dbHandler = new DbHandler<>( attendanceSQLiteLocalDataSource, attendanceRemoteDataSourceClass, convertHelper, DataSourceMode.LOCAL_ONLY);
+        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(dbHandler, getContext());
+        reportViewModel = new ReportViewModel(attendanceRepositoryImp,mParam1,mParam2, mParam3, mParam4, getContext());
     }
 
     @Override

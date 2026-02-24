@@ -18,9 +18,17 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.core.DataSourceMode;
+import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.Globals;
+import com.hamza.employeemangementsystem.data.database.DbHandler;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
+import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSourceClass;
 import com.hamza.employeemangementsystem.data.model.Employee;
+import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
+import com.hamza.employeemangementsystem.domain.EmployeeRepository;
+import com.hamza.employeemangementsystem.ui.EmployeeConverter;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
 
@@ -96,9 +104,14 @@ public class EmployeeFragment extends Fragment {
             employeeId = getArguments().getString(ARG_PARAM2);
         }
         AppDatabaseHelper<Employee> employeeAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
-        selectProfileViewModel = new SelectProfileViewModel(employeeAppDatabaseHelper,getContext());
-        //DBHandler<Attendance> attendanceDBHandler = new DBHandler<>(getActivity());
-        viewModel = new EmployeeViewModel(employeeAppDatabaseHelper, employeeId);
+        SQLiteLocalDataSource<Employee> sqLiteLocalDataSource = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper,getActivity());
+        RemoteDataSourceClass<Employee> remoteDataSource = new RemoteDataSourceClass<>();
+        IConvertHelper<Employee> convertHelper = new EmployeeConverter();
+        DbHandler<Employee> dbHandler = new DbHandler<>(sqLiteLocalDataSource,remoteDataSource,convertHelper, DataSourceMode.LOCAL_ONLY);
+        EmployeeRepositoryImp employeeRepository = new EmployeeRepositoryImp(dbHandler, getContext());
+        selectProfileViewModel = new SelectProfileViewModel(employeeRepository,getContext());
+
+        viewModel = new EmployeeViewModel(employeeRepository, employeeId);
     }
 
     @Override

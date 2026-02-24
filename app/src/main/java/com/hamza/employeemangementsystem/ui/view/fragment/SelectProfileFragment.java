@@ -3,10 +3,13 @@ package com.hamza.employeemangementsystem.ui.view.fragment;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.core.widget.TextViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.strictmode.SqliteObjectLeakedViolation;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +21,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.core.DataSourceMode;
+import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.Globals;
+import com.hamza.employeemangementsystem.data.database.DbHandler;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSourceClass;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
+import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
+import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
+import com.hamza.employeemangementsystem.domain.LocalDataSource;
+import com.hamza.employeemangementsystem.ui.AttendanceConverter;
+import com.hamza.employeemangementsystem.ui.EmployeeConverter;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.EmployeeClickHandler;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.myAdapter;
 import com.hamza.employeemangementsystem.ui.viewmodel.DashboardViewModel;
@@ -110,11 +123,23 @@ public class SelectProfileFragment extends Fragment {
             title = getArguments().getString(ARG_PARAM3);
 
         }
-//        SQLiteLocalDataSource<Employee> sqLiteLocalDataSource = new SQLiteLocalDataSource<>(getActivity());
+        //Employee
+        SQLiteLocalDataSource<Employee> employeeSQLiteLocalDataSource;
         AppDatabaseHelper<Employee> employeeAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
-        selectProfileViewModel = new SelectProfileViewModel(employeeAppDatabaseHelper,getContext());
+        employeeSQLiteLocalDataSource    = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper,getActivity());
+        RemoteDataSourceClass<Employee> remoteDataSourceClass = new RemoteDataSourceClass<>();
+        IConvertHelper<Employee> convertHelper = new EmployeeConverter();
+        DbHandler<Employee> dbHandler = new DbHandler<>(employeeSQLiteLocalDataSource,remoteDataSourceClass,convertHelper, DataSourceMode.LOCAL_ONLY);
+        EmployeeRepositoryImp employeeRepositoryImp = new EmployeeRepositoryImp(dbHandler,getContext());
+        selectProfileViewModel = new SelectProfileViewModel(employeeRepositoryImp,getContext());
+        //Attendance
         AppDatabaseHelper<Attendance> attendanceAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
-        dashboardViewModel = new DashboardViewModel(attendanceAppDatabaseHelper);
+        SQLiteLocalDataSource<Attendance> attendanceSQLiteLocalDataSource = new SQLiteLocalDataSource<>(attendanceAppDatabaseHelper,getActivity());
+        RemoteDataSourceClass<Attendance> attendanceRemoteDataSourceClass = new RemoteDataSourceClass<>();
+        IConvertHelper<Attendance> attendanceIConvertHelper = new AttendanceConverter();
+        DbHandler<Attendance> attendanceDbHandler = new DbHandler<>(attendanceSQLiteLocalDataSource, attendanceRemoteDataSourceClass, attendanceIConvertHelper, DataSourceMode.LOCAL_ONLY);
+        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(attendanceDbHandler, getContext());
+        dashboardViewModel = new DashboardViewModel(attendanceRepositoryImp,employeeRepositoryImp,getActivity());
     }
 
     @Override

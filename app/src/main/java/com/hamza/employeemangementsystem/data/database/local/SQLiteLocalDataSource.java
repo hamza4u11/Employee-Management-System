@@ -12,48 +12,56 @@ import java.util.List;
 
 public class SQLiteLocalDataSource<T>  implements LocalDataSource<T> {
 
-        private final AppDatabaseHelper<T> dbHelper;
+        private final AppDatabaseHelper<T> appDatabaseHelper;
 
-    public SQLiteLocalDataSource(AppDatabaseHelper<T> dbHelper) {
+    public SQLiteLocalDataSource(AppDatabaseHelper<T> dbHelper, Context context) {
       // dbHelper = new AppDatabaseHelper(context);
-        this.dbHelper = dbHelper;
+        this.appDatabaseHelper = new AppDatabaseHelper(context);
     }
-//public SQLiteLocalDataSource(Context context) {
-//    dbHelper = new AppDatabaseHelper(context);
-//}
+
     @Override
     public T getRecordById(String id,  IConvertHelper<T> mapper) {
-        return dbHelper.getRecordById(id, mapper);
+        return appDatabaseHelper.getRecordById(id, mapper);
     }
 
     @Override
     public List<T> getAllRecords(IConvertHelper<T> mapper) {
-        return dbHelper.getAllRecords(mapper);
+        return appDatabaseHelper.getAllRecords(mapper);
     }
 
     @Override
     public T getLastRecord(String id, IConvertHelper<T> mapper) {
-        return dbHelper.getLastRecord(id, mapper);
+        return appDatabaseHelper.getLastRecord(id, mapper);
     }
 
     @Override
-    public List<T> getRecordByCriteria(String criteria,String orderBy, IConvertHelper<T> mapper) {
-        return dbHelper.getRecordByCriteria(criteria, orderBy,mapper);
+    public List<T> getRecordByCriteria(String selectClause, String criteria,String orderBy, IConvertHelper<T> mapper) {
+        return appDatabaseHelper.getRecordByCriteria(selectClause,criteria, orderBy,mapper);
+    }
+
+    @Override
+    public List<T> getRecordByCriteria(String criteria, String orderBy, IConvertHelper<T> mapper) {
+        return appDatabaseHelper.getRecordByCriteria(criteria, orderBy,mapper );
     }
 
     @Override
     public void updateRecord(String id, T model, IConvertHelper<T> mapper) {
-        dbHelper.updateRecord(Integer.parseInt(id),model,mapper);
+        appDatabaseHelper.updateRecord(Integer.parseInt(id),model,mapper);
 
     }
 
     @Override
     public void insertRecord(T model, IConvertHelper<T> mapper) {
-        dbHelper.createRecord(model,mapper);
+        appDatabaseHelper.createRecord(model,mapper);
     }
+
+    @Override
+    public void insertRecords(List<T> model, IConvertHelper<T> mapper) {
+
+    }
+
     @Override
     public void deleteRecord(String id, IConvertHelper<T> mapper) {
-        dbHelper.deleteRecord(Integer.parseInt(id), mapper);
-
+        appDatabaseHelper.deleteRecord(Integer.parseInt(id), mapper);
     }
 }

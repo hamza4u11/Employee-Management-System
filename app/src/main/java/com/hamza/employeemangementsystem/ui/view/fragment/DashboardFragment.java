@@ -13,10 +13,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
+import com.hamza.employeemangementsystem.core.DataSourceMode;
+import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.Globals;
+import com.hamza.employeemangementsystem.data.database.DbHandler;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
+import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSourceClass;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
+import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
+import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
+import com.hamza.employeemangementsystem.domain.EmployeeRepository;
+import com.hamza.employeemangementsystem.ui.AttendanceConverter;
+import com.hamza.employeemangementsystem.ui.EmployeeConverter;
 import com.hamza.employeemangementsystem.ui.viewmodel.DashboardViewModel;
 
 /**
@@ -87,8 +98,22 @@ public class DashboardFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        //Employee
+        AppDatabaseHelper<Employee> employeeAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
+        SQLiteLocalDataSource<Employee> employeeSQLiteLocalDataSource = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper,getActivity());
+        RemoteDataSourceClass<Employee> remoteDataSource = new RemoteDataSourceClass<>();
+        IConvertHelper<Employee> convertHelper = new EmployeeConverter();
+        DbHandler<Employee> employeeDbHandler = new DbHandler<>(employeeSQLiteLocalDataSource,remoteDataSource, convertHelper, DataSourceMode.LOCAL_ONLY );
+        EmployeeRepositoryImp employeeRepositoryImp = new EmployeeRepositoryImp(employeeDbHandler, getContext());
+        //Attendance
         AppDatabaseHelper<Attendance> attendanceAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
-        dashboardViewModel = new DashboardViewModel(attendanceAppDatabaseHelper);
+        SQLiteLocalDataSource<Attendance> sqLiteLocalDataSource = new SQLiteLocalDataSource<>(attendanceAppDatabaseHelper,getActivity());
+        RemoteDataSourceClass<Attendance> remoteDataSourceClass = new RemoteDataSourceClass<>();
+        IConvertHelper<Attendance> attendanceIConvertHelper = new AttendanceConverter();
+        DbHandler<Attendance> attendanceDbHandler =  new DbHandler<>(sqLiteLocalDataSource,remoteDataSourceClass,attendanceIConvertHelper , DataSourceMode.LOCAL_ONLY);
+        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(attendanceDbHandler, getContext());
+
+        dashboardViewModel = new DashboardViewModel(attendanceRepositoryImp,employeeRepositoryImp,getContext());
 
     }
 
@@ -109,10 +134,6 @@ public class DashboardFragment extends Fragment {
         logoutBtn = view.findViewById(R.id.logoutBtn);
         manageEmployeesBtn= view.findViewById(R.id.manageEmployeesBtn);
         attendenceReportsBtn= view.findViewById(R.id.attendenceReports);
-
-
-
-
         Employee loginEmployee= Globals.getShared().getEmployee();
         String loginEmployeeId = String.valueOf(loginEmployee.id);
         refresh();
@@ -137,8 +158,6 @@ public class DashboardFragment extends Fragment {
                 if(listener!=null){
                     listener.OnLogoutClick();
                 }
-
-
             }
         });
         String mode = dashboardViewModel.getIsAdmin() ? "add" : null;
@@ -159,9 +178,6 @@ public class DashboardFragment extends Fragment {
                 }
             }
         });
-
-
-
         return view;
     }
     private void refresh(){
@@ -174,15 +190,12 @@ public class DashboardFragment extends Fragment {
         seesion.setText(dashboardViewModel.getSeesionText());
         seeionLabel.setText(dashboardViewModel.getSeesionLabel());
         label.setText(dashboardViewModel.getCheckInOutText());
-//        hideAdminButtons.setVisibility(View.GONE);
+//       hideAdminButtons.setVisibility(View.GONE);
         manageEmployeesBtn.setVisibility(View.GONE);
         checkInButton.setVisibility(View.GONE);
         checkOutButton.setVisibility(View.GONE);
         checkOutButton.setVisibility(dashboardViewModel.getIfUserCheckedIn() ? View.VISIBLE : View.GONE);
         checkInButton.setVisibility(dashboardViewModel.getIfUserCheckedIn()? View.GONE : View.VISIBLE);
         manageEmployeesBtn.setVisibility(dashboardViewModel.isLayoutEnabled()? View.VISIBLE: View.GONE);
-
     }
-
-
 }

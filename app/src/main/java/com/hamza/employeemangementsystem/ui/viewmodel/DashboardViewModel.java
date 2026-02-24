@@ -1,17 +1,30 @@
 package com.hamza.employeemangementsystem.ui.viewmodel;
 
+import android.content.Context;
 import android.os.Build;
+import android.os.strictmode.SqliteObjectLeakedViolation;
+import android.telephony.emergency.EmergencyNumber;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.hamza.employeemangementsystem.core.DataSourceMode;
+import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.Globals;
+import com.hamza.employeemangementsystem.data.database.DbHandler;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
+import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSourceClass;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
+import com.hamza.employeemangementsystem.domain.LocalDataSource;
+import com.hamza.employeemangementsystem.ui.AttendanceConverter;
+import com.hamza.employeemangementsystem.ui.EmployeeConverter;
 import com.hamza.employeemangementsystem.utils.DateTimeUtlis;
 
 import java.time.LocalDate;
@@ -19,9 +32,11 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
+import kotlin.jvm.internal.IntCompanionObject;
+
 public class DashboardViewModel extends ViewModel {
-    private AttendanceRepositoryImp repository;
-    private EmployeeRepositoryImp employeeRepo;
+    private AttendanceRepositoryImp attendanceRepositoryImp;
+    private EmployeeRepositoryImp employeeRepositoryImp;
     private String statusText= "";
     private String seesionText="";
     private String seesionLabel="";
@@ -37,18 +52,16 @@ public class DashboardViewModel extends ViewModel {
 
         return openSelectProfile;
     }
-
-
-    public DashboardViewModel(@NonNull AppDatabaseHelper appDatabaseHelper) {
+    public DashboardViewModel(@NonNull AttendanceRepositoryImp attendanceRepositoryImp,EmployeeRepositoryImp employeeRepositoryImp, Context context) {
         super();
-        repository = new AttendanceRepositoryImp(appDatabaseHelper);
-        employeeRepo = new EmployeeRepositoryImp(appDatabaseHelper);
+        this.attendanceRepositoryImp= attendanceRepositoryImp;
+        this.employeeRepositoryImp = employeeRepositoryImp;
     }
     public Attendance loadUserStatus(String id ) {
         Log.d("Android" ,"Attendance LoadUserStatus");
-        Employee employee = employeeRepo.getEmployeeById(id);
+        Employee employee = employeeRepositoryImp.getEmployeeById(id);
         Log.d("Employee Designation", employee.designation);
-        Attendance record = repository.getLastAttendance(id);
+        Attendance record = attendanceRepositoryImp.getLastAttendance(id);
         statusText = "";
         seesionText="";
         checkInOutText="";
@@ -118,10 +131,10 @@ public class DashboardViewModel extends ViewModel {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             attendance.checkInTime = LocalDateTime.now().toString();
         }
-        repository.insertAttendance(attendance);
+        attendanceRepositoryImp.insertAttendance(attendance);
     }
     public void checkOut(String id) {
-       Attendance record = repository.getLastAttendance(id);
+       Attendance record = attendanceRepositoryImp.getLastAttendance(id);
         Attendance attendance = new Attendance();
         attendance.id =record.id;
         attendance.empId=Integer.parseInt(id);
@@ -133,7 +146,7 @@ public class DashboardViewModel extends ViewModel {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             attendance.checkOutTime = LocalDateTime.now().toString();
         }
-        repository.updateAttendance(attendance);
+        attendanceRepositoryImp.updateAttendance(attendance);
     }
     public void logout() {
         Globals.getShared().setEmployee(null);

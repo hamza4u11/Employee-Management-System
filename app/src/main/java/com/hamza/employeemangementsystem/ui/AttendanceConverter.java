@@ -7,6 +7,8 @@ import android.database.Cursor;
 import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 
+import org.json.JSONObject;
+
 public class AttendanceConverter implements IConvertHelper<Attendance> {
     @Override
     public String getIdFieldName() {
@@ -53,5 +55,15 @@ public class AttendanceConverter implements IConvertHelper<Attendance> {
             attendance.status= cursor.getString(cursor.getColumnIndexOrThrow("status"));
         }
         return attendance;
+    }
+
+    @Override
+    public Attendance fromJson(JSONObject json) {
+        return null;
+    }
+
+    @Override
+    public JSONObject toJson(Attendance model) {
+        return null;
     }
 }

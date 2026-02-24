@@ -1,40 +1,62 @@
 package com.hamza.employeemangementsystem.data.repository;
 
+import static com.hamza.employeemangementsystem.core.DataSourceMode.LOCAL_ONLY;
+
+import android.content.Context;
 import android.util.Log;
 
+import com.hamza.employeemangementsystem.core.IConvertHelper;
+import com.hamza.employeemangementsystem.core.ResultCallback;
 import com.hamza.employeemangementsystem.data.Globals;
+import com.hamza.employeemangementsystem.data.database.DbHandler;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
+import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSource;
+import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSourceClass;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.domain.AttendanceRepository;
 import com.hamza.employeemangementsystem.domain.EmployeeRepository;
 import com.hamza.employeemangementsystem.ui.AttendanceConverter;
+import com.hamza.employeemangementsystem.ui.EmployeeConverter;
+import com.hamza.employeemangementsystem.ui.view.MainActivity;
 
+import java.sql.SQLOutput;
 import java.util.List;
 
 public class AttendanceRepositoryImp implements AttendanceRepository {
-        AppDatabaseHelper appDatabaseHelper;
+        AppDatabaseHelper<Attendance> appDatabaseHelper;
+        Context context;
+        DbHandler<Attendance> dbHandler;
 
 
-    public AttendanceRepositoryImp(AppDatabaseHelper appDatabaseHelper) {
 
-        this.appDatabaseHelper = appDatabaseHelper;
+    public AttendanceRepositoryImp(DbHandler<Attendance> DbHandler, Context context) {
+//        this.sqLiteLocalDataSource= new SQLiteLocalDataSource<>(appDatabaseHelper,context);
+
+        this.context = context;
+        this.dbHandler = DbHandler;
     }
 
     public List<Attendance> getAllAttendance(){
         AttendanceConverter attendanceConverter = new AttendanceConverter();
-        return appDatabaseHelper.getAllRecords(attendanceConverter);
+            // dbHandler.getAllAsync(attendanceConverter);
+        return null;
+    }
+    public void getAllAtt(ResultCallback<List<Attendance>> callback){
+        AttendanceConverter attendanceConverter = new AttendanceConverter();
+        dbHandler.getAllAsync(callback);
     }
     public Attendance getAttendanceByEmpId(String id ){
         AttendanceConverter attendanceConverter = new AttendanceConverter();
-        return  (Attendance) appDatabaseHelper.getRecordById(id ,attendanceConverter);
+        return  (Attendance) dbHandler.getRecordById(id);
     }
     @Override
     public Attendance getLastAttendance(String empId){
         AttendanceConverter attendanceConverter = new AttendanceConverter();
       String criteria = " empId = "+ empId +" ";
       String orderBy = " checkInTime DESC LIMIT 1";
-      List<Attendance> attendanceList= appDatabaseHelper.getRecordByCriteria(criteria,orderBy, attendanceConverter);
+      List<Attendance> attendanceList= dbHandler.getRecordByCriteria("*",criteria,orderBy);
       if (attendanceList!= null && attendanceList.size()==1){
           return attendanceList.get(0);
       }
@@ -45,19 +67,26 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
     public boolean updateAttendance(Attendance attendance) {
         AttendanceConverter attendanceConverter = new AttendanceConverter();
 
-        appDatabaseHelper.updateRecord(attendance.id, attendance, attendanceConverter);
+        dbHandler.updateRecord(String.valueOf(attendance.id), attendance);
         return true;
     }
     @Override
     public boolean insertAttendance(Attendance attendance) {
         AttendanceConverter attendanceConverter = new AttendanceConverter();
-        appDatabaseHelper.createRecord(attendance,attendanceConverter);
+        dbHandler.insertRecord(attendance);
         return true;
     }
     public List<Attendance> getAttendanceByCriteria(String startDate, String endDate, String employeeId, String loginId){
         AttendanceConverter attendanceConverter = new AttendanceConverter();
         String selectClause = null, criteria = null, orderBy = null;
-        EmployeeRepository employeeRepository = new EmployeeRepositoryImp(appDatabaseHelper);
+        SQLiteLocalDataSource<Attendance> sqLiteLocalDataSource = new SQLiteLocalDataSource<>(appDatabaseHelper,context);
+        RemoteDataSourceClass<Employee> remoteDataSource = new RemoteDataSourceClass<>();
+        AppDatabaseHelper<Employee> employeeAppDatabaseHelper1 = new AppDatabaseHelper<>(context);
+        SQLiteLocalDataSource<Employee> sqLiteLocalDataSource1 = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper1,context);
+        IConvertHelper<Employee> convertHelper = new EmployeeConverter();
+        DbHandler<Employee> dbHandler = new DbHandler<>(sqLiteLocalDataSource1,remoteDataSource, convertHelper, LOCAL_ONLY);
+
+        EmployeeRepository employeeRepository = new EmployeeRepositoryImp(dbHandler,context);
         Employee employee=employeeRepository.getEmployeeById(loginId);
          Globals.getShared().setEmployee(employee);
          Log.d("Employee Name", " "+ Globals.getShared().getEmployee().name );
@@ -73,7 +102,7 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
             employeeCriteria = " empId = " + loginId + " ";
         }
         criteria = employeeCriteria + (!employeeCriteria.isEmpty()?" AND ":"") + dateCriteria;
-      return  appDatabaseHelper.getRecordByCriteria( selectClause,criteria,orderBy, attendanceConverter);
+      return  sqLiteLocalDataSource.getRecordByCriteria(selectClause,criteria,orderBy, attendanceConverter);
     }
 
 

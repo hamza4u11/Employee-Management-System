@@ -6,6 +6,8 @@ import android.database.Cursor;
 import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.model.Employee;
 
+import org.json.JSONObject;
+
 public class EmployeeConverter implements IConvertHelper<Employee> {
 
 
@@ -63,5 +65,15 @@ public class EmployeeConverter implements IConvertHelper<Employee> {
         emp.managerId= cursor.getString(cursor.getColumnIndexOrThrow("managerId"));
 
         return emp;
+    }
+
+    @Override
+    public Employee fromJson(JSONObject json) {
+        return null;
+    }
+
+    @Override
+    public JSONObject toJson(Employee model) {
+        return null;
     }
 }

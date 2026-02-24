@@ -70,7 +70,7 @@ public class AppDatabaseHelper<T> extends SQLiteOpenHelper {
     public void updateRecord (int id ,T object, IConvertHelper convertHelper){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = convertHelper.fromModel(object);
-        db.update(convertHelper.getEntityName(),values, "id = ?",new String[]{String.valueOf(id)}  );
+        db.update(convertHelper.getEntityName(),values, "id = ?",new String[]{String.valueOf(id)});
 
     }
     public void deleteRecord(int id, IConvertHelper convertHelper){
@@ -125,7 +125,7 @@ public class AppDatabaseHelper<T> extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(
                 query,
-                new String[]{id} // ✅ String[]
+                new String[]{id}
         );
         T model = null;
         if (cursor.moveToFirst()) {
