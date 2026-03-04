@@ -1,24 +1,36 @@
 package com.hamza.employeemangementsystem.data.database;
 
 import android.content.ContentValues;
+import android.credentials.RegisterCredentialDescriptionRequest;
 import android.os.Looper;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.hamza.employeemangementsystem.core.ApiResultCallback;
 import com.hamza.employeemangementsystem.core.DataSourceMode;
 import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.core.ResultCallback;
+import com.hamza.employeemangementsystem.data.Globals;
+import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
 import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSourceClass;
+import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
+import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
 import com.hamza.employeemangementsystem.domain.LocalDataSource;
+import com.hamza.employeemangementsystem.ui.AttendanceConverter;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import android.os.Handler;
 import android.telephony.mbms.StreamingServiceInfo;
+import android.util.JsonReader;
+import android.util.Log;
 
 import androidx.annotation.StringDef;
+
+import org.json.JSONObject;
 
 public class DbHandler<T> {
     private final LocalDataSource<T> local;
@@ -35,59 +47,6 @@ public class DbHandler<T> {
         this.mapper = mapper;
         this.mode = mode;
     }
-//    public void getAllAsync(ResultCallback<List<T>>  callBack) {
-//        executor.execute(() -> {
-//            try{
-//                List<T> result;
-//                switch (mode) {
-//                    case LOCAL_ONLY:
-//                        result = local.getAllRecords(mapper);
-//                        break;
-//                    case REMOTE_ONLY:
-//                        result = remote.getAllRecords(mapper);
-//                        break;
-//                    case HYBRID_REMOTE_FIRST:
-//                        try {
-//                            result = remote.getAllRecords(mapper);
-//                            if (result != null) {
-//                                for (T item : result) {
-//                                    local.insertRecord(item, mapper);
-//                                }
-//                            }
-//                        } catch (Exception e) {
-//                            result = local.getAllRecords(mapper);
-//                        }
-//
-//                        break;
-//                    case HYBRID_LOCAL_FIRST:
-//                        result = local.getAllRecords(mapper);
-//
-//                        try {
-//                            if ((result == null || result.isEmpty())) {
-//                                result = remote.getAllRecords(mapper);
-//                                if (result != null) {
-//                                    for (T item : result) {
-//                                        local.insertRecord(item, mapper);
-//                                    }
-//                                }
-//                            }
-//                        } catch (Exception e) {
-//                            result = new ArrayList<>();
-//                        }
-//                        break;
-//                    default:
-//                        result = new ArrayList<>();
-//                }
-//                List<T> finalResult = result;
-//                mainHandler.post(() -> callBack.onSuccess(finalResult));
-//
-//
-//            } catch (RuntimeException e) {
-//                mainHandler.post(()-> callBack.onError(e));
-//            }
-//        });
-//    }
-
     public void getAllAsync(ResultCallback<List<T>>  callBack) {
         executor.execute(() -> {
             try{
@@ -314,7 +273,7 @@ public class DbHandler<T> {
                 }
                 break;
             case REMOTE_ONLY:
-                T recRemote = remote.getLastRecord(id);
+                T recRemote = remote.getLastRecord(id, mapper);
                 if(recRemote != null){
                     return recRemote;
                 }
@@ -324,14 +283,14 @@ public class DbHandler<T> {
                 if (recLocalFirst != null){
                     return recLocalFirst;
                 }
-                T recRemoteSecond = remote.getLastRecord(id);
+                T recRemoteSecond = remote.getLastRecord(id, mapper);
                 if (recRemoteSecond != null){
                     local.insertRecord(recRemoteSecond,mapper);
                     return recRemoteSecond;
                 }
                 break;
             case HYBRID_REMOTE_FIRST:
-                T recRemoteFirst = remote.getLastRecord(id);
+                T recRemoteFirst = remote.getLastRecord(id,mapper);
                 if(recRemoteFirst != null){
                     local.insertRecord(recRemoteFirst,mapper);
                     return recRemoteFirst;
@@ -340,14 +299,14 @@ public class DbHandler<T> {
                 if(recLocalSecond != null){
                     return recLocalSecond;
                 }
-
                 break;
             default:
                 return null;
         }
         return null;
     }
-    public List<T> getRecordByCriteria(String selectClause, String criteria, String orderBy){
+    public List<T> getRecordByCriteria(String selectClause, String criteria, String orderBy, Type type){
+
         switch(mode){
             case LOCAL_ONLY:
                 List<T> recLocal = local.getRecordByCriteria(selectClause,criteria,orderBy,mapper);
@@ -356,7 +315,7 @@ public class DbHandler<T> {
                 }
                 break;
             case REMOTE_ONLY:
-                List<T> recRemote = remote.getRecordByCriteria(criteria);
+                List<T> recRemote = remote.getRecordByCriteriaSync(criteria,mapper,type);
                 if (recRemote!=null){
                     return recRemote;
                 }
@@ -366,11 +325,11 @@ public class DbHandler<T> {
                 if (recLocalFirst != null){
                     return recLocalFirst;
                 }
-                List<T> recRemoteSecond = remote.getRecordByCriteria(criteria);
-                if(recRemoteSecond != null){
-                    local.insertRecords(recRemoteSecond, mapper);
-                    return recRemoteSecond;
-                }
+//                List<T> recRemoteSecond = remote.getRecordByCriteria(criteria);
+//                if(recRemoteSecond != null){
+//                    local.insertRecords(recRemoteSecond, mapper);
+//                    return recRemoteSecond;
+//                }
                 break;
             case HYBRID_REMOTE_FIRST:
 
@@ -378,6 +337,44 @@ public class DbHandler<T> {
         }
         return null;
     }
+//    public List<T> getRecordByCriteria(String selectClause, String criteria,String remoteCriteria, String orderBy){
+//
+//        switch(mode){
+//            case LOCAL_ONLY:
+//                List<T> recLocal = local.getRecordByCriteria(selectClause,criteria,orderBy,mapper);
+//                if(recLocal!= null){
+//                    return recLocal;
+//                }
+//                break;
+//            case REMOTE_ONLY:
+//                List<T> recRemote = remote.getRecordByCriteria(criteria,mapper);
+//                if (recRemote!=null){
+//                    return recRemote;
+//                }
+//                break;
+//            case HYBRID_LOCAL_FIRST:
+//                List<T> recLocalFirst = local.getRecordByCriteria(selectClause,criteria,orderBy, mapper);
+//                if (recLocalFirst != null){
+//                    return recLocalFirst;
+//                }
+//               // List<T> recRemoteSecond = remote.getRecordByCriteria(criteria);
+////                if(recRemoteSecond != null){
+////                    local.insertRecords(recRemoteSecond, mapper);
+////                    return recRemoteSecond;
+////                }
+//                break;
+//            case HYBRID_REMOTE_FIRST:
+//
+//                break;
+//        }
+//        return null;
+//    }
+    public  DataSourceMode getMode(){
+        DataSourceMode mode1;
+        return   mode1 = mode;
+    }
+
+
 
 }
 

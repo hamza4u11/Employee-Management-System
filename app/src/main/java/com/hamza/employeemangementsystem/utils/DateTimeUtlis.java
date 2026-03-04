@@ -34,7 +34,8 @@ public class DateTimeUtlis {
         }
     }
     public String formatDateTime(Date date, String format){
-        Log.d("formatDateTime", "Function");
+        Log.d("Format date time function" , " " + date);
+        Log.d("formatDateTime function", format);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Locale.getDefault());
         return  simpleDateFormat.format(date);
     }

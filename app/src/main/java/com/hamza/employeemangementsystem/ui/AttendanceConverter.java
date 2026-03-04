@@ -5,11 +5,23 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.hamza.employeemangementsystem.core.IConvertHelper;
+import com.hamza.employeemangementsystem.data.Globals;
+import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.model.Attendance;
+import com.hamza.employeemangementsystem.data.model.Employee;
+import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AttendanceConverter implements IConvertHelper<Attendance> {
+    EmployeeRepositoryImp employeeRepositoryImp;
+    public AttendanceConverter(EmployeeRepositoryImp employeeRepositoryImp) {
+        this.employeeRepositoryImp = employeeRepositoryImp;
+    }
+
     @Override
     public String getIdFieldName() {
         return "empId";
@@ -20,6 +32,8 @@ public class AttendanceConverter implements IConvertHelper<Attendance> {
     public String getSecondFieldName() {
         return "checkOutTime";
     }
+
+
 
 
     @Override

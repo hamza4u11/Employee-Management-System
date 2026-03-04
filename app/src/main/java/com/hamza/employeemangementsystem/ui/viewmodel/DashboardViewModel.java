@@ -74,7 +74,7 @@ public class DashboardViewModel extends ViewModel {
             Log.d("Time" , " " +time);
             seesionLabel= (record.checkInTime != null && record.checkOutTime == null )? "Current Seeion Duration" : "Last Seesion Duration";
             checkInOutText = (record.checkOutTime == null || record.checkOutTime.isEmpty() )? "Last Check In Time" : "Last Check out Time";
-            statusText= DateTimeUtlis.getShared().formatDateTime(time, Globals.getShared().getDateTimeFormat());
+            statusText= time == null ? "" : DateTimeUtlis.getShared().formatDateTime(time, Globals.getShared().getDateTimeFormat());
             seesionText=DateTimeUtlis.getShared().calculateDurationBetween(record.checkInTime,record.checkOutTime==null|| record.checkOutTime.isEmpty() ? DateTimeUtlis.getShared().getNow() :record.checkOutTime);
             ifUserCheckedIn = record.checkOutTime == null || record.checkOutTime.isEmpty();
             isLayoutEnabled = Objects.equals(employee.designation, "manager") || Objects.equals(employee.designation, "admin");

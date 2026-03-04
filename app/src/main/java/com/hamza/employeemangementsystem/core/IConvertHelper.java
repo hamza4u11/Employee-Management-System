@@ -5,6 +5,8 @@ import android.database.Cursor;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public interface IConvertHelper<T> {
     String getIdFieldName();
     String getEntityName();
@@ -14,4 +16,5 @@ public interface IConvertHelper<T> {
     T toModel(Cursor cursor);
     T fromJson(JSONObject json);
     JSONObject toJson(T model);
+
 }

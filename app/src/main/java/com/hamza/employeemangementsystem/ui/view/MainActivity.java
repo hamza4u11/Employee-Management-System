@@ -385,12 +385,12 @@ private void openListScreen(ArrayList<String> list, String title) {
         Log.d("Date", ""+ date1);
         Log.d("Time", " " + time);
     }
-    private void testingCriteriaFunctionDb(String select, String criteria , String orderBy){
-        AppDatabaseHelper<Attendance> appDatabaseHelper1 = new AppDatabaseHelper<>(this);
-        AttendanceConverter attendanceConverter = new AttendanceConverter();
-        int size = appDatabaseHelper1.getRecordByCriteria(select, criteria,orderBy,attendanceConverter).size();
-        Log.d("Size of Records"," " + size);
-    }
+//    private void testingCriteriaFunctionDb(String select, String criteria , String orderBy){
+//        AppDatabaseHelper<Attendance> appDatabaseHelper1 = new AppDatabaseHelper<>(this);
+//        AttendanceConverter attendanceConverter = new AttendanceConverter();
+//        int size = appDatabaseHelper1.getRecordByCriteria(select, criteria,orderBy,attendanceConverter).size();
+//        Log.d("Size of Records"," " + size);
+//    }
 
 
 }

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.photopicker.EmbeddedPhotoPickerClient;
 
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.core.DataSourceMode;
@@ -22,8 +23,12 @@ import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSour
 import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSource;
 import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSourceClass;
 import com.hamza.employeemangementsystem.data.model.Attendance;
+import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp;
+import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
+import com.hamza.employeemangementsystem.domain.EmployeeRepository;
 import com.hamza.employeemangementsystem.ui.AttendanceConverter;
+import com.hamza.employeemangementsystem.ui.EmployeeConverter;
 import com.hamza.employeemangementsystem.ui.adopter.myAdapter.ReportAdapter;
 import com.hamza.employeemangementsystem.ui.viewmodel.ReportViewModel;
 
@@ -46,10 +51,6 @@ public class ReportFragment extends Fragment {
     ReportViewModel reportViewModel;
     TextView title,txtName;
     SQLiteLocalDataSource<Attendance> sqLiteLocalDataSource;
-
-
-
-
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -92,14 +93,21 @@ public class ReportFragment extends Fragment {
             mParam3 = getArguments().getString(ARG_PARAM3);
             mParam4 = getArguments().getString(ARG_PARAM4);
             mParam5 = getArguments().getString(ARG_PARAM5);
-
         }
+        //Employee
+        AppDatabaseHelper<Employee> employeeAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
+        SQLiteLocalDataSource<Employee> employeeSQLiteLocalDataSource = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper, getActivity());
+        RemoteDataSourceClass<Employee> employeeRemoteDataSourceClass =  new RemoteDataSourceClass<>();
+        EmployeeConverter employeeConverter = new EmployeeConverter();
+        DbHandler<Employee> employeeDbHandler = new DbHandler<>(employeeSQLiteLocalDataSource, employeeRemoteDataSourceClass,employeeConverter, DataSourceMode.LOCAL_ONLY);
+        EmployeeRepositoryImp employeeRepositoryImp = new EmployeeRepositoryImp(employeeDbHandler, getContext());
+        //Attendance
         AppDatabaseHelper<Attendance> appDatabaseHelper = new AppDatabaseHelper<>(getActivity());
         SQLiteLocalDataSource<Attendance> attendanceSQLiteLocalDataSource = new SQLiteLocalDataSource<>(appDatabaseHelper,getActivity());
         RemoteDataSourceClass<Attendance> attendanceRemoteDataSourceClass = new RemoteDataSourceClass<>();
-        IConvertHelper<Attendance> convertHelper = new AttendanceConverter();
-        DbHandler<Attendance> dbHandler = new DbHandler<>( attendanceSQLiteLocalDataSource, attendanceRemoteDataSourceClass, convertHelper, DataSourceMode.LOCAL_ONLY);
-        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(dbHandler, getContext());
+        IConvertHelper<Attendance> convertHelper = new AttendanceConverter(employeeRepositoryImp);
+        DbHandler<Attendance> dbHandler = new DbHandler<>( attendanceSQLiteLocalDataSource, attendanceRemoteDataSourceClass, convertHelper, DataSourceMode.REMOTE_ONLY);
+        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(employeeRepositoryImp,dbHandler, getContext());
         reportViewModel = new ReportViewModel(attendanceRepositoryImp,mParam1,mParam2, mParam3, mParam4, getContext());
     }
 

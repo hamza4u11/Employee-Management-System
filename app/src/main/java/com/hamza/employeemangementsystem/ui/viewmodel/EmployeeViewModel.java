@@ -192,12 +192,8 @@ public class EmployeeViewModel extends ViewModel {
                     setCheckIn(String.valueOf(LocalDateTime.now()));
                 }
                 repository.insertEmployee(employee);
-
             }else {
                 repository.updateEmployee(employee);
             }
-
     }
-
-
 }

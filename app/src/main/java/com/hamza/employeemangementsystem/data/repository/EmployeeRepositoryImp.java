@@ -52,16 +52,14 @@ public class EmployeeRepositoryImp implements EmployeeRepository {
     public List<Employee> getEmployeeByManager(String id) {
         EmployeeConverter employeeConverter=new EmployeeConverter();
         String criteria = "managerId = "+ id;
-        return  dbHandler.getRecordByCriteria("*",criteria, null );
+        return  dbHandler.getRecordByCriteria("*",criteria, null ,null);
     }
-
-
 
     public List<Employee> getAllManagers() {
         EmployeeConverter employeeConverter = new EmployeeConverter();
         String value ="manager";
         String criteria = "designation = 'manager'";
-        return  dbHandler.getRecordByCriteria("*",criteria, null);    }
+        return  dbHandler.getRecordByCriteria("*",criteria, null,null);    }
 
 
     @Override

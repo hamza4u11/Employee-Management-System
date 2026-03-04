@@ -136,9 +136,9 @@ public class SelectProfileFragment extends Fragment {
         AppDatabaseHelper<Attendance> attendanceAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
         SQLiteLocalDataSource<Attendance> attendanceSQLiteLocalDataSource = new SQLiteLocalDataSource<>(attendanceAppDatabaseHelper,getActivity());
         RemoteDataSourceClass<Attendance> attendanceRemoteDataSourceClass = new RemoteDataSourceClass<>();
-        IConvertHelper<Attendance> attendanceIConvertHelper = new AttendanceConverter();
-        DbHandler<Attendance> attendanceDbHandler = new DbHandler<>(attendanceSQLiteLocalDataSource, attendanceRemoteDataSourceClass, attendanceIConvertHelper, DataSourceMode.LOCAL_ONLY);
-        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(attendanceDbHandler, getContext());
+        IConvertHelper<Attendance> attendanceIConvertHelper = new AttendanceConverter(employeeRepositoryImp);
+        DbHandler<Attendance> attendanceDbHandler = new DbHandler<>(attendanceSQLiteLocalDataSource, attendanceRemoteDataSourceClass, attendanceIConvertHelper, DataSourceMode.REMOTE_ONLY);
+        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(employeeRepositoryImp,attendanceDbHandler, getContext());
         dashboardViewModel = new DashboardViewModel(attendanceRepositoryImp,employeeRepositoryImp,getActivity());
     }
 

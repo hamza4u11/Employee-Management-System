@@ -20,10 +20,15 @@ import com.hamza.employeemangementsystem.data.repository.AttendanceRepositoryImp
 import com.hamza.employeemangementsystem.ui.AttendanceConverter;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ReportViewModel extends ViewModel {
     AttendanceRepositoryImp attendanceRepositoryImp;
+    String startDate, endDate,employeeId,loginEmployeeId;
     private final MutableLiveData<List<Attendance>> reports = new MutableLiveData<>();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     public  interface OnEventClickListener{
         void ViewReportClick();
     }
@@ -39,22 +44,33 @@ public class ReportViewModel extends ViewModel {
     public ReportViewModel(@NonNull AttendanceRepositoryImp repositoryImp, String startDate, String endDate, String employeeId, String loginEmployeeId, Context context) {
         super();
 
-        attendanceRepositoryImp = repositoryImp;
+        this.attendanceRepositoryImp = repositoryImp;
+        this.startDate= startDate;
+        this.endDate= endDate;
+        this.employeeId= employeeId;
+        this.loginEmployeeId=loginEmployeeId;
         loadReports();
     }
     private void loadReports(){
-        attendanceRepositoryImp.getAllAtt(new ResultCallback<List<Attendance>>() {
-            @Override
-            public void onSuccess(List<Attendance> result) {
-                reports.setValue(result);
-            }
+        {
 
-            @Override
-            public void onError(Exception e) {
-                e.printStackTrace();
-            }
-        });
-        //reports.setValue(repositoryImp.getAttendanceByCriteria(startDate,endDate,employeeId,loginEmployeeId));
+            executorService.execute(() -> {
+
+                // ✅ This runs in background thread
+                List<Attendance> result =
+                        attendanceRepositoryImp.getAttendanceByCriteria(
+                                startDate,
+                                endDate,
+                                employeeId,
+                                loginEmployeeId
+                        );
+
+                // ✅ Update LiveData from background thread
+                reports.postValue(result);
+
+            });
+        }
+        //reports.setValue(attendanceRepositoryImp.getAttendanceByCriteria(startDate,endDate,employeeId,loginEmployeeId));
     }
     public LiveData<List<Attendance>> getAllReports() {
         return reports;

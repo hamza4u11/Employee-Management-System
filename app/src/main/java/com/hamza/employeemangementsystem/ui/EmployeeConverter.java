@@ -8,6 +8,8 @@ import com.hamza.employeemangementsystem.data.model.Employee;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class EmployeeConverter implements IConvertHelper<Employee> {
 
 
@@ -30,6 +32,8 @@ public class EmployeeConverter implements IConvertHelper<Employee> {
     public String getSecondFieldName() {
         return "";
     }
+
+
 
     @Override
     public ContentValues fromModel(Employee model) {

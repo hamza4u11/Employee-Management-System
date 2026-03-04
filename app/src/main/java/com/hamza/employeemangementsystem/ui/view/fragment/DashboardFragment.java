@@ -109,9 +109,9 @@ public class DashboardFragment extends Fragment {
         AppDatabaseHelper<Attendance> attendanceAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
         SQLiteLocalDataSource<Attendance> sqLiteLocalDataSource = new SQLiteLocalDataSource<>(attendanceAppDatabaseHelper,getActivity());
         RemoteDataSourceClass<Attendance> remoteDataSourceClass = new RemoteDataSourceClass<>();
-        IConvertHelper<Attendance> attendanceIConvertHelper = new AttendanceConverter();
+        IConvertHelper<Attendance> attendanceIConvertHelper = new AttendanceConverter(employeeRepositoryImp);
         DbHandler<Attendance> attendanceDbHandler =  new DbHandler<>(sqLiteLocalDataSource,remoteDataSourceClass,attendanceIConvertHelper , DataSourceMode.LOCAL_ONLY);
-        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(attendanceDbHandler, getContext());
+        AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(employeeRepositoryImp,attendanceDbHandler, getContext());
 
         dashboardViewModel = new DashboardViewModel(attendanceRepositoryImp,employeeRepositoryImp,getContext());
 

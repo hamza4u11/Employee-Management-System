@@ -45,8 +45,8 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
         holder.empName.setText(attendance.name);
         holder.empStatus.setText(Objects.equals(attendance.status, "0") ? "In-Active" : "Active");
         holder.reportDate.setText(attendance.date);
-        holder.checkInTime.setText( attendance.checkInTime == null ? "" : DateTimeUtlis.getShared().convertStringToTime(attendance.checkInTime));
-        holder.checkoutTime.setText(attendance.checkOutTime == null ? "" : DateTimeUtlis.getShared().convertStringToTime(attendance.checkOutTime));
+        holder.checkInTime.setText( attendance.checkInTime == null ? null : DateTimeUtlis.getShared().convertStringToTime(attendance.checkInTime));
+        holder.checkoutTime.setText(attendance.checkOutTime == null ? null : DateTimeUtlis.getShared().convertStringToTime(attendance.checkOutTime));
     }
 
     @Override
