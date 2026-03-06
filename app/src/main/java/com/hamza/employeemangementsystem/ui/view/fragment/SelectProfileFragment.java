@@ -145,8 +145,6 @@ public class SelectProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
         View view = inflater.inflate(R.layout.fragment_select_profile, container, false);
         addBtn= view.findViewById(R.id.addBtn);
         startDateEndDateLayout= view.findViewById(R.id.startDateEndDateLayout);
@@ -176,7 +174,6 @@ public class SelectProfileFragment extends Fragment {
             DynEditTextDateTimePicker  dynEditTextDateTimePickerEndDate =new DynEditTextDateTimePicker(getContext(),etEndDate,endDate);
             dynEditTextDateTimePickerEndDate.setOnlyDate(true);
         }
-
         RecyclerView selectProfile = view.findViewById(R.id.selectProfile);
         EmployeeClickHandler employeeClickHandler = new EmployeeClickHandler() {
             @Override
@@ -185,17 +182,12 @@ public class SelectProfileFragment extends Fragment {
                 endDate = etEndDate.getText().toString();
                 Log.d("Start", startDate);
                 Log.d("End", endDate);
-
-
                 if(listener!=null){
                     if (Objects.equals(modeParam,"report")){
                         listener.onItemClickWithDate(employee,startDate,endDate);
-
                     }else {
                         listener.OnItemClick(employee);
                     }
-
-
                     return;
                 }
                 Fragment fragment= EmployeeFragment.newInstance(String.valueOf(employee.id),null);
@@ -205,14 +197,9 @@ public class SelectProfileFragment extends Fragment {
                         .replace(R.id.fragmentContainer, fragment)
                         .addToBackStack(null)
                         .commit();
-
             }
-
-
-
         };
         addBtn.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 if(listener!=null){

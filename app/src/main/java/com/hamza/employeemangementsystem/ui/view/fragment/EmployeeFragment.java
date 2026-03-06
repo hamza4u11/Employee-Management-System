@@ -110,7 +110,6 @@ public class EmployeeFragment extends Fragment {
         DbHandler<Employee> dbHandler = new DbHandler<>(sqLiteLocalDataSource,remoteDataSource,convertHelper, DataSourceMode.LOCAL_ONLY);
         EmployeeRepositoryImp employeeRepository = new EmployeeRepositoryImp(dbHandler, getContext());
         selectProfileViewModel = new SelectProfileViewModel(employeeRepository,getContext());
-
         viewModel = new EmployeeViewModel(employeeRepository, employeeId);
     }
 
@@ -134,19 +133,7 @@ public class EmployeeFragment extends Fragment {
         selectManager = view.findViewById(R.id.selectManager);
         spinner = view.findViewById(R.id.spinner);
         cancelBtn = view.findViewById(R.id.cancelBtn);
-
         loadScreenData();
-//        if (Objects.equals(mode, "edit") && employeeId!=null){
-//            List<EditText> editTextList = Arrays.asList(
-//                    etName, etDesignation, etPhoneNo, etPin, etAddress, etPaymentType, etAllowHoliday, etOverTimeAllow, etStatus
-//            );
-//            for (EditText et : editTextList) {
-//                et.setFocusable(false);
-//                et.setFocusableInTouchMode(false);
-//                et.setClickable(true);
-//            }
-//        }
-
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -258,8 +245,6 @@ public class EmployeeFragment extends Fragment {
             }catch (Exception e){
                 showErrorMessage(e.getMessage());
                 etName.setError(e.getMessage());
-              //  etName.requestFocus();
-
             }
         });
 

@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
        openSelectProfileScreen(null, null,"Select Your Profile");
         }
 
@@ -235,7 +234,6 @@ private void openListScreen(ArrayList<String> list, String title) {
     private void openSelectProfileScreen( String mode,String managerId ,String title) {
         SelectProfileFragment profileFragment;
         profileFragment = SelectProfileFragment.newInstance(mode,managerId, title);
-        Log.d("ID_CHECK", String.valueOf(R.id.fragmentContainer));
         profileFragment.setListener(new SelectProfileFragment.MyOnClickListener (){
             @Override
             public void OnItemClick(Employee employee) {
@@ -252,7 +250,6 @@ private void openListScreen(ArrayList<String> list, String title) {
                     Button btnCancel = dialog.findViewById(R.id.btnCancel);
 //                    setupOtpInputs(loginBtn,pin1, pin2, pin3, pin4);
                     setupOtpInputs(pin1, pin2, pin3, pin4);
-
                     loginBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

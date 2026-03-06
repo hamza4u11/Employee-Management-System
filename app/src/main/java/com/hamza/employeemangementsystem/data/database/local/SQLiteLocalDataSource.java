@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.hamza.employeemangementsystem.core.IConvertHelper;
-import com.hamza.employeemangementsystem.core.ModeMapper;
 import com.hamza.employeemangementsystem.domain.LocalDataSource;
 
 import java.util.Collections;

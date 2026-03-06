@@ -25,14 +25,8 @@ public class SelectProfileViewModel extends ViewModel {
 
     public SelectProfileViewModel(@NonNull EmployeeRepositoryImp repository, Context context) {
         super();
-//        AppDatabaseHelper<Employee> appDatabaseHelper1 = new AppDatabaseHelper<>(context);
-//        SQLiteLocalDataSource<Employee> sqLiteLocalDataSource1 = new SQLiteLocalDataSource<>(appDatabaseHelper1,context);
-
-//        repository = new EmployeeRepositoryImp(sqLiteLocalDataSource1, context);
         this.repository = repository;
-
         loadEmployees();
-       // getAllManagers();
     }
     public LiveData<List<Employee>> getAllEmployees() {
         return employees;
@@ -43,15 +37,12 @@ public class SelectProfileViewModel extends ViewModel {
             public void onSuccess(List<Employee> result) {
                 employees.setValue(result);
             }
-
             @Override
             public void onError(Exception e) {
                 e.printStackTrace();
             }
         });
-//        employees.setValue(repository.getAllEmp());
     }
-
     public Employee getEmployeeById(String id){
         return repository.getEmployeeById(id);
 

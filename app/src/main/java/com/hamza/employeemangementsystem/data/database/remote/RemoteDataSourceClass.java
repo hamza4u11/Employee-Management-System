@@ -2,6 +2,7 @@ package com.hamza.employeemangementsystem.data.database.remote;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.telephony.mbms.StreamingServiceInfo;
 import android.util.Log;
 
 import androidx.annotation.OpenForTesting;
@@ -9,10 +10,10 @@ import androidx.loader.content.CursorLoader;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.hamza.employeemangementsystem.core.ApiResultCallback;
 import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.domain.NetworkDataSource;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -31,160 +32,132 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-
-
 public class RemoteDataSourceClass<T> implements NetworkDataSource<T> {
     private final OkHttpClient client = new OkHttpClient();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
-    public T getRecordById(String id, IConvertHelper<T> mapper) {
-        return null;
-    }
+    public T getRecordByIdSync(String id, IConvertHelper<T> mapper) {
+        Type type = new TypeToken<List<T>>() {}.getType();
 
-    @Override
-    public List<T> getAllRecords(IConvertHelper<T> mapper) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public T getLastRecord(String id, IConvertHelper<T> mapper) {
-        return null;
-    }
-
-//    public List<T> getRecordByCriteriaSync(String criteria, IConvertHelper<T> mapper) {
-//        String url="http://172.20.2.152:5000/"+ mapper.getEntityName()+"?"+criteria;
-//        Log.d("Url", url);
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .build();
-//        try (Response response = client.newCall(request).execute()) {
-//            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-//
-//            final List<T> responseBody = response.body();
-//
-//
-//
-//            // Update the UI on the main thread using the Handler
-//            mainHandler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    //textView.setText(responseBody);
-//                }
-//            });
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            mainHandler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                  //  textView.setText("Error: " + e.getMessage());
-//                }
-//            });
-//        }
-//        return null;
-//
-//    }
-    @Override
-    public List<T> getRecordByCriteriaSync(
-            String criteria,
-            IConvertHelper<T> mapper,
-            Type type
-    ) {
-
-
-        String url = "http://172.20.2.167:5000/"
-                + mapper.getEntityName()
-                + "?"
-                + criteria;
-
+        String url = "http://172.20.2.167:5000/get-" + mapper.getEntityName() +"s-by-id/" + id;
         Log.d("URL", url);
-
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-
+        Request request = new Request.Builder().url(url).build();
         try (Response response = client.newCall(request).execute()) {
-
             if (!response.isSuccessful())
                 throw new IOException("Unexpected code " + response);
-
-            // ✅ 1️⃣ Convert response body to String
             String json = response.body().string();
-
             Log.d("JSON_RESPONSE", json);
-
-            // ✅ 2️⃣ Convert JSON → List<T>
             Gson gson = new Gson();
-            List<T> list = gson.fromJson(json, type);
-
+            T list = gson.fromJson(json, type);
             return list;   // ✅ RETURN LIST
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
+    @Override
+    public List<T> getAllRecordsSync(IConvertHelper<T> mapper) {
 
+        Type type = new TypeToken<List<T>>() {}.getType();
+
+            String url = "http://172.20.2.167:5000/get-all" + mapper.getEntityName() +"s";
+            Log.d("URL", url);
+            Request request = new Request.Builder().url(url).build();
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful())
+                    throw new IOException("Unexpected code " + response);
+                String json = response.body().string();
+                Log.d("JSON_RESPONSE", json);
+                Gson gson = new Gson();
+                List<T> list = gson.fromJson(json, type);
+                return list;   // ✅ RETURN LIST
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return null;
+    }
 
     @Override
-    public void updateRecord(String id, T model) {
+    public T getLastRecordSync(String id, IConvertHelper<T> mapper) {
+        Type type = new TypeToken<List<T>>() {}.getType();
+
+        String url = "http://172.20.2.167:5000/get-last-" + mapper.getEntityName() +"-by-employee/" +id;
+        Log.d("URL", url);
+        Request request = new Request.Builder().url(url).build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful())
+                throw new IOException("Unexpected code " + response);
+            String json = response.body().string();
+            Log.d("JSON_RESPONSE", json);
+            Gson gson = new Gson();
+            T list = gson.fromJson(json, type);
+            return list;   // ✅ RETURN LIST
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<T> getRecordByCriteriaSync(String criteria, IConvertHelper<T> mapper, Type type) {
+        String url = "http://172.20.2.167:5000/" + mapper.getEntityName() + "ByCriteria?" + criteria;
+        Log.d("URL", url);
+        Request request = new Request.Builder().url(url).build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful())
+                throw new IOException("Unexpected code " + response);
+            String json = response.body().string();
+            Log.d("JSON_RESPONSE", json);
+            Gson gson = new Gson();
+            List<T> list = gson.fromJson(json, type);
+            return list;   // ✅ RETURN LIST
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void updateRecordSync(String id, T model) {
 
     }
 
-
     @Override
-    public void insertRecord(T model) {
-
+    public void insertRecordSync(T model, IConvertHelper<T> mapper) {
+//        Type type = new TypeToken<List<T>>() {}.getType();
+        String url = "http://172.20.2.167:5000/insert-" + mapper.getEntityName();
+        Log.d("URL", url);
+        Request request = new Request.Builder().url(url).build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful())
+                throw new IOException("Unexpected code " + response);
+           // String json = response.body().string();
+            //Log.d("JSON_RESPONSE", json);
+            //Gson gson = new Gson();
+//            List<T> list = gson.fromJson(json, type);
+//            return list;   // ✅ RETURN LIST
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void deleteRecord(String id) {
-
+    public void deleteRecordSync(String id, IConvertHelper<T> mapper) {
+        String url = "http://172.20.2.167:5000/delete-" + mapper.getEntityName()+"/"+ id;
+        Log.d("URL", url);
+        Request request = new Request.Builder().url(url).build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful())
+                throw new IOException("Unexpected code " + response);
+            // String json = response.body().string();
+            //Log.d("JSON_RESPONSE", json);
+            //Gson gson = new Gson();
+//            List<T> list = gson.fromJson(json, type);
+//            return list;   // ✅ RETURN LIST
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-//    public <T> void fetchData(
-//            String baseUrl,
-//            String endpoint,
-//            String queryString,
-//            Type typeOfT) {
-//        Log.d("Base URl" , " " + baseUrl);
-//        Log.d("endpoint URl" , " " + endpoint);
-//        Log.d("Query" , " " + queryString);
-//
-//
-//        OkHttpClient client = new OkHttpClient();
-//
-//        String fullUrl = baseUrl + endpoint;
-//
-//        if (queryString != null && !queryString.isEmpty()) {
-//            fullUrl = fullUrl + "?" + queryString;
-//        }
-//
-//        Request request = new Request.Builder()
-//                .url(fullUrl)
-//                .build();
-
-       // client.newCall(request).enqueue(new Callback() {
-
-
-
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//
-//                if (response.isSuccessful() && response.body() != null) {
-//
-//                    String json = response.body().string();
-//
-//                    Gson gson = new Gson();
-//                    List<T> result = gson.fromJson(json, typeOfT);
-//
-//
-//                } else {
-//                }
-//            }
-//        });
-//    }
 }
 

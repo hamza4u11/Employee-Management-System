@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.reflect.TypeToken;
-import com.hamza.employeemangementsystem.core.ApiResultCallback;
 import com.hamza.employeemangementsystem.core.DataSourceMode;
 import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.core.ResultCallback;
@@ -85,7 +84,6 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
     @Override
     public List<Attendance> getAttendanceByCriteria(String startDate, String endDate, String employeeId, String loginId){
         String selectClause = null, criteria = null, orderBy = null;
-
         Log.d("Mode", " " + dbHandler.getMode());
         Employee employee= employeeRepositoryImp.getEmployeeById(loginId);
         Globals.getShared().setEmployee(employee);
@@ -103,7 +101,6 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
             }
             criteria = employeeCriteria + (!employeeCriteria.isEmpty()?" AND ":"") + dateCriteria;
             return  dbHandler.getRecordByCriteria(selectClause,criteria, orderBy,null);
-
         }else {
             if(employee.designation.equals("admin") ||employee.designation.equals("manager")) {
                 loginId = employeeId;
