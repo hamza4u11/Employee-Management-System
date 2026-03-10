@@ -1,7 +1,13 @@
 package com.hamza.employeemangementsystem.data.repository;
 
-import android.content.Context;
+import static com.hamza.employeemangementsystem.core.DataSourceMode.LOCAL_ONLY;
 
+import android.content.Context;
+import android.provider.ContactsContract;
+import android.util.Log;
+
+import com.google.gson.reflect.TypeToken;
+import com.hamza.employeemangementsystem.core.DataSourceMode;
 import com.hamza.employeemangementsystem.core.ResultCallback;
 import com.hamza.employeemangementsystem.data.database.DbHandler;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
@@ -11,6 +17,7 @@ import com.hamza.employeemangementsystem.domain.EmployeeRepository;
 import com.hamza.employeemangementsystem.ui.EmployeeConverter;
 import com.hamza.employeemangementsystem.ui.view.MainActivity;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,38 +40,47 @@ public class EmployeeRepositoryImp implements EmployeeRepository {
         return (Employee) dbHandler.getRecordById(id);
     }
 
-    @Override
-    public List<Employee> getAllEmployees(ResultCallback<List<Employee>> callback) {
-         dbHandler.getAllAsync(callback);
-         return null;
-    }
+//    @Override
+//    public List<Employee> getAllEmployees(ResultCallback<List<Employee>> callback) {
+//         dbHandler.getAllAsync(callback);
+//         return null;
+//    }
 
-    @Override
     public void getAllEmp(ResultCallback<List<Employee>> callback) {
          dbHandler.getAllAsync(callback);
     }
 
-//    @Override
-//    public List<Employee> getAllEmployees() {
-//        // EmployeeConverter employeeConverter = new EmployeeConverter();
-//        return dbHandler.getAllAsync(ResultCallback<List<Employee>> callback);
-//    }
+    public List<Employee> getAllEmployees() {
+        // EmployeeConverter employeeConverter = new EmployeeConverter();
+        return dbHandler.getAllRecords();
+    }
     public List<Employee> getEmployeeByManager(String id) {
         EmployeeConverter employeeConverter=new EmployeeConverter();
         String criteria = "managerId = "+ id;
         return  dbHandler.getRecordByCriteria("*",criteria, null ,null);
     }
-
+    @Override
     public List<Employee> getAllManagers() {
         EmployeeConverter employeeConverter = new EmployeeConverter();
-        String value ="manager";
-        String criteria = "designation = 'manager'";
-        return  dbHandler.getRecordByCriteria("*",criteria, null,null);    }
+        Type type = new TypeToken<List<Employee>>() {}.getType();
 
+        if(dbHandler.getMode()==LOCAL_ONLY){
+            String value = "manager";
+            String criteria = "designation='manager'";
+            List<Employee> getManagersFromLocal = dbHandler.getRecordByCriteria("*", criteria, null, null);
+            return getManagersFromLocal;
+        }else {
 
+            List<Employee> managers = dbHandler.getRecordByCriteria(null,null,null,type);
+           return managers;
+        }
+
+    }
     @Override
     public void updateEmployee(Employee employee) {
-        EmployeeConverter employeeConverter = new EmployeeConverter();
+        Log.d("EMPLOYEE", "Id: " + employee.id);
+        Log.d("EMPLOYEE", "Name: " + employee.name);
+        Log.d("EMPLOYEE", "Designation: " + employee.designation);
         dbHandler.updateRecord(String.valueOf(employee.id), employee);
     }
 

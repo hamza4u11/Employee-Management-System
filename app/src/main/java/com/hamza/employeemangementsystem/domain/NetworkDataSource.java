@@ -15,7 +15,7 @@ public interface NetworkDataSource <T> {
     List<T> getAllRecordsSync( IConvertHelper<T> mapper);
     T getLastRecordSync(String id, IConvertHelper<T> mapper);
     List<T> getRecordByCriteriaSync(String criteria, IConvertHelper<T> mapper, Type type);
-    void updateRecordSync( String id ,T model );
+    void updateRecordSync( String id ,T model, IConvertHelper<T>  mapper);
     void insertRecordSync( T model, IConvertHelper<T> mapper);
     void deleteRecordSync(String id,IConvertHelper<T> mapper);
 

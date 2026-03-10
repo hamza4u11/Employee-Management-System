@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,7 +52,8 @@ public class EmployeeFragment extends Fragment {
     EditText etName, etDesignation, etPhoneNo, etPin, etAddress, etPaymentType, etAllowHoliday, etOverTimeAllow, etStatus;
     SelectProfileViewModel selectProfileViewModel;
     Spinner spinner;
-    Employee selectManagerId;
+    ProgressBar loader;
+
 
     private int selectedManagerId = 0;
 
@@ -107,7 +109,7 @@ public class EmployeeFragment extends Fragment {
         SQLiteLocalDataSource<Employee> sqLiteLocalDataSource = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper,getActivity());
         RemoteDataSourceClass<Employee> remoteDataSource = new RemoteDataSourceClass<>();
         IConvertHelper<Employee> convertHelper = new EmployeeConverter();
-        DbHandler<Employee> dbHandler = new DbHandler<>(sqLiteLocalDataSource,remoteDataSource,convertHelper, DataSourceMode.LOCAL_ONLY);
+        DbHandler<Employee> dbHandler = new DbHandler<>(sqLiteLocalDataSource,remoteDataSource,convertHelper, DataSourceMode.REMOTE_ONLY);
         EmployeeRepositoryImp employeeRepository = new EmployeeRepositoryImp(dbHandler, getContext());
         selectProfileViewModel = new SelectProfileViewModel(employeeRepository,getContext());
         viewModel = new EmployeeViewModel(employeeRepository, employeeId);
@@ -167,6 +169,11 @@ public class EmployeeFragment extends Fragment {
                 }
             }
         });
+        viewModel.getEmployee().observe(getViewLifecycleOwner(), employee -> {
+            if(viewModel.getEmployee() != null){
+               // txtName.setText(employee.getName());
+            }
+        });
         return view;
     }
 
@@ -198,7 +205,6 @@ public class EmployeeFragment extends Fragment {
         Employee selectManager = new Employee();
         selectManager.setId(0);
         selectManager.setName("Select Manager");
-
         ArrayAdapter<Employee> adapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_spinner_item,
@@ -209,8 +215,9 @@ public class EmployeeFragment extends Fragment {
         viewModel.getManagers().observe(getViewLifecycleOwner(), employees -> {
             List<Employee> list = new ArrayList<>();
             list.add(selectManager);
-            list.addAll(employees);
-
+//            if(employees !=null) {
+                list.addAll(employees);
+//            }
             adapter.clear();
             adapter.addAll(list);
             adapter.notifyDataSetChanged();
@@ -339,10 +346,6 @@ public class EmployeeFragment extends Fragment {
         etPin.setText(viewModel.getPin());
         addEditEmployee.setText(employeeId!=null && !employeeId.isEmpty() ? "Employee Details":null);
 //        updateBtn.setVisibility(View.GONE);
-
-
-
     }
-
 
 }

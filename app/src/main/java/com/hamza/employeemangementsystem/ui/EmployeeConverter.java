@@ -3,12 +3,17 @@ package com.hamza.employeemangementsystem.ui;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hamza.employeemangementsystem.core.IConvertHelper;
+import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EmployeeConverter implements IConvertHelper<Employee> {
 
@@ -72,12 +77,15 @@ public class EmployeeConverter implements IConvertHelper<Employee> {
     }
 
     @Override
-    public Employee fromJson(JSONObject json) {
-        return null;
+    public List<Employee> fromJson(String  response)
+    { Gson gson = new Gson();
+        Type type = new TypeToken<List<Attendance>>(){}.getType();
+        return gson.fromJson(response, type);
     }
 
     @Override
-    public JSONObject toJson(Employee model) {
-        return null;
+    public String toJson(Employee object) {
+        Gson gson = new Gson();
+        return gson.toJson(object);
     }
 }

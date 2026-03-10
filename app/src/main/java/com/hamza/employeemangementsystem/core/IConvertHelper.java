@@ -6,6 +6,7 @@ import android.database.Cursor;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface IConvertHelper<T> {
     String getIdFieldName();
@@ -14,7 +15,7 @@ public interface IConvertHelper<T> {
     String getSecondFieldName();
     ContentValues fromModel(T model);
     T toModel(Cursor cursor);
-    T fromJson(JSONObject json);
-    JSONObject toJson(T model);
+    List<T> fromJson(String response);
+    String toJson(T model);
 
 }

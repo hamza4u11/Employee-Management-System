@@ -23,10 +23,10 @@ public class MockRemoteDataSource<T> implements RemoteDataSource<T> {
                 "{\"id\":\"2\",\"name\":\"Bob\",\"email\":\"bob@example.com\",\"pin\":\"1234\"}]";
         JSONArray array = new JSONArray(json);
         List<T> list = new ArrayList<>();
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject obj = array.getJSONObject(i);
-            list.add(mapper.fromJson(obj));
-        }
+//        for (int i = 0; i < array.length(); i++) {
+//            JSONObject obj = array.getJSONObject(i);
+//            list.add(mapper.fromJson(obj));
+//        }
         return list;
     }
     @Override

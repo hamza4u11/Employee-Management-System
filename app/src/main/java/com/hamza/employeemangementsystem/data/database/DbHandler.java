@@ -275,14 +275,14 @@ public class DbHandler<T> {
                 local.updateRecord(id, object,mapper);
                 break;
             case REMOTE_ONLY:
-                remote.updateRecordSync(id,object);
+                remote.updateRecordSync(id,object,mapper);
                 break;
             case HYBRID_LOCAL_FIRST:
                 local.updateRecord(id,object,mapper);
-                remote.updateRecordSync(id, object);
+                remote.updateRecordSync(id, object,mapper);
                 break;
             case HYBRID_REMOTE_FIRST:
-                remote.updateRecordSync(id,object);
+                remote.updateRecordSync(id,object,mapper);
                 local.updateRecord(id,object,mapper);
                 break;
             default:
@@ -357,7 +357,7 @@ public class DbHandler<T> {
                 }
                 break;
             case REMOTE_ONLY:
-                List<T> recRemote = remote.getRecordByCriteriaSync(criteria,mapper,type);
+                List<T> recRemote = remote.getRecordByCriteriaSync(mapper,type);
                 if (recRemote != null){
                     return recRemote;
                 }
@@ -391,6 +391,7 @@ public class DbHandler<T> {
 
     public  DataSourceMode getMode(){
         DataSourceMode mode1;
+        Log.d("Mode" , "" + mode);
         return   mode1 = mode;
     }
 

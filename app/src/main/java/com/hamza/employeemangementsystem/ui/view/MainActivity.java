@@ -38,9 +38,12 @@ import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
 import com.hamza.employeemangementsystem.utils.DateTimeUtlis;
 import com.hamza.employeemangementsystem.utils.DynEditTextDateTimePicker;
 
+import org.json.JSONObject;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -63,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
        openSelectProfileScreen(null, null,"Select Your Profile");
-        }
 
+        }
 private void openListScreen(ArrayList<String> list, String title) {
     ListFragment fragment = ListFragment.newInstance(list,title);
     fragment.setListener(new ItemClickHandler (){
@@ -315,6 +318,15 @@ private void openListScreen(ArrayList<String> list, String title) {
                 .replace(R.id.fragmentContainer,reportFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+    public List<Attendance> checkJson(){
+        AttendanceConverter attendanceConverter =  new AttendanceConverter(employeeRepositoryImp);
+        String json = "{ \"id\":26, \"name\":\"Abdullah\", \"designation\":\"manager\", " +
+                "\"phone_no\":\"3111234567\", \"address\":\"Karachi\", " +
+                "\"paymentType\":\"Hourly\", \"allowHoliday\":0, \"overTimeAllow\":1, " +
+                "\"status\":1, \"pin\":4321, \"checkIn\":\"2026-01-19 09:30:00\", \"managerId\":1 }";
+        Log.d("Attendance List", ""+  attendanceConverter.fromJson(json));
+        return attendanceConverter.fromJson(json);
     }
     private void testCheckInFunction(){
         dashboardViewModel.checkIn(String.valueOf(5));

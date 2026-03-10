@@ -57,43 +57,34 @@ public class SelectProfileFragment extends Fragment {
     private static final String ARG_PARAM1 = "modeParam";
     private static final String ARG_PARAM2 = "mangerIdParam";
     private static final String ARG_PARAM3 = "title";
-
     private SelectProfileViewModel selectProfileViewModel;
-    private DashboardViewModel dashboardViewModel; ;
+    private DashboardViewModel dashboardViewModel;
     Button addBtn ;
     LinearLayout startDateEndDateLayout, header;
     EditText etStartDate, etEndDate;
     TextView titleTxt, txtName;
     String startDate, endDate;
     ImageView imageView;
-
     public interface MyOnClickListener{
         void OnItemClick(Employee employee);
         void OnAddClick();
         void onItemClickWithDate(Employee employee, String startDate, String endDate);
-
     }
     private MyOnClickListener listener;
-
     public void setListener(MyOnClickListener listener) {
         this.listener = listener;
     }
-
     public MyOnClickListener getListener()
     {
         return listener;
     }
-
     // TODO: Rename and change types of parameters
     private String modeParam;
     private String managerIdParam;
     private String title;
-
-
     public SelectProfileFragment() {
         // Required empty public constructor
     }
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -113,7 +104,6 @@ public class SelectProfileFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +111,6 @@ public class SelectProfileFragment extends Fragment {
             modeParam = getArguments().getString(ARG_PARAM1);
             managerIdParam = getArguments().getString(ARG_PARAM2);
             title = getArguments().getString(ARG_PARAM3);
-
         }
         //Employee
         SQLiteLocalDataSource<Employee> employeeSQLiteLocalDataSource;
@@ -141,7 +130,6 @@ public class SelectProfileFragment extends Fragment {
         AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(employeeRepositoryImp,attendanceDbHandler, getContext());
         dashboardViewModel = new DashboardViewModel(attendanceRepositoryImp,employeeRepositoryImp,getActivity());
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -207,14 +195,12 @@ public class SelectProfileFragment extends Fragment {
                 }
             }
         });
-
         myAdapter adapter = new myAdapter(employeeClickHandler);
         selectProfile.setLayoutManager(new LinearLayoutManager(getActivity()));
         selectProfile.setAdapter(adapter);
         if (managerIdParam != null ){
             Log.d("ManagerId param", "Manager ID" );
             selectProfileViewModel.getEmployeesByManager(managerIdParam);
-
         }else{
             selectProfileViewModel.getAllEmployees().observe(getActivity(), employees -> {
                 adapter.setList(employees);
@@ -223,8 +209,6 @@ public class SelectProfileFragment extends Fragment {
         selectProfileViewModel.getFilteredEmployees().observe(getActivity(), employees -> {
             adapter.setList(employees);
         });
-
-
         return view;
     }
 }

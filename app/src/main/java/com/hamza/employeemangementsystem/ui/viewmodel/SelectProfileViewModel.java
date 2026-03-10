@@ -16,12 +16,16 @@ import com.hamza.employeemangementsystem.ui.view.MainActivity;
 //import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp_old;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SelectProfileViewModel extends ViewModel {
     private final MutableLiveData<List<Employee>> employees = new MutableLiveData<>();
     private final MutableLiveData<List<Employee>> filteredEmployees = new MutableLiveData<>();
     private final MutableLiveData<List<Employee>> managers = new MutableLiveData<>();
     private EmployeeRepositoryImp repository;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
 
     public SelectProfileViewModel(@NonNull EmployeeRepositoryImp repository, Context context) {
         super();
@@ -32,20 +36,17 @@ public class SelectProfileViewModel extends ViewModel {
         return employees;
     }
     private void loadEmployees() {
-        repository.getAllEmp(new ResultCallback<List<Employee>>() {
-            @Override
-            public void onSuccess(List<Employee> result) {
-                employees.setValue(result);
-            }
-            @Override
-            public void onError(Exception e) {
-                e.printStackTrace();
-            }
+        executorService.execute(() -> {
+            // ✅ This runs in background thread
+            List<Employee> result =
+                    repository.getAllEmployees(
+                    );
+            // ✅ Update LiveData from background thread
+            employees.postValue(result);
         });
     }
     public Employee getEmployeeById(String id){
         return repository.getEmployeeById(id);
-
     }
     public LiveData<List<Employee>> getFilteredEmployees(){
         return filteredEmployees;

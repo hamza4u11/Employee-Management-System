@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface EmployeeRepository {
     Employee getEmployeeById(String id);
-    List<Employee> getAllEmployees(ResultCallback<List<Employee>> callback);
-    void getAllEmp(ResultCallback<List<Employee>> callback);
-
+//    List<Employee> getAllEmployees(ResultCallback<List<Employee>> callback);
+//    void getAllEmp(ResultCallback<List<Employee>> callback);
+    List<Employee> getAllManagers();
     void updateEmployee(Employee employee);
     void insertEmployee(Employee employee);
     boolean deleteEmployee(String id);

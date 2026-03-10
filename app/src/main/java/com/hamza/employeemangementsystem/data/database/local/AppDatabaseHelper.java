@@ -92,6 +92,7 @@ public class AppDatabaseHelper<T> extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             model = (T) convertHelper.toModel(cursor);
         }
+        cursor.close();
         return model;
     }
     public List<T>  getRecordByCriteria(String selectClause , String criteria,String orderBy,  IConvertHelper convertHelper) {
@@ -112,6 +113,7 @@ public class AppDatabaseHelper<T> extends SQLiteOpenHelper {
                 models.add(model);
             }while(cursor.moveToNext());
         }
+        cursor.close();
         return models;
     }
     public List<T> getRecordByCriteria(String criteria,String orderBy,  IConvertHelper convertHelper) {
@@ -131,6 +133,7 @@ public class AppDatabaseHelper<T> extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             model = (T) convertHelper.toModel(cursor);
         }
+        cursor.close();
         return model;
     }
 

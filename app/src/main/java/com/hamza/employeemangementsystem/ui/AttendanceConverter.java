@@ -4,6 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.data.Globals;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
@@ -11,8 +15,10 @@ import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +38,6 @@ public class AttendanceConverter implements IConvertHelper<Attendance> {
     public String getSecondFieldName() {
         return "checkOutTime";
     }
-
-
-
-
     @Override
     public String getEntityName() {
         return "attendance";
@@ -72,12 +74,15 @@ public class AttendanceConverter implements IConvertHelper<Attendance> {
     }
 
     @Override
-    public Attendance fromJson(JSONObject json) {
-        return null;
+    public List<Attendance> fromJson(String response) {
+    Gson gson = new Gson();
+    Type type = new TypeToken<List<Attendance>>(){}.getType();
+        return gson.fromJson(response, type);
     }
 
     @Override
-    public JSONObject toJson(Attendance model) {
-        return null;
+    public String toJson(Attendance object) {
+        Gson gson = new Gson();
+        return gson.toJson(object);
     }
 }

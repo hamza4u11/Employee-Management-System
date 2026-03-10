@@ -3,6 +3,8 @@ package com.hamza.employeemangementsystem.ui.viewmodel;
 
 import android.content.Context;
 import android.os.Build;
+import android.telephony.ClosedSubscriberGroupInfo;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -12,47 +14,62 @@ import androidx.lifecycle.ViewModel;
 import com.hamza.employeemangementsystem.core.ResultCallback;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
+import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
 import com.hamza.employeemangementsystem.domain.EmployeeRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class EmployeeViewModel extends ViewModel {
     EmployeeRepository repository;
     private final MutableLiveData<List<Employee>> managers = new MutableLiveData<>();
     private MutableLiveData<String> result = new MutableLiveData<>();
-    SQLiteLocalDataSource<Employee> sqliteLocalDateSource;
+    private MutableLiveData<Employee> employeeLiveData = new MutableLiveData<>();
     String empId;
     Employee employee;
-
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     public EmployeeViewModel(EmployeeRepository employeeRepository, String employeeId){
         super();
-
         repository = employeeRepository;
         getAllManagers();
-
         if(employeeId!= null) {
             empId=employeeId;
-            employee = repository.getEmployeeById(employeeId);
+            employee=loadEmployee();
         }else{
             employee = new Employee();
         }
     }
-
+    public LiveData<Employee> getEmployee() {
+        return employeeLiveData;
+    }
+    public Employee loadEmployee() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Employee> future = executor.submit(() -> {
+            return repository.getEmployeeById(empId);
+        });
+        try {
+            return future.get(); // waits until API finishes
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public int getId() {
         return employee.id;
     }
-
     public void setId(String id) {
-        employee.name = id;
+        employee.id = Integer.parseInt(id) ;
     }
     public String getName() {
+        Log.d("EMPLOYEE", "Employee is " + employee);
         return employee.name;
     }
     public void setName(String name) throws Exception {
-
         if(name.isEmpty()){
             throw (new Exception("Name cannot be empty"));
         }
@@ -62,10 +79,8 @@ public class EmployeeViewModel extends ViewModel {
         employee.name = name;
     }
     public String getDesignation() {
-
         return employee.designation;
     }
-
     public void setDesignation(String designation) throws Exception {
         if(designation.isEmpty()){
             throw  (new Exception("Designation cannot be empty"));
@@ -169,31 +184,35 @@ public class EmployeeViewModel extends ViewModel {
         return managers;
     }
     public void getAllManagers() {
-        repository.getAllEmp(new ResultCallback<List<Employee>>() {
-            @Override
-            public void onSuccess(List<Employee> result) {
-                managers.setValue(result);
-            }
 
-            @Override
-            public void onError(Exception e) {
-                e.printStackTrace();
-            }
+        executorService.execute(() -> {
+
+            // ✅ This runs in background thread
+            List<Employee> result =
+                    repository.getAllManagers(
+                    );
+            // ✅ Update LiveData from background thread
+            managers.postValue(result);
+
         });
-       // managers.setValue( repository.getAllManagers());
+
+       // managers.setValue(repository.getAllManagers());
     }
     public LiveData<String> getResult() {
         return result;
     }
-    public void updateEmployee(){
-          Employee employee1 = employee;
-            if(empId == null){
+    public void updateEmployee() {
+        executorService.execute(() -> {
+            Employee employee1 = employee;
+            if (empId == null) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     setCheckIn(String.valueOf(LocalDateTime.now()));
                 }
-                repository.insertEmployee(employee);
-            }else {
-                repository.updateEmployee(employee);
+                repository.insertEmployee(employee1);
+            } else {
+                repository.updateEmployee(employee1);
             }
+        });
     }
+
 }
