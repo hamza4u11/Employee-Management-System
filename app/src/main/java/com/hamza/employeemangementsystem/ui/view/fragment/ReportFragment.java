@@ -99,7 +99,7 @@ public class ReportFragment extends Fragment {
         SQLiteLocalDataSource<Employee> employeeSQLiteLocalDataSource = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper, getActivity());
         RemoteDataSourceClass<Employee> employeeRemoteDataSourceClass =  new RemoteDataSourceClass<>();
         EmployeeConverter employeeConverter = new EmployeeConverter();
-        DbHandler<Employee> employeeDbHandler = new DbHandler<>(employeeSQLiteLocalDataSource, employeeRemoteDataSourceClass,employeeConverter, DataSourceMode.LOCAL_ONLY);
+        DbHandler<Employee> employeeDbHandler = new DbHandler<>(employeeSQLiteLocalDataSource, employeeRemoteDataSourceClass,employeeConverter, DataSourceMode.REMOTE_ONLY);
         EmployeeRepositoryImp employeeRepositoryImp = new EmployeeRepositoryImp(employeeDbHandler, getContext());
         //Attendance
         AppDatabaseHelper<Attendance> appDatabaseHelper = new AppDatabaseHelper<>(getActivity());

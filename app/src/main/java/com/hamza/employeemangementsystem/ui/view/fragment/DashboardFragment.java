@@ -5,6 +5,10 @@ package com.hamza.employeemangementsystem.ui.view.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +34,10 @@ import com.hamza.employeemangementsystem.ui.AttendanceConverter;
 import com.hamza.employeemangementsystem.ui.EmployeeConverter;
 import com.hamza.employeemangementsystem.ui.viewmodel.DashboardViewModel;
 
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link DashboardFragment#newInstance} factory method to
@@ -47,6 +55,8 @@ public class DashboardFragment extends Fragment {
     TextView txtName,seesion, label, status ,seeionLabel;
     LinearLayout hideAdminButtons ;
     Button checkInButton, checkOutButton, logoutBtn, manageEmployeesBtn, attendenceReportsBtn ;
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    Handler handler = new Handler(Looper.getMainLooper());
 
     public interface  OnEventClickListener{
        void OnManageEmployeesClick( String adminOrManager,  String addBtnForAdmin);
@@ -103,25 +113,19 @@ public class DashboardFragment extends Fragment {
         SQLiteLocalDataSource<Employee> employeeSQLiteLocalDataSource = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper,getActivity());
         RemoteDataSourceClass<Employee> remoteDataSource = new RemoteDataSourceClass<>();
         IConvertHelper<Employee> convertHelper = new EmployeeConverter();
-        DbHandler<Employee> employeeDbHandler = new DbHandler<>(employeeSQLiteLocalDataSource,remoteDataSource, convertHelper, DataSourceMode.LOCAL_ONLY );
+        DbHandler<Employee> employeeDbHandler = new DbHandler<>(employeeSQLiteLocalDataSource,remoteDataSource, convertHelper, DataSourceMode.REMOTE_ONLY );
         EmployeeRepositoryImp employeeRepositoryImp = new EmployeeRepositoryImp(employeeDbHandler, getContext());
         //Attendance
         AppDatabaseHelper<Attendance> attendanceAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
         SQLiteLocalDataSource<Attendance> sqLiteLocalDataSource = new SQLiteLocalDataSource<>(attendanceAppDatabaseHelper,getActivity());
         RemoteDataSourceClass<Attendance> remoteDataSourceClass = new RemoteDataSourceClass<>();
         IConvertHelper<Attendance> attendanceIConvertHelper = new AttendanceConverter(employeeRepositoryImp);
-        DbHandler<Attendance> attendanceDbHandler =  new DbHandler<>(sqLiteLocalDataSource,remoteDataSourceClass,attendanceIConvertHelper , DataSourceMode.LOCAL_ONLY);
+        DbHandler<Attendance> attendanceDbHandler =  new DbHandler<>(sqLiteLocalDataSource,remoteDataSourceClass,attendanceIConvertHelper , DataSourceMode.REMOTE_ONLY);
         AttendanceRepositoryImp attendanceRepositoryImp = new AttendanceRepositoryImp(employeeRepositoryImp,attendanceDbHandler, getContext());
-
         dashboardViewModel = new DashboardViewModel(attendanceRepositoryImp,employeeRepositoryImp,getContext());
-
     }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         txtName = view.findViewById(R.id.txtName);
         seesion = view.findViewById(R.id.seesion);
@@ -137,7 +141,7 @@ public class DashboardFragment extends Fragment {
         Employee loginEmployee= Globals.getShared().getEmployee();
         String loginEmployeeId = String.valueOf(loginEmployee.id);
         refresh();
-        checkInButton.setOnClickListener(new View.OnClickListener() {
+            checkInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dashboardViewModel.checkIn(loginEmployeeId);
@@ -197,5 +201,7 @@ public class DashboardFragment extends Fragment {
         checkOutButton.setVisibility(dashboardViewModel.getIfUserCheckedIn() ? View.VISIBLE : View.GONE);
         checkInButton.setVisibility(dashboardViewModel.getIfUserCheckedIn()? View.GONE : View.VISIBLE);
         manageEmployeesBtn.setVisibility(dashboardViewModel.isLayoutEnabled()? View.VISIBLE: View.GONE);
+        Log.d("Refresh Calling", "UI Updated Successfully");
     }
+
 }

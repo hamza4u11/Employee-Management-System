@@ -118,7 +118,7 @@ public class SelectProfileFragment extends Fragment {
         employeeSQLiteLocalDataSource    = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper,getActivity());
         RemoteDataSourceClass<Employee> remoteDataSourceClass = new RemoteDataSourceClass<>();
         IConvertHelper<Employee> convertHelper = new EmployeeConverter();
-        DbHandler<Employee> dbHandler = new DbHandler<>(employeeSQLiteLocalDataSource,remoteDataSourceClass,convertHelper, DataSourceMode.LOCAL_ONLY);
+        DbHandler<Employee> dbHandler = new DbHandler<>(employeeSQLiteLocalDataSource,remoteDataSourceClass,convertHelper, DataSourceMode.REMOTE_ONLY);
         EmployeeRepositoryImp employeeRepositoryImp = new EmployeeRepositoryImp(dbHandler,getContext());
         selectProfileViewModel = new SelectProfileViewModel(employeeRepositoryImp,getContext());
         //Attendance

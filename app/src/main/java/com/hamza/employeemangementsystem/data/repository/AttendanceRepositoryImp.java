@@ -1,6 +1,7 @@
 package com.hamza.employeemangementsystem.data.repository;
 
 import static com.hamza.employeemangementsystem.core.DataSourceMode.LOCAL_ONLY;
+import static com.hamza.employeemangementsystem.core.DataSourceMode.REMOTE_ONLY;
 
 import android.content.Context;
 import android.util.Log;
@@ -49,9 +50,9 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
         this.context = context;
         this.dbHandler = DbHandler;
     }
-    public void getAllAtt(ResultCallback<List<Attendance>> callback){
+    public void getAllAtt(ResultCallback<List<Attendance>> callback,Type type){
 //        AttendanceConverter attendanceConverter = new AttendanceConverter();
-        dbHandler.getAllAsync(callback);
+        dbHandler.getAllAsync(callback,type);
     }
     public Attendance getAttendanceByEmpId(String id ){
         AttendanceConverter attendanceConverter = new AttendanceConverter(employeeRepositoryImp);
@@ -59,14 +60,23 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
     }
     @Override
     public Attendance getLastAttendance(String empId){
+        Log.d("Attendance Mode", ""+dbHandler.getMode());
+        Type type = new TypeToken<List<Attendance>>() {}.getType();
+
         AttendanceConverter attendanceConverter = new AttendanceConverter(employeeRepositoryImp);
-      String criteria = " empId = "+ empId +" ";
-      String orderBy = " checkInTime DESC LIMIT 1";
-      List<Attendance> attendanceList= dbHandler.getRecordByCriteria("*",criteria,orderBy,null);
-      if (attendanceList!= null && attendanceList.size()==1){
-          return attendanceList.get(0);
-      }
-      return null;
+        if(dbHandler.getMode()==LOCAL_ONLY){
+            String criteria = " empId = "+ empId +" ";
+            String orderBy = " checkInTime DESC LIMIT 1";
+            List<Attendance> attendanceList= dbHandler.getRecordByCriteria("*",criteria,orderBy,null);
+            if (attendanceList!= null && attendanceList.size()==1){
+                return attendanceList.get(0);
+            }
+        }else if (dbHandler.getMode()==REMOTE_ONLY){
+            Attendance lastAttendance =  dbHandler.getLastRecord(empId,type);
+            return lastAttendance;
+        }
+        return null;
+
     }
     @Override
     public boolean updateAttendance(Attendance attendance) {

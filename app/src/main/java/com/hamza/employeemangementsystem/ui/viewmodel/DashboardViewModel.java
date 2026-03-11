@@ -2,6 +2,8 @@ package com.hamza.employeemangementsystem.ui.viewmodel;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.strictmode.SqliteObjectLeakedViolation;
 import android.telephony.emergency.EmergencyNumber;
 import android.util.Log;
@@ -31,6 +33,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import kotlin.jvm.internal.IntCompanionObject;
 
@@ -46,6 +51,8 @@ public class DashboardViewModel extends ViewModel {
     private boolean isLayoutEnabled = false;
     private final MutableLiveData<Boolean> openSelectProfile = new MutableLiveData<>();
     private Boolean isAdmin = false;
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    Handler handler = new Handler(Looper.getMainLooper());
 
 
     public LiveData<Boolean> openSelectProfile() {
@@ -58,38 +65,49 @@ public class DashboardViewModel extends ViewModel {
         this.employeeRepositoryImp = employeeRepositoryImp;
     }
     public Attendance loadUserStatus(String id ) {
-        Log.d("Android" ,"Attendance LoadUserStatus");
-        Employee employee = employeeRepositoryImp.getEmployeeById(id);
-        Log.d("Employee Designation", employee.designation);
-        Attendance record = attendanceRepositoryImp.getLastAttendance(id);
-        statusText = "";
-        seesionText="";
-        checkInOutText="";
-        ifUserCheckedIn=false;
-        isLayoutEnabled = false;
-        isAdmin= false;
-        seesionLabel="";
-        if (record != null ){
-            time = (record.checkOutTime==null || record.checkOutTime.isEmpty() ) ?  DateTimeUtlis.getShared().convertStringToDateTime(record.checkInTime):DateTimeUtlis.getShared().convertStringToDateTime(record.checkOutTime);
-            Log.d("Time" , " " +time);
-            seesionLabel= (record.checkInTime != null && record.checkOutTime == null )? "Current Seeion Duration" : "Last Seesion Duration";
-            checkInOutText = (record.checkOutTime == null || record.checkOutTime.isEmpty() )? "Last Check In Time" : "Last Check out Time";
-            statusText= time == null ? "" : DateTimeUtlis.getShared().formatDateTime(time, Globals.getShared().getDateTimeFormat());
-            seesionText=DateTimeUtlis.getShared().calculateDurationBetween(record.checkInTime,record.checkOutTime==null|| record.checkOutTime.isEmpty() ? DateTimeUtlis.getShared().getNow() :record.checkOutTime);
-            ifUserCheckedIn = record.checkOutTime == null || record.checkOutTime.isEmpty();
-            isLayoutEnabled = Objects.equals(employee.designation, "manager") || Objects.equals(employee.designation, "admin");
-            isAdmin= Objects.equals(employee.designation, "admin");
-        }else{
-            time = null;
-            checkInOutText= "Welcome";
-            statusText = employee.name;
-            seesionText="Please Check INN";
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Attendance> future = executor.submit(() -> {
+            Log.d("Android" ,"Attendance LoadUserStatus");
+            Employee employee = employeeRepositoryImp.getEmployeeById(id);
+            Log.d("Employee Designation", employee.designation);
+            Attendance record = attendanceRepositoryImp.getLastAttendance(id);
+            statusText = "";
+            seesionText="";
+            checkInOutText="";
             ifUserCheckedIn=false;
-            isLayoutEnabled=false;
-            isAdmin=false;
-            seesionLabel="Start Seesion";
+            isLayoutEnabled = false;
+            isAdmin= false;
+            seesionLabel="";
+            if (record != null ){
+                time = (record.checkOutTime==null || record.checkOutTime.isEmpty() ) ?  DateTimeUtlis.getShared().convertStringToDateTime(record.checkInTime):DateTimeUtlis.getShared().convertStringToDateTime(record.checkOutTime);
+                Log.d("Time" , " " +time);
+                seesionLabel= (record.checkInTime != null && record.checkOutTime == null )? "Current Seeion Duration" : "Last Seesion Duration";
+                checkInOutText = (record.checkOutTime == null || record.checkOutTime.isEmpty() )? "Last Check In Time" : "Last Check out Time";
+                statusText= time == null ? "" : DateTimeUtlis.getShared().formatDateTime(time, Globals.getShared().getDateTimeFormat());
+                seesionText=DateTimeUtlis.getShared().calculateDurationBetween(record.checkInTime,record.checkOutTime==null|| record.checkOutTime.isEmpty() ? DateTimeUtlis.getShared().getNow() :record.checkOutTime);
+                ifUserCheckedIn = record.checkOutTime == null || record.checkOutTime.isEmpty();
+                isLayoutEnabled = Objects.equals(employee.designation, "manager") || Objects.equals(employee.designation, "admin");
+                isAdmin= Objects.equals(employee.designation, "admin");
+            }else{
+                time = null;
+                checkInOutText= "Welcome";
+                statusText = employee.name;
+                seesionText="Please Check INN";
+                ifUserCheckedIn=false;
+                isLayoutEnabled=false;
+                isAdmin=false;
+                seesionLabel="Start Seesion";
+            }
+            return record;
+        });
+        try {
+            return future.get(); // waits until API finishes
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return record;
+        return null;
+
+
     }
     public Boolean getIsAdmin(){
 

@@ -49,7 +49,7 @@ public class DbHandler<T> {
         this.mapper = mapper;
         this.mode = mode;
     }
-    public void getAllAsync(ResultCallback<List<T>>  callBack) {
+    public void getAllAsync(ResultCallback<List<T>>  callBack, Type type) {
         executor.execute(() -> {
             try{
                 List<T> result;
@@ -58,11 +58,11 @@ public class DbHandler<T> {
                         result = local.getAllRecords(mapper);
                         break;
                     case REMOTE_ONLY:
-                        result = remote.getAllRecordsSync(mapper);
+                        result = remote.getAllRecordsSync(mapper, type);
                         break;
                     case HYBRID_REMOTE_FIRST:
                         try {
-                            result = remote.getAllRecordsSync(mapper);
+                            result = remote.getAllRecordsSync(mapper,type);
                             if (result != null) {
                                 for (T item : result) {
                                     local.insertRecord(item, mapper);
@@ -78,7 +78,7 @@ public class DbHandler<T> {
 
                         try {
                             if ((result == null || result.isEmpty())) {
-                                result = remote.getAllRecordsSync(mapper);
+                                result = remote.getAllRecordsSync(mapper,type);
                                 if (result != null) {
                                     for (T item : result) {
                                         local.insertRecord(item, mapper);
@@ -191,7 +191,7 @@ public class DbHandler<T> {
         }
     }
 
-    public List<T> getAllRecords() {
+    public List<T> getAllRecords( Type type) {
         switch (mode) {
             case LOCAL_ONLY:
             List<T> empLocal = local.getAllRecords(mapper );
@@ -199,13 +199,13 @@ public class DbHandler<T> {
                     return empLocal;
                 }
             case REMOTE_ONLY:
-                List<T> empRemote = remote.getAllRecordsSync(mapper);
+                List<T> empRemote = remote.getAllRecordsSync(mapper, type);
                 if (empRemote!= null){
                     return empRemote;
                 }
             case HYBRID_REMOTE_FIRST:
                 try {
-                    List<T> empRemoteFirst = remote.getAllRecordsSync(mapper);
+                    List<T> empRemoteFirst = remote.getAllRecordsSync(mapper,type);
                     if (empRemoteFirst != null ) {
                         //local.insertRecord(empRemoteFirst, mapper);
 
@@ -307,7 +307,7 @@ public class DbHandler<T> {
             default:
         }
     }
-    public T getLastRecord(String id){
+    public List<T> getLastRecord(String id, Type type){
         switch (mode){
             case LOCAL_ONLY:
                 T recLocal = local.getLastRecord(id,mapper);
@@ -316,7 +316,7 @@ public class DbHandler<T> {
                 }
                 break;
             case REMOTE_ONLY:
-                T recRemote = remote.getLastRecordSync(id, mapper);
+                List<T> recRemote = remote.getLastRecordSync(id, mapper,type);
                 if(recRemote != null){
                     return recRemote;
                 }
@@ -326,14 +326,14 @@ public class DbHandler<T> {
                 if (recLocalFirst != null){
                     return recLocalFirst;
                 }
-                T recRemoteSecond = remote.getLastRecordSync(id, mapper);
+                T recRemoteSecond = remote.getLastRecordSync(id, mapper,type);
                 if (recRemoteSecond != null){
                     local.insertRecord(recRemoteSecond,mapper);
                     return recRemoteSecond;
                 }
                 break;
             case HYBRID_REMOTE_FIRST:
-                T recRemoteFirst = remote.getLastRecordSync(id,mapper);
+                T recRemoteFirst = remote.getLastRecordSync(id,mapper,type);
                 if(recRemoteFirst != null){
                     local.insertRecord(recRemoteFirst,mapper);
                     return recRemoteFirst;

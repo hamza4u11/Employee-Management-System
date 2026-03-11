@@ -12,6 +12,7 @@ import com.hamza.employeemangementsystem.core.ResultCallback;
 import com.hamza.employeemangementsystem.data.database.DbHandler;
 import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
 import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
+import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.domain.EmployeeRepository;
 import com.hamza.employeemangementsystem.ui.EmployeeConverter;
@@ -46,13 +47,15 @@ public class EmployeeRepositoryImp implements EmployeeRepository {
 //         return null;
 //    }
 
-    public void getAllEmp(ResultCallback<List<Employee>> callback) {
-         dbHandler.getAllAsync(callback);
+    public void getAllEmp(ResultCallback<List<Employee>> callback,Type type) {
+         dbHandler.getAllAsync(callback,type);
     }
 
     public List<Employee> getAllEmployees() {
         // EmployeeConverter employeeConverter = new EmployeeConverter();
-        return dbHandler.getAllRecords();
+        Type type = new TypeToken<List<Employee>>() {}.getType();
+
+        return dbHandler.getAllRecords(type);
     }
     public List<Employee> getEmployeeByManager(String id) {
         EmployeeConverter employeeConverter=new EmployeeConverter();
