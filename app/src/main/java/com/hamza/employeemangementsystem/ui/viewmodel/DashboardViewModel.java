@@ -38,10 +38,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import kotlin.jvm.internal.IntCompanionObject;
+import kotlin.jvm.internal.Ref;
 
 public class DashboardViewModel extends ViewModel {
     private AttendanceRepositoryImp attendanceRepositoryImp;
     private EmployeeRepositoryImp employeeRepositoryImp;
+
     private String statusText= "";
     private String seesionText="";
     private String seesionLabel="";
@@ -51,20 +53,29 @@ public class DashboardViewModel extends ViewModel {
     private boolean isLayoutEnabled = false;
     private final MutableLiveData<Boolean> openSelectProfile = new MutableLiveData<>();
     private Boolean isAdmin = false;
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-    Handler handler = new Handler(Looper.getMainLooper());
-
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
     public LiveData<Boolean> openSelectProfile() {
 
         return openSelectProfile;
     }
-    public DashboardViewModel(@NonNull AttendanceRepositoryImp attendanceRepositoryImp,EmployeeRepositoryImp employeeRepositoryImp, Context context) {
+    public DashboardViewModel(@NonNull AttendanceRepositoryImp attendanceRepositoryImp,EmployeeRepositoryImp employeeRepositoryImp,  Context context) {
         super();
         this.attendanceRepositoryImp= attendanceRepositoryImp;
         this.employeeRepositoryImp = employeeRepositoryImp;
     }
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+    public void startLoading() {
+        isLoading.setValue(true);
+    }
+    private void stopLoading() {
+        isLoading.postValue(false); // ✅ safe from background thread
+    }
     public Attendance loadUserStatus(String id ) {
+        Log.d("Dashboard Fragment LoadUserStatus", id);
+        startLoading();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Attendance> future = executor.submit(() -> {
             Log.d("Android" ,"Attendance LoadUserStatus");
@@ -98,17 +109,19 @@ public class DashboardViewModel extends ViewModel {
                 isAdmin=false;
                 seesionLabel="Start Seesion";
             }
+            stopLoading();
             return record;
+
         });
         try {
             return future.get(); // waits until API finishes
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return null;
-
-
     }
+
     public Boolean getIsAdmin(){
 
         return isAdmin;
@@ -141,6 +154,8 @@ public class DashboardViewModel extends ViewModel {
         return checkInOutText;
     }
     public void checkIn(String id){
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future future = executor.submit(() -> {
         Attendance attendance = new Attendance();
         attendance.empId = Integer.parseInt(id);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -149,22 +164,33 @@ public class DashboardViewModel extends ViewModel {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             attendance.checkInTime = LocalDateTime.now().toString();
         }
+        attendance.checkOutTime= "";
+        attendance.overTime=0;
         attendanceRepositoryImp.insertAttendance(attendance);
+        });
+        try {
+             future.get(); // waits until API finishes
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     public void checkOut(String id) {
-       Attendance record = attendanceRepositoryImp.getLastAttendance(id);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future future = executor.submit(() -> {Attendance record = attendanceRepositoryImp.getLastAttendance(id);
         Attendance attendance = new Attendance();
-        attendance.id =record.id;
         attendance.empId=Integer.parseInt(id);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            attendance.date= LocalDate.now().toString();
-        }
-        attendance.checkInTime = record.checkInTime;
-        Log.d("checkInTime",record.checkInTime);
+//        attendance.date= record.date;
+//        attendance.checkInTime = record.checkInTime;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             attendance.checkOutTime = LocalDateTime.now().toString();
         }
         attendanceRepositoryImp.updateAttendance(attendance);
+        });
+        try {
+             future.get(); // waits until API finishes
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     public void logout() {
         Globals.getShared().setEmployee(null);

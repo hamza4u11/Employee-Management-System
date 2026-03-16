@@ -8,6 +8,7 @@
     android:orientation="vertical"
     tools:context=".ui.view.fragment.SelectProfileFragment">
 
+
     <LinearLayout
 
         android:id="@+id/header"
@@ -51,6 +52,7 @@
 
 
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,6 +78,7 @@
 
 
         <!-- PROFILE SELECTION CARD -->
+
 
         <LinearLayout
             android:id="@+id/startDateEndDateLayout"
@@ -169,6 +172,15 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="20dp">
+                <ProgressBar
+                    android:id="@+id/pBar"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/header"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp" />
 
                 <!-- TITLE -->
                 <!--                <TextView-->

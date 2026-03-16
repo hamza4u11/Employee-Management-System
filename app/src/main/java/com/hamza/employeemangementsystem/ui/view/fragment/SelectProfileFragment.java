@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
@@ -65,6 +66,7 @@ public class SelectProfileFragment extends Fragment {
     TextView titleTxt, txtName;
     String startDate, endDate;
     ImageView imageView;
+    ProgressBar loader;
     public interface MyOnClickListener{
         void OnItemClick(Employee employee);
         void OnAddClick();
@@ -118,8 +120,8 @@ public class SelectProfileFragment extends Fragment {
         employeeSQLiteLocalDataSource    = new SQLiteLocalDataSource<>(employeeAppDatabaseHelper,getActivity());
         RemoteDataSourceClass<Employee> remoteDataSourceClass = new RemoteDataSourceClass<>();
         IConvertHelper<Employee> convertHelper = new EmployeeConverter();
-        DbHandler<Employee> dbHandler = new DbHandler<>(employeeSQLiteLocalDataSource,remoteDataSourceClass,convertHelper, DataSourceMode.REMOTE_ONLY);
-        EmployeeRepositoryImp employeeRepositoryImp = new EmployeeRepositoryImp(dbHandler,getContext());
+        DbHandler<Employee> employeeDbHandler = new DbHandler<>(employeeSQLiteLocalDataSource,remoteDataSourceClass,convertHelper, DataSourceMode.REMOTE_ONLY);
+        EmployeeRepositoryImp employeeRepositoryImp = new EmployeeRepositoryImp(employeeDbHandler,getContext());
         selectProfileViewModel = new SelectProfileViewModel(employeeRepositoryImp,getContext());
         //Attendance
         AppDatabaseHelper<Attendance> attendanceAppDatabaseHelper = new AppDatabaseHelper<>(getActivity());
@@ -145,6 +147,8 @@ public class SelectProfileFragment extends Fragment {
         imageView= view.findViewById(R.id.imageView);
         titleTxt = view.findViewById(R.id.titleTxt);
         titleTxt.setText(title);
+        loader=view.findViewById(R.id.pBar);
+
         txtName= view.findViewById(R.id.txtName);
         txtName.setText(Globals.getShared().getEmployee()  == null ? " " :  Globals.getShared().getEmployee().name );
         addBtn.setVisibility(view.GONE);
@@ -162,6 +166,13 @@ public class SelectProfileFragment extends Fragment {
             DynEditTextDateTimePicker  dynEditTextDateTimePickerEndDate =new DynEditTextDateTimePicker(getContext(),etEndDate,endDate);
             dynEditTextDateTimePickerEndDate.setOnlyDate(true);
         }
+        selectProfileViewModel.getIsLoading().observe(getActivity(), isLoading -> {
+            if (isLoading) {
+                loader.setVisibility(View.VISIBLE);
+            } else {
+                loader.setVisibility(View.GONE);
+            }
+        });
         RecyclerView selectProfile = view.findViewById(R.id.selectProfile);
         EmployeeClickHandler employeeClickHandler = new EmployeeClickHandler() {
             @Override

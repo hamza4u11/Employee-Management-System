@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AttendanceRepository {
     Attendance getLastAttendance(String empId);
-    boolean updateAttendance(Attendance attendance);
-    boolean insertAttendance(Attendance attendance);
+    void updateAttendance(Attendance attendance);
+    void insertAttendance(Attendance attendance);
     List<Attendance> getAttendanceByCriteria(String startDate,String endDate,String employeeId, String loginId);
 }

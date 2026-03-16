@@ -11,9 +11,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 public interface NetworkDataSource <T> {
-    T getRecordByIdSync(String id, IConvertHelper<T> mapper);
+    T getRecordByIdSync(String id, IConvertHelper<T> mapper, Type type);
     List<T> getAllRecordsSync( IConvertHelper<T> mapper, Type type);
-    List<T> getLastRecordSync(String id, IConvertHelper<T> mapper,Type type);
+    T getLastRecordSync(String id, IConvertHelper<T> mapper,Type type);
     List<T> getRecordByCriteriaSync(String criteria, IConvertHelper<T> mapper, Type type);
     void updateRecordSync( String id ,T model, IConvertHelper<T>  mapper);
     void insertRecordSync( T model, IConvertHelper<T> mapper);

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hamza.employeemangementsystem.R;
@@ -55,9 +56,7 @@ public class DashboardFragment extends Fragment {
     TextView txtName,seesion, label, status ,seeionLabel;
     LinearLayout hideAdminButtons ;
     Button checkInButton, checkOutButton, logoutBtn, manageEmployeesBtn, attendenceReportsBtn ;
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-    Handler handler = new Handler(Looper.getMainLooper());
-
+    ProgressBar loader;
     public interface  OnEventClickListener{
        void OnManageEmployeesClick( String adminOrManager,  String addBtnForAdmin);
        void OnReportsClick();
@@ -136,11 +135,19 @@ public class DashboardFragment extends Fragment {
         checkInButton = view.findViewById(R.id.checkInButton);
         checkOutButton = view.findViewById(R.id.checkOutbutton);
         logoutBtn = view.findViewById(R.id.logoutBtn);
+        loader =  view.findViewById(R.id.pBar);
         manageEmployeesBtn= view.findViewById(R.id.manageEmployeesBtn);
         attendenceReportsBtn= view.findViewById(R.id.attendenceReports);
+        refresh();
+        dashboardViewModel.getIsLoading().observe(getActivity(), isLoading -> {
+            if (isLoading) {
+                loader.setVisibility(View.VISIBLE);
+            } else {
+                loader.setVisibility(View.GONE);
+            }
+        });
         Employee loginEmployee= Globals.getShared().getEmployee();
         String loginEmployeeId = String.valueOf(loginEmployee.id);
-        refresh();
             checkInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

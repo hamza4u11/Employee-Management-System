@@ -1,22 +1,15 @@
 package com.hamza.employeemangementsystem.ui.viewmodel;
 
 
-import android.content.Context;
 import android.os.Build;
-import android.telephony.ClosedSubscriberGroupInfo;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.hamza.employeemangementsystem.core.ResultCallback;
-import com.hamza.employeemangementsystem.data.database.local.AppDatabaseHelper;
-import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSource;
-import com.hamza.employeemangementsystem.data.model.Attendance;
+import com.google.gson.Gson;
 import com.hamza.employeemangementsystem.data.model.Employee;
-import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
 import com.hamza.employeemangementsystem.domain.EmployeeRepository;
 
 import java.time.LocalDateTime;
@@ -32,6 +25,9 @@ public class EmployeeViewModel extends ViewModel {
     private MutableLiveData<Employee> employeeLiveData = new MutableLiveData<>();
     String empId;
     Employee employee;
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+
+
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     public EmployeeViewModel(EmployeeRepository employeeRepository, String employeeId){
         super();
@@ -48,17 +44,31 @@ public class EmployeeViewModel extends ViewModel {
         return employeeLiveData;
     }
     public Employee loadEmployee() {
+        startLoading();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Employee> future = executor.submit(() -> {
-            return repository.getEmployeeById(empId);
+             Employee emp =repository.getEmployeeById(empId);
+            stopLoading();
+            return emp;
         });
         try {
             return future.get(); // waits until API finishes
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+    public void startLoading() {
+        isLoading.setValue(true);
+    }
+    private void stopLoading() {
+        isLoading.postValue(false); // ✅ safe from background thread
+    }
+
     public int getId() {
         return employee.id;
     }
@@ -202,16 +212,30 @@ public class EmployeeViewModel extends ViewModel {
         return result;
     }
     public void updateEmployee() {
+//        ExecutorService executor = Executors.newSingleThreadExecutor();
+//        Future<Void> future = executor.submit(() -> {
+        Employee employee1 = employee;
+
         executorService.execute(() -> {
-            Employee employee1 = employee;
+            isLoading.postValue(true);
             if (empId == null) {
+                Log.d("Employee Insert" , new Gson().toJson(employee1));
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     setCheckIn(String.valueOf(LocalDateTime.now()));
                 }
                 repository.insertEmployee(employee1);
             } else {
+                Log.d("Employee Update" , new Gson().toJson(employee1));
                 repository.updateEmployee(employee1);
             }
+//        });
+//        try {
+//             future.get(); // waits until API finishes
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+            isLoading.postValue(false);
         });
     }
 

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.photopicker.EmbeddedPhotoPickerClient;
 
@@ -50,8 +51,7 @@ public class ReportFragment extends Fragment {
     ReportAdapter adapter;
     ReportViewModel reportViewModel;
     TextView title,txtName;
-    SQLiteLocalDataSource<Attendance> sqLiteLocalDataSource;
-
+    ProgressBar loader;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -120,6 +120,14 @@ public class ReportFragment extends Fragment {
         title.setText(mParam5);
         txtName= view.findViewById(R.id.txtName);
         txtName.setText(Globals.getShared().getEmployee().name);
+        loader =  view.findViewById(R.id.pBar);
+        reportViewModel.getIsLoading().observe(getActivity(), isLoading -> {
+            if (isLoading) {
+                loader.setVisibility(View.VISIBLE);
+            } else {
+                loader.setVisibility(View.GONE);
+            }
+        });
         ReportRecyclerView = view.findViewById(R.id.reportsRecyclerView);
         ReportAdapter adapter = new ReportAdapter(getContext());
         ReportRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

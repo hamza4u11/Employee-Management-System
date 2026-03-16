@@ -55,8 +55,9 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
         dbHandler.getAllAsync(callback,type);
     }
     public Attendance getAttendanceByEmpId(String id ){
+        Type type = new TypeToken<List<Attendance>>() {}.getType();
         AttendanceConverter attendanceConverter = new AttendanceConverter(employeeRepositoryImp);
-        return  (Attendance) dbHandler.getRecordById(id);
+        return  (Attendance) dbHandler.getRecordById(id,type);
     }
     @Override
     public Attendance getLastAttendance(String empId){
@@ -79,22 +80,21 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
 
     }
     @Override
-    public boolean updateAttendance(Attendance attendance) {
+    public void updateAttendance(Attendance attendance) {
         AttendanceConverter attendanceConverter = new AttendanceConverter(employeeRepositoryImp);
-
+        Log.d("Attendance" , attendance.empId +  " " + attendance.checkOutTime);
         dbHandler.updateRecord(String.valueOf(attendance.id), attendance);
-        return true;
     }
     @Override
-    public boolean insertAttendance(Attendance attendance) {
+    public void insertAttendance(Attendance attendance) {
         AttendanceConverter attendanceConverter = new AttendanceConverter(employeeRepositoryImp);
         dbHandler.insertRecord(attendance);
-        return true;
     }
     @Override
     public List<Attendance> getAttendanceByCriteria(String startDate, String endDate, String employeeId, String loginId){
         String selectClause = null, criteria = null, orderBy = null;
         Log.d("Mode", " " + dbHandler.getMode());
+        Log.d("Login Id", loginId);
         Employee employee= employeeRepositoryImp.getEmployeeById(loginId);
         Globals.getShared().setEmployee(employee);
         selectClause = "* , (SELECT e.name FROM employees e WHERE e.id = attendance.empId) AS name ,(SELECT e.status FROM employees e WHERE e.id = attendance.empId ) AS status ";
@@ -113,12 +113,11 @@ public class AttendanceRepositoryImp implements AttendanceRepository {
             return  dbHandler.getRecordByCriteria(selectClause,criteria, orderBy,null);
         }else {
             if(employee.designation.equals("admin") ||employee.designation.equals("manager")) {
-                loginId = employeeId;
+               loginId= employeeId==""?loginId:employeeId;
             }
             Type type = new TypeToken<List<Attendance>>() {}.getType();
             criteria = "empId=" + Integer.parseInt(loginId) + "&startDate=" + startDate + "&endDate=" + endDate ;
             return  dbHandler.getRecordByCriteria(selectClause,criteria, orderBy,type);
         }
-
     }
 }

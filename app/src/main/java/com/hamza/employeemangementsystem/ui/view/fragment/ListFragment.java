@@ -41,8 +41,6 @@ public class ListFragment extends Fragment {
 //    ReportViewModel viewModel = new ReportViewModel(dbHandler);
     private ItemClickHandler listener;
 
-
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String  ARG_PARAM1 = "param1" ;
@@ -97,9 +95,7 @@ public class ListFragment extends Fragment {
         title = view.findViewById(R.id.title);
         title.setText(mParam2);
 
-
         adapter = new ListAdapter(getContext(), mParam1, listener);
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         return  view;

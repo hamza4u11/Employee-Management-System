@@ -28,7 +28,6 @@ import com.hamza.employeemangementsystem.data.database.local.SQLiteLocalDataSour
 import com.hamza.employeemangementsystem.data.database.remote.RemoteDataSourceClass;
 import com.hamza.employeemangementsystem.data.model.Employee;
 import com.hamza.employeemangementsystem.data.repository.EmployeeRepositoryImp;
-import com.hamza.employeemangementsystem.domain.EmployeeRepository;
 import com.hamza.employeemangementsystem.ui.EmployeeConverter;
 import com.hamza.employeemangementsystem.ui.viewmodel.EmployeeViewModel;
 import com.hamza.employeemangementsystem.ui.viewmodel.SelectProfileViewModel;
@@ -43,7 +42,7 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class EmployeeFragment extends Fragment {
-    private EmployeeViewModel viewModel;
+    private EmployeeViewModel employeeViewModel;
     // TODO: Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "mode";
     private static final String ARG_PARAM2 = "employeeId";
@@ -112,7 +111,7 @@ public class EmployeeFragment extends Fragment {
         DbHandler<Employee> dbHandler = new DbHandler<>(sqLiteLocalDataSource,remoteDataSource,convertHelper, DataSourceMode.REMOTE_ONLY);
         EmployeeRepositoryImp employeeRepository = new EmployeeRepositoryImp(dbHandler, getContext());
         selectProfileViewModel = new SelectProfileViewModel(employeeRepository,getContext());
-        viewModel = new EmployeeViewModel(employeeRepository, employeeId);
+        employeeViewModel = new EmployeeViewModel(employeeRepository, employeeId);
     }
 
     @Override
@@ -135,24 +134,32 @@ public class EmployeeFragment extends Fragment {
         selectManager = view.findViewById(R.id.selectManager);
         spinner = view.findViewById(R.id.spinner);
         cancelBtn = view.findViewById(R.id.cancelBtn);
+        loader =  view.findViewById(R.id.pBar);
         loadScreenData();
+        employeeViewModel.getIsLoading().observe(getActivity(), isLoading -> {
+            if (isLoading) {
+                loader.setVisibility(View.VISIBLE);
+            } else {
+                loader.setVisibility(View.GONE);
+            }
+        });
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 try {
-                    viewModel.setName(etName.getText().toString());
-                    viewModel.setDesignation(etDesignation.getText().toString());
-                    viewModel.setPhoneNo(etPhoneNo.getText().toString());
-                    viewModel.setAddress(etAddress.getText().toString());
-                    viewModel.setPaymentType(etPaymentType.getText().toString());
-                    viewModel.setAllowHoliday(etAllowHoliday.getText().toString());
-                    viewModel.setAllowOverTime(etOverTimeAllow.getText().toString());
-                    viewModel.setStatus(etStatus.getText().toString());
-                    viewModel.setPin(etPin.getText().toString());
-                    selectedManagerId = Objects.equals(mode, "add") ? selectedManagerId : Integer.parseInt(viewModel.getManagerId());
-                    viewModel.setManagerId(String.valueOf(selectedManagerId));
-                    viewModel.updateEmployee();
+                    employeeViewModel.setName(etName.getText().toString());
+                    employeeViewModel.setDesignation(etDesignation.getText().toString());
+                    employeeViewModel.setPhoneNo(etPhoneNo.getText().toString());
+                    employeeViewModel.setAddress(etAddress.getText().toString());
+                    employeeViewModel.setPaymentType(etPaymentType.getText().toString());
+                    employeeViewModel.setAllowHoliday(etAllowHoliday.getText().toString());
+                    employeeViewModel.setAllowOverTime(etOverTimeAllow.getText().toString());
+                    employeeViewModel.setStatus(etStatus.getText().toString());
+                    employeeViewModel.setPin(etPin.getText().toString());
+                    selectedManagerId = Objects.equals(mode, "add") ? selectedManagerId : Integer.parseInt(employeeViewModel.getManagerId());
+                    employeeViewModel.setManagerId(String.valueOf(selectedManagerId));
+                    employeeViewModel.updateEmployee();
                     if (listener != null) {
                         listener.OnBackClick();
                     }
@@ -169,31 +176,30 @@ public class EmployeeFragment extends Fragment {
                 }
             }
         });
-        viewModel.getEmployee().observe(getViewLifecycleOwner(), employee -> {
-            if(viewModel.getEmployee() != null){
+        employeeViewModel.getEmployee().observe(getViewLifecycleOwner(), employee -> {
+            if(employeeViewModel.getEmployee() != null){
                // txtName.setText(employee.getName());
             }
         });
         return view;
     }
-
     private void loadScreenData() {
         addEditEmployee.setText(Objects.equals(mode, "add") ? "Add Employee" : "Edit Employee");
-        etName.setText(viewModel.getName());
-        etDesignation.setText(viewModel.getDesignation());
-        etPhoneNo.setText(viewModel.getPhoneNo());
-        etAddress.setText(viewModel.getAddress());
-        etStatus.setText(viewModel.getStatus());
-        etPaymentType.setText(viewModel.getPaymentType());
-        etAllowHoliday.setText(viewModel.getAllowHoliday());
-        etOverTimeAllow.setText(viewModel.getOverTimeAllow());
+        etName.setText(employeeViewModel.getName());
+        etDesignation.setText(employeeViewModel.getDesignation());
+        etPhoneNo.setText(employeeViewModel.getPhoneNo());
+        etAddress.setText(employeeViewModel.getAddress());
+        etStatus.setText(employeeViewModel.getStatus());
+        etPaymentType.setText(employeeViewModel.getPaymentType());
+        etAllowHoliday.setText(employeeViewModel.getAllowHoliday());
+        etOverTimeAllow.setText(employeeViewModel.getOverTimeAllow());
         selectManager.setVisibility(
                 Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
         );
         spinner.setVisibility(
                 Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
         );
-        etPin.setText(viewModel.getPin());
+        etPin.setText(employeeViewModel.getPin());
         setupManagerSpinner();
         formValidations();
         if(employeeId!= null){
@@ -212,7 +218,7 @@ public class EmployeeFragment extends Fragment {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        viewModel.getManagers().observe(getViewLifecycleOwner(), employees -> {
+        employeeViewModel.getManagers().observe(getViewLifecycleOwner(), employees -> {
             List<Employee> list = new ArrayList<>();
             list.add(selectManager);
 //            if(employees !=null) {
@@ -241,13 +247,12 @@ public class EmployeeFragment extends Fragment {
             }
         });
     }
-
     private void formValidations() {
 
         etName.setOnFocusChangeListener((v, hasFocus) -> {
             try{
                 if (!hasFocus) {
-                    viewModel.setName(etName.getText().toString());
+                    employeeViewModel.setName(etName.getText().toString());
                 }
             }catch (Exception e){
                 showErrorMessage(e.getMessage());
@@ -258,7 +263,7 @@ public class EmployeeFragment extends Fragment {
         etDesignation.setOnFocusChangeListener((v, hasFocus) -> {
             try{
                 if (!hasFocus) {
-                    viewModel.setDesignation(etDesignation.getText().toString());
+                    employeeViewModel.setDesignation(etDesignation.getText().toString());
                 }
             }catch (Exception e){
                 showErrorMessage(e.getMessage());
@@ -269,7 +274,7 @@ public class EmployeeFragment extends Fragment {
         etPhoneNo.setOnFocusChangeListener((v, hasFocus) -> {
             try{
                 if (!hasFocus) {
-                    viewModel.setPhoneNo(etPhoneNo.getText().toString());
+                    employeeViewModel.setPhoneNo(etPhoneNo.getText().toString());
                 }
             }catch (Exception e){
                 showErrorMessage(e.getMessage());
@@ -280,7 +285,7 @@ public class EmployeeFragment extends Fragment {
         etAddress.setOnFocusChangeListener((v, hasFocus) -> {
             try{
                 if (!hasFocus) {
-                    viewModel.setAddress(etAddress.getText().toString());
+                    employeeViewModel.setAddress(etAddress.getText().toString());
                 }
             }catch (Exception e){
                 showErrorMessage(e.getMessage());
@@ -291,7 +296,7 @@ public class EmployeeFragment extends Fragment {
         etStatus.setOnFocusChangeListener((v, hasFocus) -> {
             try{
                 if (!hasFocus) {
-                    viewModel.setStatus(etStatus.getText().toString());
+                    employeeViewModel.setStatus(etStatus.getText().toString());
                 }
             }catch (Exception e){
                 showErrorMessage(e.getMessage());
@@ -303,7 +308,7 @@ public class EmployeeFragment extends Fragment {
         etPaymentType.setOnFocusChangeListener((v, hasFocus) -> {
             try{
                 if (!hasFocus) {
-                    viewModel.setPaymentType(etPaymentType.getText().toString());
+                    employeeViewModel.setPaymentType(etPaymentType.getText().toString());
                 }
             }catch (Exception e){
                 showErrorMessage(e.getMessage());
@@ -316,7 +321,7 @@ public class EmployeeFragment extends Fragment {
         etPin.setOnFocusChangeListener((v, hasFocus) -> {
             try{
                 if (!hasFocus) {
-                    viewModel.setPin(etPin.getText().toString());
+                    employeeViewModel.setPin(etPin.getText().toString());
                 }
             }catch (Exception e){
                 showErrorMessage(e.getMessage());
@@ -329,21 +334,21 @@ public class EmployeeFragment extends Fragment {
         Toast.makeText(requireActivity(), message, LENGTH_SHORT).show();
     }
     private void ifManagerLogin(){
-        etName.setText(viewModel.getName());
-        etDesignation.setText(viewModel.getDesignation());
-        etPhoneNo.setText(viewModel.getPhoneNo());
-        etAddress.setText(viewModel.getAddress());
-        etStatus.setText(viewModel.getStatus());
-        etPaymentType.setText(viewModel.getPaymentType());
-        etAllowHoliday.setText(viewModel.getAllowHoliday());
-        etOverTimeAllow.setText(viewModel.getOverTimeAllow());
+        etName.setText(employeeViewModel.getName());
+        etDesignation.setText(employeeViewModel.getDesignation());
+        etPhoneNo.setText(employeeViewModel.getPhoneNo());
+        etAddress.setText(employeeViewModel.getAddress());
+        etStatus.setText(employeeViewModel.getStatus());
+        etPaymentType.setText(employeeViewModel.getPaymentType());
+        etAllowHoliday.setText(employeeViewModel.getAllowHoliday());
+        etOverTimeAllow.setText(employeeViewModel.getOverTimeAllow());
         selectManager.setVisibility(
                 Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
         );
         spinner.setVisibility(
                 Objects.equals(mode, "add") ? View.VISIBLE : View.GONE
         );
-        etPin.setText(viewModel.getPin());
+        etPin.setText(employeeViewModel.getPin());
         addEditEmployee.setText(employeeId!=null && !employeeId.isEmpty() ? "Employee Details":null);
 //        updateBtn.setVisibility(View.GONE);
     }

@@ -28,17 +28,17 @@ public class EmployeeRepositoryImp implements EmployeeRepository {
     DbHandler<Employee> dbHandler;
 
     public EmployeeRepositoryImp(DbHandler<Employee>  dbHandler, Context context){
-//      sqLiteLocalDataSource = new SQLiteLocalDataSource<>(appDatabaseHelper,context);
         this.sqLiteLocalDataSource=new SQLiteLocalDataSource<>(appDatabaseHelper,context);
         this.dbHandler =  dbHandler;
-
-//        this.appDatabaseHelper = appDatabaseHelper;
     }
     @Override
     public Employee getEmployeeById(String id) {
-        EmployeeConverter employeeConverter=new EmployeeConverter();
-//        return (Employee) appDatabaseHelper.getRecordById(id, employeeConverter);
-        return (Employee) dbHandler.getRecordById(id);
+        Type type = new TypeToken<List<Employee>>() {}.getType();
+        Employee employee = dbHandler.getRecordById(id,type);
+        if(employee != null){
+            return employee;
+        }
+        return null;
     }
 
 //    @Override
@@ -77,13 +77,12 @@ public class EmployeeRepositoryImp implements EmployeeRepository {
             List<Employee> managers = dbHandler.getRecordByCriteria(null,null,null,type);
            return managers;
         }
-
     }
     @Override
     public void updateEmployee(Employee employee) {
-        Log.d("EMPLOYEE", "Id: " + employee.id);
-        Log.d("EMPLOYEE", "Name: " + employee.name);
-        Log.d("EMPLOYEE", "Designation: " + employee.designation);
+        Log.d("UPDATE EMPLOYEE", "Id: " + employee.id);
+        Log.d("UPDATE EMPLOYEE", "Name: " + employee.name);
+        Log.d("UPDATE EMPLOYEE", "Designation: " + employee.designation);
         dbHandler.updateRecord(String.valueOf(employee.id), employee);
     }
 

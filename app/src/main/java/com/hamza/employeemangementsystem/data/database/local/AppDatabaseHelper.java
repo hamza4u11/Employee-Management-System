@@ -120,22 +120,22 @@ public class AppDatabaseHelper<T> extends SQLiteOpenHelper {
             return  getRecordByCriteria(" * " , criteria ,orderBy , convertHelper);
     }
 
-    public T getRecordById(String id, IConvertHelper convertHelper) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT *  FROM " + convertHelper.getEntityName() + " WHERE " + convertHelper.getIdFieldName() + "=?";
-
-
-        Cursor cursor = db.rawQuery(
-                query,
-                new String[]{id}
-        );
-        T model = null;
-        if (cursor.moveToFirst()) {
-            model = (T) convertHelper.toModel(cursor);
-        }
-        cursor.close();
-        return model;
-    }
+//    public T getRecordById(String id, IConvertHelper convertHelper) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        String query = "SELECT *  FROM " + convertHelper.getEntityName() + " WHERE " + convertHelper.getIdFieldName() + "=?";
+//
+//
+//        Cursor cursor = db.rawQuery(
+//                query,
+//                new String[]{id}
+//        );
+//        T model = null;
+//        if (cursor.moveToFirst()) {
+//            model = (T) convertHelper.toModel(cursor);
+//        }
+//        cursor.close();
+//        return model;
+//    }
 
 
     public List<T> getAllRecords(IConvertHelper convertHelper) {

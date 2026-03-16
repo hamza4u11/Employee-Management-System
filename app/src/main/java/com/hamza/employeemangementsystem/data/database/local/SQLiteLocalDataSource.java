@@ -20,7 +20,8 @@ public class SQLiteLocalDataSource<T>  implements LocalDataSource<T> {
 
     @Override
     public T getRecordById(String id,  IConvertHelper<T> mapper) {
-        return appDatabaseHelper.getRecordById(id, mapper);
+        //appDatabaseHelper.getRecordById(id, mapper);
+        return null;
     }
 
     @Override

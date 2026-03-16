@@ -31,9 +31,8 @@ public class RemoteDataSourceClass<T> implements NetworkDataSource<T> {
     private final OkHttpClient client = new OkHttpClient();
 
     @Override
-    public T getRecordByIdSync(String id, IConvertHelper<T> mapper) {
-        String url="http://172.20.2.167:5000/get-"+ mapper.getEntityName()+ "-by-id/:id";
-        Type type = new TypeToken<List<T>>(){}.getType();
+    public T getRecordByIdSync(String id, IConvertHelper<T> mapper, Type type) {
+        String url="http://172.20.2.167:5000/get-"+ mapper.getEntityName()+ "-by-id/"+id;
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
@@ -42,8 +41,13 @@ public class RemoteDataSourceClass<T> implements NetworkDataSource<T> {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful() && response.body() != null) {
                 String json = response.body().string();
+                Log.d("Record By Id JSON",json) ;
                 Gson gson = new Gson();
-                return gson.fromJson(json, type);
+               List<T> list = gson.fromJson(json, type);
+                if (list != null && !list.isEmpty()) {
+                    Log.d("List First Element", ""+ list.get(0));
+                    return list.get(0);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,7 +93,7 @@ public class RemoteDataSourceClass<T> implements NetworkDataSource<T> {
 //    }
 
         @Override
-    public List<T> getLastRecordSync(String id, IConvertHelper<T> mapper,Type type) {
+    public T getLastRecordSync(String id, IConvertHelper<T> mapper,Type type) {
         String url = "http://172.20.2.167:5000/get-last-" + mapper.getEntityName() +"-by-employee/" +id;
         Log.d("URL", url);
         Request request = new Request.Builder().url(url).build();
@@ -100,7 +104,9 @@ public class RemoteDataSourceClass<T> implements NetworkDataSource<T> {
             Log.d("JSON_RESPONSE", json);
             Gson gson = new Gson();
             List<T> list = gson.fromJson(json, type);
-            return list;   // ✅ RETURN LIST
+            if (list != null && !list.isEmpty()) {
+                return list.get(0); // Here is your first index!
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,30 +130,30 @@ public class RemoteDataSourceClass<T> implements NetworkDataSource<T> {
         }
         return null;
     }
-    public List<T> getRecordByCriteriaSync(IConvertHelper<T> mapper, Type type) {
-        String url = "http://172.20.2.167:5000/get-managers";
-        Log.d("Get Managers URL", url);
-        Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .build();
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
-            }
-            if (response.body() == null) {
-                return new ArrayList<>();
-            }
-            String json = response.body().string();
-            Log.d("JSON_RESPONSE", json);
-            Gson gson = new Gson();
-            List<T> list = gson.fromJson(json, type);
-            return list ;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }
+//    public List<T> getRecordByCriteriaSyncEmployee(IConvertHelper<T> mapper, Type type) {
+//        String url = "http://172.20.2.167:5000/get-managers";
+//        Log.d("Get Managers URL", url);
+//        Request request = new Request.Builder()
+//                .url(url)
+//                .get()
+//                .build();
+//        try (Response response = client.newCall(request).execute()) {
+//            if (!response.isSuccessful()) {
+//                throw new IOException("Unexpected code " + response);
+//            }
+//            if (response.body() == null) {
+//                return new ArrayList<>();
+//            }
+//            String json = response.body().string();
+//            Log.d("JSON_RESPONSE", json);
+//            Gson gson = new Gson();
+//            List<T> list = gson.fromJson(json, type);
+//            return list ;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return new ArrayList<>();
+//    }
     @Override
     public void updateRecordSync(String id, T model, IConvertHelper<T> mapper) {
         OkHttpClient client = new OkHttpClient();
@@ -155,7 +161,7 @@ public class RemoteDataSourceClass<T> implements NetworkDataSource<T> {
         String json = mapper.toJson(model);
         RequestBody body = RequestBody.create(json, JSON);
         Request request = new Request.Builder()
-                .url("http://172.20.2.167:5000/update-"+mapper.getEntityName()+"/"+ id )
+                .url("http://172.20.2.167:5000/update-"+mapper.getEntityName()+"/"+id )
                 .put(body)
                 .build();
         try (Response response = client.newCall(request).execute()) {

@@ -1,6 +1,8 @@
 package com.hamza.employeemangementsystem.ui.viewmodel;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -25,6 +27,8 @@ public class SelectProfileViewModel extends ViewModel {
     private final MutableLiveData<List<Employee>> managers = new MutableLiveData<>();
     private EmployeeRepositoryImp repository;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+
 
 
     public SelectProfileViewModel(@NonNull EmployeeRepositoryImp repository, Context context) {
@@ -36,17 +40,29 @@ public class SelectProfileViewModel extends ViewModel {
         return employees;
     }
     private void loadEmployees() {
+        startLoading(); // this sets LiveData = true, okay if on main thread
+
         executorService.execute(() -> {
-            // ✅ This runs in background thread
-            List<Employee> result =
-                    repository.getAllEmployees(
-                    );
-            // ✅ Update LiveData from background thread
+            List<Employee> result = repository.getAllEmployees();
+
+            // ✅ Use postValue for background thread
             employees.postValue(result);
+
+            // ✅ Also use postValue inside stopLoading()
+            stopLoading(); // make sure stopLoading uses postValue
         });
     }
-    public Employee getEmployeeById(String id){
+       public Employee getEmployeeById(String id){
         return repository.getEmployeeById(id);
+    }
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+    public void startLoading() {
+        isLoading.setValue(true);
+    }
+    private void stopLoading() {
+        isLoading.postValue(false); // ✅ safe from background thread
     }
     public LiveData<List<Employee>> getFilteredEmployees(){
         return filteredEmployees;

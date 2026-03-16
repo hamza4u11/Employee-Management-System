@@ -42,10 +42,8 @@ public class AttendanceConverter implements IConvertHelper<Attendance> {
     public String getEntityName() {
         return "attendance";
     }
-
     @Override
     public ContentValues fromModel(Attendance model) {
-
         ContentValues values = new ContentValues();
         values.put("empId",model.empId);
         values.put("date",model.date);
@@ -54,7 +52,6 @@ public class AttendanceConverter implements IConvertHelper<Attendance> {
         values.put("overTime",model.overTime);
         return values;
     }
-
     @Override
     public Attendance toModel(Cursor cursor) {
         Attendance attendance = new Attendance();

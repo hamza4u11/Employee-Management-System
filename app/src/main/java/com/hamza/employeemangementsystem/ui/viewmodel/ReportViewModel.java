@@ -28,6 +28,7 @@ public class ReportViewModel extends ViewModel {
     String startDate, endDate,employeeId,loginEmployeeId;
     private final MutableLiveData<List<Attendance>> reports = new MutableLiveData<>();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
 
     public  interface OnEventClickListener{
         void ViewReportClick();
@@ -53,9 +54,8 @@ public class ReportViewModel extends ViewModel {
     }
     private void loadReports(){
         {
-
+            startLoading();
             executorService.execute(() -> {
-
                 // ✅ This runs in background thread
                 List<Attendance> result =
                         attendanceRepositoryImp.getAttendanceByCriteria(
@@ -67,10 +67,19 @@ public class ReportViewModel extends ViewModel {
 
                 // ✅ Update LiveData from background thread
                 reports.postValue(result);
-
+                stopLoading();
             });
         }
         //reports.setValue(attendanceRepositoryImp.getAttendanceByCriteria(startDate,endDate,employeeId,loginEmployeeId));
+    }
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+    public void startLoading() {
+        isLoading.setValue(true);
+    }
+    private void stopLoading() {
+        isLoading.postValue(false); // ✅ safe from background thread
     }
     public LiveData<List<Attendance>> getAllReports() {
         return reports;

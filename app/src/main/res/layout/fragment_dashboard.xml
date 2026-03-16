@@ -62,9 +62,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header" />
-    <!-- Status -->
-
-    <!-- Session -->
 
     <TextView
         android:id="@+id/status"
@@ -116,6 +113,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/seeionLabel" />
 
+    <ProgressBar
+        android:id="@+id/pBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/seesion" />
+
     <!-- Check In -->
     <Button
         android:id="@+id/checkInButton"
@@ -129,7 +136,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/seesion" />
+        app:layout_constraintTop_toBottomOf="@id/pBar" />
 
     <!-- Check Out -->
     <Button
@@ -198,6 +205,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hideAdminButtons" />
+
+
 
 
 

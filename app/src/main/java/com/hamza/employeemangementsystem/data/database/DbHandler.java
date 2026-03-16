@@ -5,6 +5,7 @@ import android.credentials.RegisterCredentialDescriptionRequest;
 import android.os.Looper;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.gson.Gson;
 import com.hamza.employeemangementsystem.core.DataSourceMode;
 import com.hamza.employeemangementsystem.core.IConvertHelper;
 import com.hamza.employeemangementsystem.core.ResultCallback;
@@ -108,13 +109,13 @@ public class DbHandler<T> {
                 }
                 return null;
             case REMOTE_ONLY:
-                T empRemote = remote.getRecordByIdSync(id,mapper);
+                T empRemote = remote.getRecordByIdSync(id,mapper,null);
                 if (empRemote!= null && ((Employee) empRemote).pin.equals(pin)){
                     return empRemote;
                 }
             case HYBRID_REMOTE_FIRST:
                 try {
-                    T empRemoteFirst = remote.getRecordByIdSync(id, mapper);
+                    T empRemoteFirst = remote.getRecordByIdSync(id, mapper,null);
                     if (empRemoteFirst != null && ((Employee) empRemoteFirst).pin.equals(pin)) {
                         local.insertRecord(empRemoteFirst, mapper);
 
@@ -145,93 +146,97 @@ public class DbHandler<T> {
                 return null;
         }
     }
-    public T getRecordById(String id) {
+    public T getRecordById(String id, Type type) {
         switch (mode) {
             case LOCAL_ONLY:
+                Log.d("Mode", "Local Only");
                 T empLocal = local.getRecordById(id, mapper);
                 if (empLocal!=null ){
                     return empLocal;
                 }
             case REMOTE_ONLY:
-                T empRemote = remote.getRecordByIdSync(id,mapper);
+                T empRemote = remote.getRecordByIdSync(id,mapper,type);
                 if (empRemote!= null){
                     return empRemote;
                 }
-            case HYBRID_REMOTE_FIRST:
-                try {
-                    T empRemoteFirst = remote.getRecordByIdSync(id, mapper);
-                    if (empRemoteFirst != null ) {
-                        local.insertRecord(empRemoteFirst, mapper);
+//            case HYBRID_REMOTE_FIRST:
+//                Log.d("Mode","HYBRID_REMOTE_FIRST Id="+ id);
+//                try {
+//                    T empRemoteFirst = remote.getRecordByIdSync(id, mapper,null);
+//                    if (empRemoteFirst != null ) {
+//                        local.insertRecord(empRemoteFirst, mapper);
+//
+//                    }
+//                }catch (Exception ignore ){
+//
+//                }
+//                T empLocalFallBack = local.getRecordById(id, mapper);
+//                if (empLocalFallBack != null ){
+//                    return empLocalFallBack;
+//                }
+//
+////                return null;
+//            case HYBRID_LOCAL_FIRST:
+//                T empLocalFirst =  local.getRecordById(id, mapper);
+//                if(empLocalFirst!= null){
+//                    return empLocalFirst;
+//                }
+//                try{
+//                    T empRemoteSecond = local.getRecordById(id,mapper);
+//                    if(empRemoteSecond != null);
+//                    local.insertRecord(empRemoteSecond,mapper);
+//                    return empRemoteSecond;
+//                }catch (Exception e){
+//                    return null;
+//                }
 
-                    }
-                }catch (Exception ignore ){
-
-                }
-                T empLocalFallBack = local.getRecordById(id, mapper);
-                if (empLocalFallBack != null ){
-                    return empLocalFallBack;
-                }
-
-                return null;
-            case HYBRID_LOCAL_FIRST:
-                T empLocalFirst =  local.getRecordById(id, mapper);
-                if(empLocalFirst!= null){
-                    return empLocalFirst;
-                }
-                try{
-                    T empRemoteSecond = local.getRecordById(id,mapper);
-                    if(empRemoteSecond != null);
-                    local.insertRecord(empRemoteSecond,mapper);
-                    return empRemoteSecond;
-                }catch (Exception e){
-                    return null;
-                }
             default:
-                return null;
         }
+        return null;
+
     }
 
     public List<T> getAllRecords( Type type) {
         switch (mode) {
-            case LOCAL_ONLY:
-            List<T> empLocal = local.getAllRecords(mapper );
-                if (empLocal!=null ){
-                    return empLocal;
-                }
+//            case LOCAL_ONLY:
+//            List<T> empLocal = local.getAllRecords(mapper );
+//                if (empLocal!=null ){
+//                    return empLocal;
+//                }
             case REMOTE_ONLY:
                 List<T> empRemote = remote.getAllRecordsSync(mapper, type);
                 if (empRemote!= null){
                     return empRemote;
                 }
-            case HYBRID_REMOTE_FIRST:
-                try {
-                    List<T> empRemoteFirst = remote.getAllRecordsSync(mapper,type);
-                    if (empRemoteFirst != null ) {
-                        //local.insertRecord(empRemoteFirst, mapper);
-
-                    }
-                }catch (Exception ignore ){
-
-                }
-                List<T> empLocalFallBack = local.getAllRecords( mapper);
-                if (empLocalFallBack != null ){
-                    return empLocalFallBack;
-                }
-
-                return null;
-            case HYBRID_LOCAL_FIRST:
-                List<T> empLocalFirst =  local.getAllRecords( mapper);
-                if(empLocalFirst!= null){
-                    return empLocalFirst;
-                }
-                try{
-                    List<T> empRemoteSecond = local.getAllRecords(mapper);
-                    if(empRemoteSecond != null);
-                    //  local.insertRecord(empRemoteSecond,mapper);
-                    return empRemoteSecond;
-                }catch (Exception e){
-                    return null;
-                }
+//            case HYBRID_REMOTE_FIRST:
+//                try {
+//                    List<T> empRemoteFirst = remote.getAllRecordsSync(mapper,type);
+//                    if (empRemoteFirst != null ) {
+//                        //local.insertRecord(empRemoteFirst, mapper);
+//
+//                    }
+//                }catch (Exception ignore ){
+//
+//                }
+//                List<T> empLocalFallBack = local.getAllRecords( mapper);
+//                if (empLocalFallBack != null ){
+//                    return empLocalFallBack;
+//                }
+//
+//                return null;
+//            case HYBRID_LOCAL_FIRST:
+//                List<T> empLocalFirst =  local.getAllRecords( mapper);
+//                if(empLocalFirst!= null){
+//                    return empLocalFirst;
+//                }
+//                try{
+//                    List<T> empRemoteSecond = local.getAllRecords(mapper);
+//                    if(empRemoteSecond != null);
+//                    //  local.insertRecord(empRemoteSecond,mapper);
+//                    return empRemoteSecond;
+//                }catch (Exception e){
+//                    return null;
+               // }
             default:
                 return null;
         }
@@ -251,6 +256,8 @@ public class DbHandler<T> {
         });
     }
     public void  insertRecord(T object ){
+        String jsonObject = new Gson().toJson(object);
+        Log.d("Insert Object", jsonObject);
         switch ( mode){
             case LOCAL_ONLY:
                local.insertRecord(object,mapper);
@@ -270,11 +277,15 @@ public class DbHandler<T> {
         }
     }
     public void updateRecord(String id, T object){
+        String jsonObject = new Gson().toJson(object);
+        Log.d("Insert Object", jsonObject);
         switch (mode){
             case LOCAL_ONLY:
+                Log.d("UPDATE RECORD MODE", "LOCAL ONLY");
                 local.updateRecord(id, object,mapper);
                 break;
             case REMOTE_ONLY:
+                Log.d("UPDATE RECORD MODE","REMOTE ONLY");
                 remote.updateRecordSync(id,object,mapper);
                 break;
             case HYBRID_LOCAL_FIRST:
@@ -307,7 +318,7 @@ public class DbHandler<T> {
             default:
         }
     }
-    public List<T> getLastRecord(String id, Type type){
+    public T getLastRecord(String id, Type type){
         switch (mode){
             case LOCAL_ONLY:
                 T recLocal = local.getLastRecord(id,mapper);
@@ -316,7 +327,8 @@ public class DbHandler<T> {
                 }
                 break;
             case REMOTE_ONLY:
-                List<T> recRemote = remote.getLastRecordSync(id, mapper,type);
+                T recRemote = remote.getLastRecordSync(id, mapper,type);
+
                 if(recRemote != null){
                     return recRemote;
                 }
@@ -357,34 +369,36 @@ public class DbHandler<T> {
                 }
                 break;
             case REMOTE_ONLY:
-                List<T> recRemote = remote.getRecordByCriteriaSync(mapper,type);
+
+                Log.d("Remote Only", "Get Record By Criteria");
+                List<T> recRemote = remote.getRecordByCriteriaSync(criteria,mapper,type);
                 if (recRemote != null){
-                    return recRemote;
+                        return recRemote;
                 }
                 break;
-            case HYBRID_LOCAL_FIRST:
-                List<T> recLocalFirst = local.getRecordByCriteria(selectClause, criteria, orderBy, mapper);
-                if (recLocalFirst != null){
-                    return recLocalFirst;
-                }else{
-                    List<T> recRemoteSecond = remote.getRecordByCriteriaSync(criteria,mapper,type);
-                    if(recRemoteSecond != null){
-                        local.insertRecords(recRemoteSecond, mapper);
-                        return recRemoteSecond;
-                    }
-                }
-                break;
-            case HYBRID_REMOTE_FIRST:
-                List<T> recRemoteFirst = remote.getRecordByCriteriaSync(criteria,mapper,type);
-                if (recRemoteFirst != null){
-                    return recRemoteFirst;
-                }else{
-                    List<T> recLocalSecond = local.getRecordByCriteria(selectClause,criteria,orderBy, mapper);
-                    if(recLocalSecond != null){
-                        return recLocalSecond;
-                    }
-                }
-                break;
+//            case HYBRID_LOCAL_FIRST:
+//                List<T> recLocalFirst = local.getRecordByCriteria(selectClause, criteria, orderBy, mapper);
+//                if (recLocalFirst != null){
+//                    return recLocalFirst;
+//                }else{
+//                    List<T> recRemoteSecond = remote.getRecordByCriteriaSync(criteria,mapper,type);
+//                    if(recRemoteSecond != null){
+//                        local.insertRecords(recRemoteSecond, mapper);
+//                        return recRemoteSecond;
+//                    }
+//                }
+//                break;
+//            case HYBRID_REMOTE_FIRST:
+//                List<T> recRemoteFirst = remote.getRecordByCriteriaSync(criteria,mapper,type);
+//                if (recRemoteFirst != null){
+//                    return recRemoteFirst;
+//                }else{
+//                    List<T> recLocalSecond = local.getRecordByCriteria(selectClause,criteria,orderBy, mapper);
+//                    if(recLocalSecond != null){
+//                        return recLocalSecond;
+//                    }
+//                }
+//                break;
         }
         return null;
     }

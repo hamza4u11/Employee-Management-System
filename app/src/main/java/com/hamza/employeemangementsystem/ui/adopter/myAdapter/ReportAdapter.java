@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.IconCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.hamza.employeemangementsystem.R;
 import com.hamza.employeemangementsystem.data.model.Attendance;
 import com.hamza.employeemangementsystem.data.model.Report;
@@ -42,6 +43,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ReportAdapter.ViewHolder holder, int position) {
         Attendance attendance = list.get(position);
+        Log.d("DATA_CHECK", "Full Object: " + new Gson().toJson(attendance));
         holder.empName.setText(attendance.name);
         holder.empStatus.setText(Objects.equals(attendance.status, "0") ? "In-Active" : "Active");
         holder.reportDate.setText(attendance.date);
